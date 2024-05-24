@@ -2,7 +2,7 @@ import { CameraView, useCameraPermissions } from 'expo-camera';
 import { useState } from 'react';
 import { Button, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 
-export default function App() {
+export default function ScannerScreen({navigation}) {
   const [facing, setFacing] = useState('back');
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -38,6 +38,7 @@ export default function App() {
   );
 }
 
+// Edit style stuff here
 const styles = StyleSheet.create({
   container: {
     flex: 1,
