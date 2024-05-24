@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button, Alert } from "react-native";
+import { Text, View, StyleSheet, Button, Alert, ActivityIndicator } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 
 export default function App() {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScanAgainButton, setShowScanAgainButton] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -19,6 +20,7 @@ export default function App() {
   const handleBarCodeScanned = ({ type, data }) => {
     if (!scanned) {
       setScanned(true);
+      setLoading(true);
       fetchProductData(data);
     }
   };
@@ -36,40 +38,48 @@ export default function App() {
           `Product: ${productInfo}\nRecyclable: ${isRecyclable ? 'Yes' : 'No'}`,
           [
             { text: "OK", onPress: () => {
-              setScanned(false);
               setShowScanAgainButton(true);
+              setLoading(false);
             }}
           ]
         );
       } else {
-        Alert.alert("Error", "Product data not found.");
-        setScanned(false);
+        Alert.alert("Error", "Product data not found.", [
+          { text: "OK", onPress: () => {
+              setScanned(false);
+              setLoading(false);
+          }},
+        ]);
       }
     } catch (error) {
       console.error("Error fetching product data:", error);
-      Alert.alert("Error", "Failed to handle barcode scan.");
-      setScanned(false);
+      Alert.alert("Error", "Failed to handle barcode scan.", [
+        { text: "OK", onPress: () => {
+            setScanned(false);
+            setLoading(false);
+        }},
+      ]);
     }
   };
 
   const extractMaterials = (packaging, packagingRecycling) => {
     if (packagingRecycling && packagingRecycling.length > 0) {
-      return packagingRecycling.map(item => item.lc_name);
+      return packagingRecycling.map((item) => item.lc_name);
     }
     return [];
   };
 
   const determineRecyclability = (materials) => {
     const recyclabilityRules = {
-      "PET": true,
-      "HDPE": true,
-      "Glass": true,
-      "Aluminum": true,
-      "Steel": true,
-      "PS": false,
-      "PVC": false,
-      "recyclable": true,
-      "not recyclable": false
+      PET: true,
+      HDPE: true,
+      Glass: true,
+      Aluminum: true,
+      Steel: true,
+      PS: false,
+      PVC: false,
+      recyclable: true,
+      "not recyclable": false,
     };
 
     for (const material of materials) {
@@ -89,15 +99,24 @@ export default function App() {
 
   return (
     <View style={styles.container}>
-      <CameraView
-        onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-        barcodeScannerSettings={{
-          barcodeTypes: ["qr", "upc_e", "upc_a"],
-        }}
-        style={StyleSheet.absoluteFillObject}
-      />
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {!loading && !showScanAgainButton && (
+        <CameraView
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr", "upc_e", "upc_a"],
+          }}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
       {showScanAgainButton && (
-        <Button title={"Tap to Scan Again"} onPress={() => setShowScanAgainButton(false)} />
+        <Button
+          title={"Tap to Scan Again"}
+          onPress={() => {
+            setScanned(false);
+            setShowScanAgainButton(false);
+          }}
+        />
       )}
     </View>
   );
