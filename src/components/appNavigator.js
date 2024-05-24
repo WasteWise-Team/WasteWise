@@ -42,18 +42,19 @@ export default function AppNavigator() {
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}
+          tabBarActiveTintColor: '#2D5A3D',
+          tabBarInactiveTintColor: '#2D5A3D',
+          headerShown: false,
+          tabBarInactiveBackgroundColor: '#C4D8BF',
+          tabBarActiveBackgroundColor: '#C4D8BF',
+          tabBarStyle: {backgroundColor: '#C4D8BF'},
+          })}
       >
         <Tab.Screen name={homeName} component={HomeScreen} />
         <Tab.Screen name={MapName} component={MapScreen} />
         <Tab.Screen name={ScannerName} component={ScannerScreen} />
         <Tab.Screen name={ProfileName} component={ProfileScreen} />
         <Tab.Screen name={BinName} component={BinScreen} />
-
-       
-
       </Tab.Navigator>
     </NavigationContainer>
   );
