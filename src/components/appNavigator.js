@@ -1,5 +1,6 @@
 // src/navigation/AppNavigator.js
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -19,6 +20,16 @@ const ScannerName = 'Scanner';
 const BinName = 'Bin';
 
 const Tab = createBottomTabNavigator();
+const CustomTabButton = (props) => (
+  <TouchableOpacity
+    {...props}
+    style={
+      props.accessibilityState.selected
+        ? [props.style, { borderTopColor: '#2D5A3D', borderTopWidth: 2 }]
+        : props.style
+    }
+  />
+);
 
 export default function AppNavigator() {
   return (
@@ -50,11 +61,11 @@ export default function AppNavigator() {
           tabBarStyle: {backgroundColor: '#C4D8BF'},
           })}
       >
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={MapName} component={MapScreen} />
-        <Tab.Screen name={ScannerName} component={ScannerScreen} />
-        <Tab.Screen name={ProfileName} component={ProfileScreen} />
-        <Tab.Screen name={BinName} component={BinScreen} />
+        <Tab.Screen name={homeName} component={HomeScreen} options={{tabBarButton: CustomTabButton}}/>
+        <Tab.Screen name={MapName} component={MapScreen} options={{tabBarButton: CustomTabButton}}/>
+        <Tab.Screen name={ScannerName} component={ScannerScreen} options={{tabBarButton: CustomTabButton}}/>
+        <Tab.Screen name={BinName} component={BinScreen} options={{tabBarButton: CustomTabButton}}/>
+        <Tab.Screen name={ProfileName} component={ProfileScreen} options={{tabBarButton: CustomTabButton}}/>
       </Tab.Navigator>
     </NavigationContainer>
   );
