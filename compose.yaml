@@ -1,0 +1,22 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    volumes:
+      - expo-data:/usr/src/app/.expo
+    ports:
+      - 8081:8081
+    develop:
+      watch:
+        - action: sync
+          path: ./src
+          target: /usr/src/app/src
+          ignore:
+            - node_modules/
+        - action: rebuild
+          path: package.json
+
+volumes:
+  expo-data:
