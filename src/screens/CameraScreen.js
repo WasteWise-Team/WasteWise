@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Text, View, StyleSheet, Button, Alert, ActivityIndicator } from "react-native";
 import { CameraView, Camera } from "expo-camera";
 
-export default function App() {
+export default function CameraScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScanAgainButton, setShowScanAgainButton] = useState(false);
@@ -114,13 +114,19 @@ export default function App() {
         />
       )}
       {showScanAgainButton && (
-        <Button
-          title={"Tap to Scan Again"}
-          onPress={() => {
-            setScanned(false);
-            setShowScanAgainButton(false);
-          }}
-        />
+        <>
+          <Button
+            title={"Tap to Scan Again"}
+            onPress={() => {
+              setScanned(false);
+              setShowScanAgainButton(false);
+            }}
+          />
+          <Button
+            title={"Go Back"}
+            onPress={() => navigation.goBack()}
+          />
+        </>
       )}
     </View>
   );

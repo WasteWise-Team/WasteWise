@@ -1,15 +1,17 @@
-// src/navigation/AppNavigator.js
 import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
-import ScannerScreen from '../screens/cameraPage';
+import Scan from '../screens/Scan';
 import BinScreen from '../screens/BinScreen';
+import CameraScreen from '../screens/CameraScreen';
+import UploadScreen from '../screens/UploadScreen';
 
 // Screen names
 const homeName = 'Home';
@@ -19,6 +21,15 @@ const ScannerName = 'Scanner';
 const BinName = 'Bin';
 
 const Tab = createBottomTabNavigator();
+const Stack = createStackNavigator();
+
+const ScanStack = () => (
+  <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Screen name="ScannerStack" component={Scan} />
+    <Stack.Screen name="ScanItem" component={CameraScreen} /> 
+    <Stack.Screen name="UploadImage" component={UploadScreen} /> 
+  </Stack.Navigator>
+);
 
 export default function AppNavigator() {
   return (
@@ -44,16 +55,14 @@ export default function AppNavigator() {
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: 'gray',
+          headerShown: false
         })}
       >
         <Tab.Screen name={homeName} component={HomeScreen} />
         <Tab.Screen name={MapName} component={MapScreen} />
-        <Tab.Screen name={ScannerName} component={ScannerScreen} />
+        <Tab.Screen name={ScannerName} component={ScanStack} />
         <Tab.Screen name={ProfileName} component={ProfileScreen} />
         <Tab.Screen name={BinName} component={BinScreen} />
-
-       
-
       </Tab.Navigator>
     </NavigationContainer>
   );
