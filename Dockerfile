@@ -34,4 +34,4 @@ COPY . .
 EXPOSE 8081
 
 # Run the application.
-CMD npx expo start
+CMD npx expo start --tunnel
