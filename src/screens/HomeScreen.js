@@ -1,8 +1,13 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, Dimensions } from 'react-native';
 // import * as Font from 'expo-font';
 
+// Get screen dimensions
+const { width } = Dimensions.get('window');
+
+const baseFontSize = width > 600 ? 24 : 16; // Example breakpoint at 600
+  
 export default function HomeScreen({ navigation }) {
     const [fontsLoaded, setFontsLoaded] = useState(false);
     useEffect(() => {
@@ -30,6 +35,20 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.horizontalLine} />
             </View>
             <StatusBar style="auto" />
+
+            <Text style={styles.welcome_text}>
+                Good afternoon, <Text style={styles.name}>My</Text>. 
+                It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
+            </Text>
+
+            <View style={styles.summary_container}>
+                <Text style={styles.summary_text}>
+                    <Text style={styles.summary_word}>Summary:</Text> 
+                </Text>
+                <Text style={styles.summary_text2}>
+                    You've recycled a total of <Text style={styles.name}>2478</Text> pounds
+                </Text>
+            </View>
         </View>
     );
 }
@@ -41,7 +60,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#C4D8BF',
         alignItems: 'center',
         justifyContent: 'flex-start',
-        paddingTop: 80,
+        paddingTop: 70,
     },
 
     title_container: {
@@ -63,8 +82,47 @@ const styles = StyleSheet.create({
 
     horizontalLine: {
         marginTop: 10, // Space between the title and the line
-        width: '100%', // Full width
-        height: 2, // Line height
-        backgroundColor: '#34724B', // Line color
+        width: '120%', // Full width
+        height: 1, // Line height
+        backgroundColor: '#264131', // Line color
+    },
+
+    welcome_text: {
+        alignItems: 'center',
+        fontSize: 15,
+        fontFamily: 'NunitoRegular-vmABZ',
+        color: '#2D5A3D',
+    },
+
+    name: {
+        alignItems: 'center',
+        color: '#68A77C',
+    },
+
+    summary_container: {
+        alignItems: 'center',
+        marginBottom: 20,
+        width: '100%', // Ensure the container takes the full width
+        justifyContent: 'flex-end',
+        paddingBottom: 30,
+        flex: 1,
+    },
+
+    summary_text: {
+        alignItems: 'center',
+        fontSize: 15,
+        fontFamily: 'NunitoRegular-vmABZ',
+        color: '#2D5A3D',
+    },
+
+    summary_text2: {
+        alignItems: 'center',
+        fontSize: 15,
+        fontFamily: 'NunitoRegular-vmABZ',
+        color: '#2D5A3D',
+    },
+
+    summary_word: {
+        color: '#264131',
     },
 });
