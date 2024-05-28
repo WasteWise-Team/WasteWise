@@ -1,4 +1,5 @@
 import React from 'react';
+import { TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -23,11 +24,24 @@ const BinName = 'Bin';
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
+const CustomTabButton = (props) => (
+  <TouchableOpacity
+    {...props}
+    style={
+      props.accessibilityState.selected
+        ? [props.style, { borderTopColor: '#2D5A3D', borderTopWidth: 2 }]
+        : props.style
+    }
+  />
+);
+
+
+
 const ScanStack = () => (
-  <Stack.Navigator screenOptions={{headerShown: false}}>
+  <Stack.Navigator screenOptions={{ headerShown: false }}>
     <Stack.Screen name="ScannerStack" component={Scan} />
-    <Stack.Screen name="ScanItem" component={CameraScreen} /> 
-    <Stack.Screen name="UploadImage" component={UploadScreen} /> 
+    <Stack.Screen name="ScanItem" component={CameraScreen} />
+    <Stack.Screen name="UploadImage" component={UploadScreen} />
   </Stack.Navigator>
 );
 
@@ -49,20 +63,23 @@ export default function AppNavigator() {
               iconName = focused ? 'camera' : 'camera-outline';
             } else if (route.name === BinName) {
               iconName = focused ? 'add-circle' : 'add-circle-outline';
-            } 
+            }
 
             return <Ionicons name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-          headerShown: false
+          tabBarActiveTintColor: '#2D5A3D',
+          tabBarInactiveTintColor: '#2D5A3D',
+          headerShown: false,
+          tabBarInactiveBackgroundColor: '#C4D8BF',
+          tabBarActiveBackgroundColor: '#C4D8BF',
+          tabBarStyle: { backgroundColor: '#C4D8BF' },
         })}
       >
-        <Tab.Screen name={homeName} component={HomeScreen} />
-        <Tab.Screen name={MapName} component={MapScreen} />
-        <Tab.Screen name={ScannerName} component={ScanStack} />
-        <Tab.Screen name={ProfileName} component={ProfileScreen} />
-        <Tab.Screen name={BinName} component={BinScreen} />
+        <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
+        <Tab.Screen name={MapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
+        <Tab.Screen name={ScannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
+        <Tab.Screen name={ProfileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
+        <Tab.Screen name={BinName} component={BinScreen} ptions={{ tabBarButton: CustomTabButton }} />
       </Tab.Navigator>
     </NavigationContainer>
   );
