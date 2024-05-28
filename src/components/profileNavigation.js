@@ -10,7 +10,10 @@ const ProfileNavigation = ({ navigationState, setIndex }) => {
         return (
           <TouchableOpacity
             key={route.key}
-            onPress={() => setIndex(index)}
+            onPress={() => {
+              console.log(`Navigating to ${route.title}`);
+              setIndex(index);
+            }}
             style={styles.navItem}
           >
             <Text style={[styles.navText, isFocused ? styles.navTextFocused : null]}>
@@ -41,6 +44,7 @@ const styles = StyleSheet.create({
   },
   navTextFocused: {
     color: '#2D5A3D',
+    fontWeight: 'bold',
   },
 });
 

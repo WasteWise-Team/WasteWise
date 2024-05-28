@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Image, StyleSheet, Dimensions, TouchableHighlight } from 'react-native';
+import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 /**
  * SCALING STUFF
@@ -16,13 +16,13 @@ const ProfileHeader = ({ profileImage, username, bio }) => {
         <Text style={styles.username}>{username}</Text>
         <Text style={styles.bio}>{bio}</Text>
       </View>
-      <TouchableHighlight
+      <TouchableOpacity
         style={styles.logoutButton}
         // onPress={onLogout}
         underlayColor="#68A77C" // Color when pressed, doesn't work yet
       >
         <AntDesign name="logout" size={20} color="#2D5A3D" />
-      </TouchableHighlight>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
   },
   logoutButton: {
     position: 'absolute',
-    top: 30,
+    top: 50,
     right: 20,
     padding: 10,
     borderRadius: 5,
