@@ -29,8 +29,11 @@ export default function App() {
     try {
       const response = await fetch(`https://world.openfoodfacts.net/api/v2/product/${barcode}`);
       const productData = await response.json();
+
       if (productData.status === 1) {
-        const materials = extractMaterials(productData.product.packaging, productData.product.packaging_recycling);
+        console.log('Recyclability Section:', JSON.stringify(productData.product.packagings, null, 2)); // Print the recyclability section
+
+        const materials = extractMaterials(productData.product.packagings);
         const isRecyclable = determineRecyclability(materials);
         const productInfo = productData.product.product_name;
         Alert.alert(
@@ -38,9 +41,10 @@ export default function App() {
           `Product: ${productInfo}\nRecyclable: ${isRecyclable ? 'Yes' : 'No'}`,
           [
             { text: "OK", onPress: () => {
-              setShowScanAgainButton(true);
-              setLoading(false);
-            }}
+                setShowScanAgainButton(true);
+                setLoading(false);
+              }
+            }
           ]
         );
       } else {
@@ -62,29 +66,29 @@ export default function App() {
     }
   };
 
-  const extractMaterials = (packaging, packagingRecycling) => {
-    if (packagingRecycling && packagingRecycling.length > 0) {
-      return packagingRecycling.map((item) => item.lc_name);
-    }
-    return [];
+  const extractMaterials = (packagings) => {
+    return packagings.map(packaging => packaging.material);
   };
 
   const determineRecyclability = (materials) => {
     const recyclabilityRules = {
-      PET: true,
-      HDPE: true,
-      Glass: true,
-      Aluminum: true,
-      Steel: true,
-      PS: false,
-      PVC: false,
-      recyclable: true,
+      "pet": true,
+      "hdpe": true,
+      "glass": true,
+      "aluminium": true,
+      "steel": true,
+      "ps": false,
+      "pvc": false,
+      "recyclable": true,
       "not recyclable": false,
     };
 
     for (const material of materials) {
-      if (recyclabilityRules[material.toLowerCase()] === false) {
-        return false;
+      if (material) {
+        const materialKey = Object.keys(recyclabilityRules).find(key => material.toLowerCase().includes(key));
+        if (materialKey && recyclabilityRules[materialKey] === false) {
+          return false;
+        }
       }
     }
     return true;
