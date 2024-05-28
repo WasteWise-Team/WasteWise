@@ -3,14 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 
 export default function MapScreen({ navigation }) {
     return (
-        <View style={styles.container}>
-            <Text 
-                onPress={() => navigation.navigate('Home')}
-                style={styles.text}
-            >
-                Map Screen
-            </Text>
-        </View>
+        <View style={styles.container}></View>
     );
 }
 
@@ -20,9 +13,8 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#C4D8BF'
     },
-    text: {
-        fontSize: 26,
-        fontWeight: 'bold',
-    },
+    
+
 });
