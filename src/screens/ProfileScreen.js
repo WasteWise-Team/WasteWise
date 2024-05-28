@@ -72,7 +72,7 @@ export default function ProfileScreen({ navigation }) {
         renderTabBar={props => (
           <ProfileNavigation 
             navigationState={props.navigationState} 
-            setIndex={props.setIndex} 
+            setIndex={setIndex} 
           />
         )}
       />
