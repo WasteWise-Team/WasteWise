@@ -78,8 +78,8 @@ export default function AppNavigator() {
         <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
         <Tab.Screen name={MapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
         <Tab.Screen name={ScannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
-        <Tab.Screen name={ProfileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
         <Tab.Screen name={BinName} component={BinScreen} ptions={{ tabBarButton: CustomTabButton }} />
+        <Tab.Screen name={ProfileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
       </Tab.Navigator>
     </NavigationContainer>
   );

@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { TabView, SceneMap } from 'react-native-tab-view';
 import ProfileHeader from '../components/profileHeader';
 import ProfileNavigation from '../components/profileNavigation';
+import Settings from '../components/settings';
 
 
 const { width } = Dimensions.get('window');
