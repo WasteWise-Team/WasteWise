@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    paddingTop: 30,
+    paddingTop: 40,
     paddingLeft: 40,
     backgroundColor: '#C4D8BF', // DARK/LIGHT MODE
     marginBottom: -20, // Negative margin to reduce space between header and next item

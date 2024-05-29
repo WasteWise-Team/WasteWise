@@ -14,7 +14,7 @@ function HistoryScreen() {
   );
 }
 
-function LeaderboardsScreen() {
+function RanksScreen() {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
       <Text>Leaderboards Content</Text>
@@ -41,21 +41,6 @@ function SettingsScreen() {
 const Tab = createMaterialTopTabNavigator();
 
 export default function ProfileScreen({ navigation }) {
-  // const [index, setIndex] = useState(0);
-  // const [routes] = useState([
-  //   { key: 'history', title: 'History' },
-  //   { key: 'leaderboards', title: 'Leaderboards' },
-  //   { key: 'social', title: 'Social' },
-  //   { key: 'settings', title: 'Settings' },
-  // ]);
-
-  // const renderScene = SceneMap({
-  //   history: HistoryRoute,
-  //   leaderboards: LeaderboardsRoute,
-  //   social: SocialRoute,
-  //   settings: SettingsRoute,
-  // });
-
   const profileData = {
     profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
     username: 'dmalfoy',
@@ -73,14 +58,14 @@ export default function ProfileScreen({ navigation }) {
       <Tab.Navigator
         screenOptions={{
           tabBarIndicatorStyle: { backgroundColor: '#2D5A3D', height: 2 },
-          tabBarLabelStyle: { fontSize: 16 },
+          tabBarLabelStyle: { fontSize: 16, fontFamily: 'Nunito-Regular', color: '#2D5A3D', textTransform: 'none', marginBottom: -5},
           tabBarStyle: { backgroundColor: '#C4D8BF' },
           tabBarActiveTintColor: '#2D5A3D', // Active tab label color
           tabBarInactiveTintColor: '#2D5A3D', // Inactive tab label color
         }}
       >
         <Tab.Screen name="History" component={HistoryScreen} />
-        <Tab.Screen name="Leaderboards" component={LeaderboardsScreen} />
+        <Tab.Screen name="Ranks" component={RanksScreen} />
         <Tab.Screen name="Social" component={SocialScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
