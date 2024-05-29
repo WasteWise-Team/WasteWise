@@ -2,7 +2,7 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Dimensions } from 'react-native';
 import TestChart from '../components/pie-chart';
-// import * as Font from 'expo-font';
+import HeaderLogo from '../components/headerLogo'; // Import the HeaderLogo component
 
 // Get screen dimensions
 const { width } = Dimensions.get('window');
@@ -38,14 +38,7 @@ export default function HomeScreen({ navigation }) {
 
     return (
         <View style={styles.container}>
-            <View style={styles.title_container}>
-                <Text style={styles.title}>
-                    Waste
-                    <Text style={styles.title2}>Wise</Text>
-                    {/* <FontAwesome name="recycle" size={40} color="#2D5A3D" /> */}
-                </Text>
-                <View style={styles.horizontalLine} />
-            </View>
+            <HeaderLogo />
             <StatusBar style="auto" />
 
             <Text style={styles.welcome_text}>
@@ -85,30 +78,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingTop: 70,
-    },
-
-    title_container: {
-        alignItems: 'center',
-        marginBottom: 20,
-        width: '100%', // Ensure the container takes the full width
-        paddingHorizontal: 20, // Add padding to make the line appear properly
-    },
-
-    title: {
-        fontSize: 30,
-        fontFamily: 'NunitoRegular-vmABZ',
-        color: '#34724B',
-    },
-
-    title2: {
-        color: '#FCFCFE',
-    },
-
-    horizontalLine: {
-        marginTop: 10, // Space between the title and the line
-        width: '120%', // Full width
-        height: 1, // Line height
-        backgroundColor: '#264131', // Line color
     },
 
     welcome_text: {
