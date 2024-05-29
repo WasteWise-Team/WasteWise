@@ -31,7 +31,7 @@ function SocialScreen() {
   );
 }
 
-function SettingsScreen() {
+function SettingsScreen({navigation}) {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
        <Settings navigation={navigation} />
