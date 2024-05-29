@@ -1,85 +1,106 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Text, View, TouchableOpacity } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import * as Location from 'expo-location';
 
-const BinScreen = () => {
-  const [location, setLocation] = useState(null);
-  const [markers, setMarkers] = useState([]);
-  const [errorMsg, setErrorMsg] = useState(null);
-  const mapRef = useRef(null);
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import HeaderLogo from '../components/headerLogo';
 
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-      getLocation();
-    };
+export default function BinScreen({ navigation }) {
+    return (
+        <View style={styles.container}>
+            <ScrollView contentContainerStyle={styles.scrollContainer}>
+                <HeaderLogo />
+                <View style={styles.sectionContainer}>
+                    <View style={styles.intro}>
+                        <Text style={styles.paragraph}>
+                            See a bin that doesn’t show up in our maps?
+                        </Text>
+                    </View>
+                </View>
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.headerSection}>
+                        Contribute to the Community,{'\n'}
+                        Add a Bin.
+                    </Text>
+                </View>
+                <View style={styles.sectionContainer}>
+                    <View style={styles.stepsContainer}>
+                        <View style={styles.verticalLine} />
+                        <View style={styles.stepsContent}>
+                            <Text style={styles.paragraph}>
+                                1. Walk to the bin{'\n'}
+                                2. Take a picture{'\n'}
+                                3. Contribute to the community!{'\n\n'}
+                                Happy Recycling
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+                    <Text style={styles.buttonText}>Add My Bin</Text>
+                </TouchableOpacity>
+            </ScrollView>
+        </View>
+    );
+}
 
-    requestLocationPermission();
-  }, []);
-
-  const getLocation = async () => {
-    let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-    setLocation(location.coords);
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }, 1000);
-    }
-  };
-
-  const addBinMarker = async () => {
-    let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-    const newMarker = {
-      latitude: location.coords.latitude,
-      longitude: location.coords.longitude,
-    };
-    setMarkers((prevMarkers) => [...prevMarkers, newMarker]);
-  };
-
-  return (
-    <View style={{ flex: 1 }}>
-      <MapView
-        ref={mapRef}
-        style={{ width: '100%', height: '100%' }}
-        initialRegion={{
-          latitude: 28.693602091083623,
-          longitude: 77.21464383448563,
-          latitudeDelta: 0.01,
-          longitudeDelta: 0.01,
-        }}
-        showsUserLocation
-        followsUserLocation
-      >
-        {markers.map((marker, index) => (
-          <Marker key={index} coordinate={marker} />
-        ))}
-      </MapView>
-      <TouchableOpacity
-        style={{
-          width: '90%',
-          height: 50,
-          alignSelf: 'center',
-          position: 'absolute',
-          backgroundColor: 'green',
-          bottom: 20,
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-        onPress={addBinMarker}
-      >
-        <Text style={{ color: 'white' }}>Add Bin</Text>
-      </TouchableOpacity>
-      {errorMsg ? <Text>{errorMsg}</Text> : null}
-    </View>
-  );
-};
-
-export default BinScreen;
+// Edit style stuff here
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#C4D8BF',
+    },
+    scrollContainer: {
+        flexGrow: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 16,
+    },
+    sectionContainer: {
+        width: '90%', // Adjust width as necessary
+        marginBottom: 15, // Adjust margin as necessary to make gaps smaller
+        alignSelf: 'center', // Center the container
+        alignItems: 'flex-start', // Align content to the left
+    },
+    headerSection: {
+        fontFamily: 'Nunito-Bold',
+        fontSize: 20,
+        marginBottom: 8,
+        color: '#2D5A3D',
+        textAlign: 'left',
+    },
+    paragraph: {
+        fontFamily: 'Nunito-Regular',
+        fontSize: 16,
+        marginBottom: 8, // Adjust margin as necessary to make gaps smaller
+        textAlign: 'left',
+        color: '#2D5A3D',
+    },
+    stepsContainer: {
+        flexDirection: 'row',
+        width: '100%',
+        paddingHorizontal: 20,
+        marginBottom: 20,
+    },
+    verticalLine: {
+        width: 1.5,
+        backgroundColor: '#2D5A3D',
+        marginRight: 10,
+        color: '#2D5A3D',
+    },
+    stepsContent: {
+        flex: 1,
+    },
+    button: {
+        marginTop: 20,
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderWidth: 2,
+        borderColor: '#2D5A3D',
+        width: '65%', // Make the button span more horizontally
+        alignSelf: 'center', // Center the button horizontally
+    },
+    buttonText: {
+        fontSize: 16,
+        color: '#2D5A3D',
+        textAlign: 'center',
+    },
+});
