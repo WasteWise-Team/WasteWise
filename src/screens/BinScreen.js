@@ -34,7 +34,7 @@ export default function BinScreen({ navigation }) {
                         </View>
                     </View>
                 </View>
-                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Home')}>
+                <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("BinMap")}>
                     <Text style={styles.buttonText}>Add My Bin</Text>
                 </TouchableOpacity>
             </ScrollView>
