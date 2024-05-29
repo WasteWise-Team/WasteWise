@@ -61,31 +61,39 @@ const styles = StyleSheet.create({
     padding: 16, // Add padding around the container
   },
   content: {
-    width: '70%', // Make content 80% of the screen width
+    width: '85%', // Make content 75% of the screen width
     alignSelf: 'center', // Center the content
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    paddingTop: 20,
+    fontSize: 20,
+    fontFamily: 'Nunito-Bold',
     textAlign: 'left', // Align title to the left
+    color: '#2D5A3D',
     marginVertical: 20,
   },
   listContainer: {
-    paddingBottom: 16, // Add padding at the bottom of the list
+    paddingBottom: 15, // Add padding at the bottom of the list
+    paddingRight: 20,
+    paddingLeft: 20,
   },
   item: {
+    fontFamily: 'Nunito-Regular',
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+
   },
   itemName: {
     flex: 1,
     textAlign: 'left',
+    color: '#2D5A3D',
+    fontSize: 15,
   },
   itemDate: {
     flex: 1,
     textAlign: 'right',
+    color: '#2D5A3D',
+    fontSize: 15,
   },
 });
