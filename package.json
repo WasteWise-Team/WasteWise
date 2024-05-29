@@ -33,6 +33,12 @@
     "react-native-svg-transformer": "^1.4.0",
     "react-native-tab-view": "^3.5.2",
     "react-native-vector-icons": "^10.1.0",
+
+    "react-native-web": "~0.19.10",
+    "react-native-maps": "1.14.0",
+    "expo-location": "~17.0.1",
+    "expo-linking": "~6.3.1"
+
     "react-native-web": "~0.19.10"
   },
   "devDependencies": {
