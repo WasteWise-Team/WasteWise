@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View, Switch } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-export default function settings({ navigation }) {
+export default function settings({ setting }) {
     const [isDataEnabled, setIsDataEnabled] = useState(false);
     const toggleDataSwitch = () => setIsDataEnabled(previousState => !previousState);
 

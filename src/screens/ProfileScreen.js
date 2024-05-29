@@ -2,15 +2,17 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import ProfileHeader from '../components/profileHeader';
 import Settings from '../components/settings';
+import History from '../components/scanHistory';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const { width } = Dimensions.get('window');
+const baseFontSize = width > 350 ? 16 : 14;
 
 // Dummy components for each tab
 function HistoryScreen({navigation}) {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
-       <Settings navigation={navigation} />
+       <History navigation={navigation} />
     </View>
   );
 }
@@ -58,9 +60,14 @@ export default function ProfileScreen({ navigation }) {
       />
       <Tab.Navigator
         screenOptions={{
-          tabBarIndicatorStyle: { backgroundColor: '#2D5A3D', height: 2 },
-          tabBarLabelStyle: { fontSize: 16, fontFamily: 'Nunito-Regular', color: '#2D5A3D', textTransform: 'none', marginBottom: -5},
-          tabBarStyle: { backgroundColor: '#C4D8BF' },
+          tabBarIndicatorStyle: { backgroundColor: '#2D5A3D', height: 2 }, // actual tab bar
+          tabBarLabelStyle: { fontSize: baseFontSize, fontFamily: 'Nunito-Regular', color: '#2D5A3D', textTransform: 'none', marginBottom: -5,}, // tab bar container
+          tabBarStyle: {
+            backgroundColor: '#C4D8BF',
+            borderBottomWidth: 0, // Remove the bottom border
+            shadowColor: 'transparent', // Remove the shadow
+            elevation: 0, // Remove the elevation (shadow on Android)
+          },
           tabBarActiveTintColor: '#2D5A3D', // Active tab label color
           tabBarInactiveTintColor: '#2D5A3D', // Inactive tab label color
         }}
