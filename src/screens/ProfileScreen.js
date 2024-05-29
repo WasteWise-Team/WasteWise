@@ -7,7 +7,7 @@ import { createMaterialTopTabNavigator } from '@react-navigation/material-top-ta
 const { width } = Dimensions.get('window');
 
 // Dummy components for each tab
-function HistoryScreen() {
+function HistoryScreen({navigation}) {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
        <Settings navigation={navigation} />
