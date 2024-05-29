@@ -9,8 +9,8 @@ const { width } = Dimensions.get('window');
 // Dummy components for each tab
 function HistoryScreen() {
   return (
-    <View style={[styles.scene, { backgroundColor: '#ff4081' }]}>
-      <Text>History Content</Text>
+    <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
+       <Settings navigation={navigation} />
     </View>
   );
 }
