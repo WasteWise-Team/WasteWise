@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import ProfileHeader from '../components/profileHeader';
+import Settings from '../components/settings';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const { width } = Dimensions.get('window');
@@ -33,7 +34,7 @@ function SocialScreen() {
 function SettingsScreen() {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
-      <Text>Settings Content</Text>
+       <Settings navigation={navigation} />
     </View>
   );
 }
