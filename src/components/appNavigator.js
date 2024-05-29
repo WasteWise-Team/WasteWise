@@ -15,6 +15,7 @@ import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
 import LoginScreen from '../screens/Login';
 import StartingScreen from '../screens/StartingScreen';
+import BinMapScreen from '../screens/BinMapScreen';
 
 // Screen names
 const homeName = 'Home';
@@ -44,6 +45,7 @@ const ScanStack = () => (
     <Stack.Screen name="UploadImage" component={UploadScreen} />
     
     <Stack.Screen name="Starting" component={StartingScreen} />
+ 
   </Stack.Navigator>
 );
 
@@ -52,6 +54,7 @@ const MainStack = () => (
     <Stack.Screen name="Starting" component={StartingScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="AppTabs" component={AppTabs} />
+    <Stack.Screen name="BinMap" component={BinMapScreen}/>
   </Stack.Navigator>
 );
 
