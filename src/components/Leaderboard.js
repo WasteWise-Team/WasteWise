@@ -54,7 +54,7 @@ export default function Leaderboard({ navigation }) {
         )}
       </View>
     </SafeAreaView>
-  );
+  );        
 }
 
 const styles = StyleSheet.create({
