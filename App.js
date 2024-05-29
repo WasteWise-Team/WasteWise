@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import { View } from 'react-native';
 import AppNavigator from './src/components/appNavigator'; // Adjust the import path as needed
 
 const loadFonts = async () => {
