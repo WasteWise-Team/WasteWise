@@ -6,6 +6,7 @@ import ProfileNavigation from '../components/profileNavigation';
 import Settings from '../components/settings';
 
 
+
 const { width } = Dimensions.get('window');
 
 // Dummy components for each tab
@@ -27,10 +28,11 @@ const SocialRoute = () => (
   </View>
 );
 
-const SettingsRoute = () => (
+const SettingsRoute = ({ navigation }) => (
   <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
-    <Text>Settings Content</Text>
+    <Settings navigation={navigation} />
   </View>
+  
 );
 
 const initialLayout = { width };
