@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import ProfileHeader from '../components/profileHeader';
 import Settings from '../components/settings';
 import History from '../components/scanHistory';
+import Social from '../components/social';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 
 const { width } = Dimensions.get('window');
@@ -27,8 +28,8 @@ function RanksScreen() {
 
 function SocialScreen() {
   return (
-    <View style={[styles.scene, { backgroundColor: '#ff4081' }]}>
-      <Text>Social Content</Text>
+    <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
+       <Social navigation={navigation} />
     </View>
   );
 }
@@ -47,7 +48,7 @@ export default function ProfileScreen({ navigation }) {
   const profileData = {
     profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
     username: 'dmalfoy',
-    bio: 'draco. draco malfoy',
+    bio: 'Draco. Draco Malfoy.',
   };
 
   return (

@@ -63,6 +63,7 @@ const styles = StyleSheet.create({
   content: {
     width: '85%', // Make content 75% of the screen width
     alignSelf: 'center', // Center the content
+    height: '95%',
   },
   title: {
     paddingTop: 20,
