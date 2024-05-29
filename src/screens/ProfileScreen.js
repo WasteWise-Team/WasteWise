@@ -4,6 +4,7 @@ import ProfileHeader from '../components/profileHeader';
 import Settings from '../components/settings';
 import History from '../components/scanHistory';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import Leaderboard from '../components/Leaderboard';
 
 const { width } = Dimensions.get('window');
 const baseFontSize = width > 350 ? 16 : 14;
@@ -20,7 +21,7 @@ function HistoryScreen({navigation}) {
 function RanksScreen() {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
-      <Text>Leaderboards Content</Text>
+      <Leaderboard navigation={navigation} />
     </View>
   );
 }
@@ -73,7 +74,7 @@ export default function ProfileScreen({ navigation }) {
         }}
       >
         <Tab.Screen name="History" component={HistoryScreen} />
-        <Tab.Screen name="Ranks" component={RanksScreen} />
+        <Tab.Screen name="Ranks" component={Leaderboard} />
         <Tab.Screen name="Social" component={SocialScreen} />
         <Tab.Screen name="Settings" component={SettingsScreen} />
       </Tab.Navigator>
