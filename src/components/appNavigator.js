@@ -10,7 +10,7 @@ import HomeScreen from '../screens/HomeScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import Scan from '../screens/Scan';
-import BinScreen from '../screens/BinScreen';
+import BinScreen from '../screens/AddBinScreen';
 import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
 import LoginScreen from '../screens/Login';

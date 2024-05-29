@@ -41,31 +41,4 @@ const ProfileNavigation = ({ state, descriptors, navigation }) => {
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  // navContainer: {
-  //   flexDirection: 'row',
-  //   justifyContent: 'space-around',
-  //   alignItems: 'center',
-  //   height: 50, // Adjust the height as needed
-  //   backgroundColor: '#C4D8BF', // Change the background color if needed
-  // },
-  // navItem: {
-  //   flex: 1,
-  //   alignItems: 'center',
-  //   paddingVertical: 10,
-  // },
-  // navItemFocused: {
-  //   backgroundColor: '#D4E1D0', // Add a background color for the focused item if desired
-  // },
-  // navText: {
-  //   fontSize: 16,
-  //   color: '#2D5A3D',
-  // },
-  // navTextFocused: {
-  //   color: '#2D5A3D',
-  //   fontWeight: 'bold',
-  // },
-});
-
 export default ProfileNavigation;
