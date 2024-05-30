@@ -1,65 +1,107 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image, SafeAreaView, Dimensions } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+
+const IMAGE_URL = 'https://i.pinimg.com/564x/25/d9/dd/25d9dd4a3d76d97de90b9363d5c049d9.jpg';
 
 const StartingScreen = ({ navigation }) => {
     return (
-        <View style={styles.container}>
-            <View style={styles.content}>
-                <Text style={styles.text}>Welcome</Text>
-                <Pressable
-                    style={[styles.button, styles.firstButton]}
-                    onPress={() => navigation.navigate('CreateAccount')}
-                >
-                    <Text style={styles.buttonText}>Create Account</Text>
-                </Pressable>
-                <Pressable
-                    style={[styles.button, styles.firstButton]}
-                    onPress={() => navigation.navigate('LoginScreen')}
-                >
-                    <Text style={styles.buttonText}>Log In</Text>
-                </Pressable>
-                <Pressable style={styles.button} onPress={() => navigation.navigate('AppTabs')}>
-                    <Text style={styles.buttonText}>Continue as Guest</Text>
-                </Pressable>
-            </View>
-        </View>
+        <LinearGradient
+            colors={['#C4D8BF', '#E2FAEC']}
+            style={styles.container}
+        >
+            <SafeAreaView style={styles.safeArea}>
+                <View style={styles.header}>
+                    <Text style={styles.title}>
+                        Waste
+                        <Text style={styles.title2}>Wise</Text>
+                    </Text>
+                </View>
+                <View style={styles.content}>
+                    <View style={styles.imageContainer}>
+                        <Image source={{ uri: IMAGE_URL }} style={styles.image} />
+                    </View>
+                </View>
+                <View style={styles.footer}>
+                    <Pressable
+                        style={[styles.button, styles.firstButton]}
+                        onPress={() => navigation.navigate('Login')}
+                    >
+                        <Text style={styles.buttonText}>Get Started</Text>
+                    </Pressable>
+                    <Pressable style={styles.link} onPress={() => navigation.navigate('CreateAccount')}>
+                        <Text style={styles.linkText}>Already a member?</Text>
+                    </Pressable>
+                    <Pressable style={styles.link} onPress={() => navigation.navigate('AppTabs')}>
+                        <Text style={styles.linkText}>Continue as Guest</Text>
+                    </Pressable>
+                </View>
+            </SafeAreaView>
+        </LinearGradient>
     );
 };
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
+    },
+    safeArea: {
+        flex: 1,
+    },
+    header: {
         alignItems: 'center',
-        justifyContent: 'center',
-        backgroundColor: '#C4D8BF',
+        marginVertical: 30,
+    },
+    title: {
+        fontSize: 25,
+        fontFamily: 'Nunito-SemiBold',
+        color: '#34724B',
+    },
+    title2: {
+        color: '#FCFCFE',
     },
     content: {
-        alignItems: 'center',
+        flex: 1,
         justifyContent: 'center',
+        alignItems: 'center',
     },
-    text: {
-        fontSize: 26,
-        fontWeight: 'bold',
-        marginBottom: 20,
+    imageContainer: {
+        alignItems: 'center',
+    },
+    image: {
+        width: Dimensions.get('window').width * 0.65,
+        height: Dimensions.get('window').height * 0.6,
+        borderRadius: 15,
+    },
+    footer: {
+        alignItems: 'center',
+        marginVertical: 40,
+        fontFamily: 'Nunito-Regular',
     },
     button: {
         alignItems: 'center',
         justifyContent: 'center',
         paddingVertical: 12,
         paddingHorizontal: 32,
-        borderRadius: 4,
-        elevation: 3,
-        backgroundColor: '#2D5A3D',
-    },
-    firstButton: {
-        marginBottom: 10, // Add margin only to the first button
+        borderWidth: 1, // Add border width
+        borderColor: '#2D5A3D', // Set border color
+        backgroundColor: 'transparent',
+        marginVertical: 10,
+        width: '60%', // Make the button width wider
     },
     buttonText: {
-        fontSize: 16,
+        fontSize: 15,
         lineHeight: 21,
-        fontWeight: 'bold',
         letterSpacing: 0.25,
-        color: 'white',
+        color: '#2D5A3D',
+    },
+    link: {
+        marginVertical: 5,
+    },
+    linkText: {
+        fontSize: 15,
+        color: '#2D5A3D',
+        textDecorationLine: 'none', // Remove underline
     },
 });
 
