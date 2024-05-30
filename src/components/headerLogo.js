@@ -24,7 +24,7 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 30,
-        fontFamily: 'NunitoRegular-vmABZ',
+        fontFamily: 'Nunito-Regular',
         color: '#34724B',
     },
 
