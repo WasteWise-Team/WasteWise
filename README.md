@@ -11,6 +11,7 @@ docker compose up --build -w # to build and to watch
 ##### Light Mode:
 Background: #C4D8BF
 Text: #2D5A3D
+Accents: #82B37A
 
 ##### Dark Mode:
 Background: #042222

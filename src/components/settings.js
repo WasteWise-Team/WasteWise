@@ -21,16 +21,16 @@ export default function Settings({ setting }) {
                 <View style={styles.body_container}>
                     <View style={styles.row}>
                       <Text style={styles.text}>Edit Profile</Text> 
-                      <Icon name="chevron-right" size={20} color="#000" style={styles.icon} /> 
+                      <Icon name="chevron-right" size={20} color="#2D5A3D" style={styles.icon} /> 
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.text}>Change Password</Text> 
-                      <Icon name="chevron-right" size={20} color="#000" style={styles.icon} /> 
+                      <Icon name="chevron-right" size={20} color="#2D5A3D" style={styles.icon} /> 
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.text}>Data Collection</Text> 
                       <Switch
-                            trackColor={{ false: '#767577', true: '#2D5A3D' }}
+                            trackColor={{ false: '#767577', true: '#2D593D' }}
                             thumbColor={isDataEnabled ? '#99DAB3' : '#f4f3f4'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={toggleDataSwitch}
@@ -41,7 +41,7 @@ export default function Settings({ setting }) {
                     <View style={styles.row}>
                       <Text style={styles.text}>Make Profile Public</Text> 
                       <Switch
-                            trackColor={{ false: '#767577', true: '#2D5A3D' }}
+                            trackColor={{ false: '#767577', true: '#2D593D' }}
                             thumbColor={isPublicEnabled  ? '#99DAB3' : '#f4f3f4'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={togglePublicSwitch}
@@ -52,7 +52,7 @@ export default function Settings({ setting }) {
                     <View style={styles.row}>
                       <Text style={styles.text}>Dark Mode</Text> 
                       <Switch
-                            trackColor={{ false: '#767577', true: '#2D5A3D' }}
+                            trackColor={{ false: '#767577', true: '#2D593D' }}
                             thumbColor={isDarkModeEnabled  ? '#99DAB3' : '#f4f3f4'}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={toggleDarkModeSwitch}
@@ -65,15 +65,15 @@ export default function Settings({ setting }) {
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.text}>About Us</Text> 
-                      <Icon name="chevron-right" size={20} color="#000" style={styles.icon} /> 
+                      <Icon name="chevron-right" size={20} color="#2D5A3D" style={styles.icon} /> 
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.text}>Privacy Policy</Text> 
-                      <Icon name="chevron-right" size={20} color="#000" style={styles.icon} /> 
+                      <Icon name="chevron-right" size={20} color="#2D5A3D" style={styles.icon} /> 
                     </View>
                     <View style={styles.row}>
                       <Text style={styles.text}>Terms and Conditions</Text> 
-                      <Icon name="chevron-right" size={20} color="#000" style={styles.icon} /> 
+                      <Icon name="chevron-right" size={20} color="#2D5A3D" style={styles.icon} /> 
                     </View>
                 </View>
             </ScrollView>
@@ -89,13 +89,18 @@ const styles = StyleSheet.create({
     },
     scrollViewContent: {
         padding: 16,
+        width: '90%',
+        alignSelf: 'center', // Center horizontally
     },
     title: {
-        fontSize: 15,
-        color: '#7C7C7C',
-        marginLeft: 20,
+        fontSize: 12,
+        color: '#2D5A3D',
+        marginLeft: 18,
+        marginRight: 18,
         marginTop: 10,
         marginBottom: 10,
+        borderBottomWidth: 1,
+        borderBottomColor: '#2D5A3D',
     },
     body_container: {
         flex: 1,
@@ -111,6 +116,8 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 16,
+        color: '#2D5A3D',
+        fontFamily: 'Nunito-Medium',
     },
     icon: {
         marginLeft: 'auto',
@@ -122,10 +129,10 @@ const styles = StyleSheet.create({
         marginTop: 40,
         marginBottom: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#7C7C7C',
+        borderBottomColor: '#2D5A3D',
     },
     sectionTitle: {
-        fontSize: 15,
-        color: '#7C7C7C',
+        fontSize: 12,
+        color: '#2D5A3D',
     },
 });
