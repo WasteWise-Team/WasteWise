@@ -13,9 +13,10 @@ import Scan from '../screens/Scan';
 import BinScreen from '../screens/AddBinScreen';
 import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
-import LoginScreen from '../screens/Login';
+import CreateAccount from '../screens/CreateAccount';
 import StartingScreen from '../screens/StartingScreen';
 import BinMapScreen from '../screens/BinMapScreen';
+import LoginScreen from '../screens/LoginScreen';
 
 // Screen names
 const homeName = 'Home';
@@ -52,7 +53,9 @@ const ScanStack = () => (
 const MainStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
     <Stack.Screen name="Starting" component={StartingScreen} />
-    <Stack.Screen name="Login" component={LoginScreen} />
+    <Stack.Screen name="CreateAccount" component={CreateAccount} />
+    <Stack.Screen name="LoginScreen" component={LoginScreen} />
+
     <Stack.Screen name="AppTabs" component={AppTabs} />
     <Stack.Screen name="BinMap" component={BinMapScreen}/>
   </Stack.Navigator>
