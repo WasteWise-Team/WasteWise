@@ -8,7 +8,7 @@ const StartingScreen = ({ navigation }) => {
                 <Text style={styles.text}>Welcome</Text>
                 <Pressable
                     style={[styles.button, styles.firstButton]}
-                    onPress={() => navigation.navigate('Login')}
+                    onPress={() => navigation.navigate('CreateAccount')}
                 >
                     <Text style={styles.buttonText}>Create Account</Text>
                 </Pressable>
