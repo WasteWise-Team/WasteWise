@@ -8,7 +8,7 @@ const { height, width } = Dimensions.get('window');
 const HEADER_HEIGHT = height * 0.20;
 const LEFT_MARGIN = width * 0.2;
 
-const ProfileHeader = ({ profileImage, username, bio }) => {
+const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
   return (
     <View style={styles.headerContainer}>
       <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -18,7 +18,7 @@ const ProfileHeader = ({ profileImage, username, bio }) => {
       </View>
       <TouchableOpacity
         style={styles.logoutButton}
-        // onPress={onLogout}
+        onPress={() => navigation.navigate("Starting")}
         underlayColor="#68A77C" // Color when pressed, doesn't work yet
       >
         <AntDesign name="logout" size={20} color="#2D5A3D" />

@@ -58,7 +58,7 @@ export default function ProfileScreen({ navigation }) {
         profileImage={profileData.profileImage}
         username={profileData.username}
         bio={profileData.bio}
-        onLogout={() => {}} // Empty function for onLogout
+        navigation={navigation} // Empty function for onLogout
       />
       <Tab.Navigator
         screenOptions={{
