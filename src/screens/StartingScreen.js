@@ -12,6 +12,12 @@ const StartingScreen = ({ navigation }) => {
                 >
                     <Text style={styles.buttonText}>Create Account</Text>
                 </Pressable>
+                <Pressable
+                    style={[styles.button, styles.firstButton]}
+                    onPress={() => navigation.navigate('LoginScreen')}
+                >
+                    <Text style={styles.buttonText}>Log In</Text>
+                </Pressable>
                 <Pressable style={styles.button} onPress={() => navigation.navigate('AppTabs')}>
                     <Text style={styles.buttonText}>Continue as Guest</Text>
                 </Pressable>
