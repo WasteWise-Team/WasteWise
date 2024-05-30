@@ -19,7 +19,7 @@ function HistoryScreen({navigation}) {
   );
 }
 
-function RanksScreen() {
+function RanksScreen({navigation}) {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
       <Leaderboard navigation={navigation} />
@@ -27,7 +27,7 @@ function RanksScreen() {
   );
 }
 
-function SocialScreen() {
+function SocialScreen({navigation}) {
   return (
     <View style={[styles.scene, { backgroundColor: '#673ab7' }]}>
        <Social navigation={navigation} />
