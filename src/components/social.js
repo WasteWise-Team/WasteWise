@@ -49,7 +49,7 @@ export default function CommunityRecords() {
         {!isCurrentUser && <Image source={{ uri: item.profilePic }} style={styles.profilePic} />}
         <View style={isCurrentUser ? styles.currentUserTextContainer : styles.friendTextContainer}>
           <Text style={styles.userName}>{item.user}</Text>
-          <View style={[styles.chatBubble, isCurrentUser ? styles.currentUserBubble : styles.friendBubble]}>
+          <View style={isCurrentUser ? styles.currentUserChatBubble : styles.friendChatBubble}>
             <Text style={isCurrentUser ? styles.currentUserItemText : styles.friendItemText}>
               {item.item.split(' ')[0]} <Text style={isCurrentUser ? styles.currentUserItemTextHighlight : styles.friendItemTextHighlight}>{item.item.split(' ').slice(1).join(' ')}</Text>
             </Text>
@@ -115,7 +115,6 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-end', // Center the content within the container
   },
   currentUserContainer: {
-    // flexDirection: 'row-reverse', // Ensure profile pic is on the right
     justifyContent: 'flex-end',
     alignItems: 'flex-end', // Align all items to the right
   },
@@ -139,15 +138,19 @@ const styles = StyleSheet.create({
   friendTextContainer: {
     alignItems: 'flex-start',
   },
-  chatBubble: {
-    padding: 10,
-    borderRadius: 20,
-  },
-  currentUserBubble: {
+  currentUserChatBubble: {
     backgroundColor: '#2D5A3D',
+    padding: 10,
+    borderBottomLeftRadius:15,
+    borderTopRightRadius: 15,
+    borderTopLeftRadius: 15,
   },
-  friendBubble: {
+  friendChatBubble: {
     backgroundColor: '#FFFFFF',
+    padding: 10,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
+    borderBottomRightRadius: 15,
   },
   currentUserItemText: {
     color: '#FFFFFF', // Text color for current user
@@ -175,14 +178,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginVertical: 20,
+    
   },
   separatorLine: {
     flex: 1,
     height: 1,
-    backgroundColor: '#2D5A3D',
+    backgroundColor: '#82B37A',
   },
   dateSeparatorText: {
     marginHorizontal: 10,
-    color: '#2D5A3D',
+    color: '#82B37A',
   },
 });
