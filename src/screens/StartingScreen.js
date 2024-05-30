@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, Pressable, StyleSheet, Image, SafeAreaView, Dimensions } from 'react-native';
+import { View, Text, Pressable, StyleSheet, Image, SafeAreaView, Dimensions, TouchableOpacity } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const IMAGE_URL = 'https://i.pinimg.com/564x/25/d9/dd/25d9dd4a3d76d97de90b9363d5c049d9.jpg';
@@ -23,18 +23,18 @@ const StartingScreen = ({ navigation }) => {
                     </View>
                 </View>
                 <View style={styles.footer}>
-                    <Pressable
+                    <TouchableOpacity
                         style={[styles.button, styles.firstButton]}
-                        onPress={() => navigation.navigate('Login')}
+                        onPress={() => navigation.navigate('CreateAccount')}
                     >
                         <Text style={styles.buttonText}>Get Started</Text>
-                    </Pressable>
-                    <Pressable style={styles.link} onPress={() => navigation.navigate('CreateAccount')}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('LoginScreen')}>
                         <Text style={styles.linkText}>Already a member?</Text>
-                    </Pressable>
-                    <Pressable style={styles.link} onPress={() => navigation.navigate('AppTabs')}>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.link} onPress={() => navigation.navigate('AppTabs')}>
                         <Text style={styles.linkText}>Continue as Guest</Text>
-                    </Pressable>
+                    </TouchableOpacity>
                 </View>
             </SafeAreaView>
         </LinearGradient>
@@ -70,12 +70,12 @@ const styles = StyleSheet.create({
     },
     image: {
         width: Dimensions.get('window').width * 0.65,
-        height: Dimensions.get('window').height * 0.6,
+        height: Dimensions.get('window').height * 0.5,
         borderRadius: 15,
     },
     footer: {
         alignItems: 'center',
-        marginVertical: 40,
+        marginVertical: 50,
         fontFamily: 'Nunito-Regular',
     },
     button: {
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
         color: '#2D5A3D',
     },
     link: {
-        marginVertical: 5,
+        marginVertical: 10,
     },
     linkText: {
         fontSize: 15,
