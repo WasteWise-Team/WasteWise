@@ -39,7 +39,7 @@ const CustomTabButton = (props) => (
 );
 
 const ScanStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
     <Stack.Screen name="ScannerStack" component={Scan} />
     <Stack.Screen name="ScanItem" component={CameraScreen} />
     <Stack.Screen name="UploadImage" component={UploadScreen} />
@@ -50,7 +50,7 @@ const ScanStack = () => (
 );
 
 const MainStack = () => (
-  <Stack.Navigator screenOptions={{ headerShown: false }}>
+  <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
     <Stack.Screen name="Starting" component={StartingScreen} />
     <Stack.Screen name="Login" component={LoginScreen} />
     <Stack.Screen name="AppTabs" component={AppTabs} />
