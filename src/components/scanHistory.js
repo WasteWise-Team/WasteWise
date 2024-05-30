@@ -72,6 +72,7 @@ const styles = StyleSheet.create({
     textAlign: 'left', // Align title to the left
     color: '#2D5A3D',
     marginVertical: 20,
+    paddingLeft: 25,
   },
   listContainer: {
     paddingBottom: 15, // Add padding at the bottom of the list
@@ -83,7 +84,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     padding: 10,
-
   },
   itemName: {
     flex: 1,

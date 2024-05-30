@@ -6,10 +6,10 @@ const fetchLeaderboardData = async () => {
   // Replace this with your actual data fetching logic
   return new Array(20).fill(null).map((_, index) => ({
     id: `${index}`,
-    name: `Person ${index}`,
-    city: `City ${index}`,
+    name: `gingeRon ${index}`,
+    city: `London ${index}`,
     recycledItems: Math.floor(Math.random() * 100), // Random number of recycled items
-    photoUrl: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg', // Placeholder image URL, replace with actual image URLs
+    photoUrl: 'https://i.pinimg.com/564x/f7/f9/a4/f7f9a42c7b7087b2b5913a1a5bf7c47f.jpg', // Placeholder image URL, replace with actual image URLs
   }));
 };
 
@@ -41,7 +41,7 @@ export default function Leaderboard({ navigation }) {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Recycling Leaderboard</Text>
+        <Text style={styles.title}>Green Machines</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -71,11 +71,11 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: 'Left',
+    paddingLeft: 25,
     marginVertical: 20,
     fontFamily: 'Nunito-Bold',
     color: '#2D5A3D'
-
   },
   listContainer: {
     paddingBottom: 16,
@@ -87,7 +87,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     padding: 10,
     borderBottomWidth: 1,
-    borderBottomColor: '#ccc',
+    borderBottomColor: '#82B37A', // Border color
   },
   photo: {
     width: 50,
@@ -101,7 +101,7 @@ const styles = StyleSheet.create({
   },
   itemName: {
     fontSize: 18,
-    fontWeight: 'bold',
+    fontfamily: 'Nunito-SemiBold',
     color: '#2D5A3D'
   },
   itemCity: {

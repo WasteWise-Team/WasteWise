@@ -83,7 +83,7 @@ const AppTabs = () => (
       headerShown: false,
       tabBarInactiveBackgroundColor: '#C4D8BF',
       tabBarActiveBackgroundColor: '#C4D8BF',
-      tabBarStyle: { backgroundColor: '#C4D8BF' },
+      tabBarStyle: { backgroundColor: '#C4D8BF', shadowColor: 'transparent', elevation: 0, borderBlockColor: 'transparent' },
     })}
   >
     <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
