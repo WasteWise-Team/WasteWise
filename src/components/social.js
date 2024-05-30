@@ -45,19 +45,19 @@ export default function CommunityRecords() {
   const renderItem = ({ item }) => {
     const isCurrentUser = item.user === 'You';
     return (
-    <View style={[styles.itemContainer, isCurrentUser ? styles.currentUserContainer : styles.friendContainer]}>
+      <View style={[styles.itemContainer, isCurrentUser ? styles.currentUserContainer : styles.friendContainer]}>
         {!isCurrentUser && <Image source={{ uri: item.profilePic }} style={styles.profilePic} />}
         <View style={isCurrentUser ? styles.currentUserTextContainer : styles.friendTextContainer}>
-        <Text style={styles.userName}>{item.user}</Text>
-        <View style={[styles.chatBubble, isCurrentUser ? styles.currentUserBubble : styles.friendBubble]}>
-            <Text style={styles.itemText}>
-            {item.item.split(' ')[0]} <Text style={styles.itemTextHighlight}>{item.item.split(' ').slice(1).join(' ')}</Text>
+          <Text style={styles.userName}>{item.user}</Text>
+          <View style={[styles.chatBubble, isCurrentUser ? styles.currentUserBubble : styles.friendBubble]}>
+            <Text style={isCurrentUser ? styles.currentUserItemText : styles.friendItemText}>
+              {item.item.split(' ')[0]} <Text style={isCurrentUser ? styles.currentUserItemTextHighlight : styles.friendItemTextHighlight}>{item.item.split(' ').slice(1).join(' ')}</Text>
             </Text>
-        </View>
-        <Text style={styles.timeText}>{item.time}</Text>
+          </View>
+          <Text style={styles.timeText}>{item.time}</Text>
         </View>
         {isCurrentUser && <Image source={{ uri: item.profilePic }} style={styles.profilePic} />}
-    </View>
+      </View>
     );
   };
 
@@ -106,10 +106,6 @@ const styles = StyleSheet.create({
   listContainer: {
     paddingBottom: 16,
   },
-//   chatBoxContainer: {
-//     width: '50%',
-//     textAlign: 'center',
-//   },
   itemContainer: {
     flexDirection: 'row',
     marginVertical: 10,
@@ -148,16 +144,22 @@ const styles = StyleSheet.create({
     borderRadius: 20,
   },
   currentUserBubble: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#2D5A3D',
   },
   friendBubble: {
     backgroundColor: '#FFFFFF',
   },
-  itemText: {
-    color: '#000000',
+  currentUserItemText: {
+    color: '#FFFFFF', // Text color for current user
   },
-  itemTextHighlight: {
-    color: '#68A77C',
+  friendItemText: {
+    color: '#000000', // Text color for friend
+  },
+  currentUserItemTextHighlight: {
+    color: '#C4D8BF', // Highlight color for current user
+  },
+  friendItemTextHighlight: {
+    color: '#68A77C', // Highlight color for friend
   },
   timeText: {
     fontSize: 12,
