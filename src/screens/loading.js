@@ -47,17 +47,18 @@ const styles = StyleSheet.create({
 
   title: {
     fontSize: 40,
-    fontFamily: 'NunitoRegular-vmABZ',
+    fontFamily: 'Nunito-Regular',
     color: '#34724B',
   },
 
   title2: {
     color: '#FCFCFE',
+    fontFamily: 'Nunito-Regular',
   },
   
   subtitle: {
     fontSize: 15,
-    fontFamily: 'NunitoRegular-vmABZ',
+    fontFamily: 'Nunito-Regular',
     color: '#34724B',
   },
 });

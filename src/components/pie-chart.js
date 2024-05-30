@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   },
 
   title: {
-    fontSize: 20,
+    fontSize: 18,
     margin: 10,
     color: '#000000',
     paddingTop: 20,

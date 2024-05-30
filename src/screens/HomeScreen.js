@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, Dimensions, ScrollView, SafeAreaView } from 'react-native';
 import TestChart from '../components/pie-chart';
 import HeaderLogo from '../components/headerLogo'; // Import the HeaderLogo component
 
@@ -37,41 +37,56 @@ export default function HomeScreen({ navigation }) {
 
 
     return (
-        <View style={styles.container}>
-            <HeaderLogo />
-            <StatusBar style="auto" />
+        <SafeAreaView style={styles.safeArea}>
+            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
+                <View style={styles.container}>
+                    <HeaderLogo />
+                    <StatusBar style="auto" />
 
-            <Text style={styles.welcome_text}>
-                Good afternoon, <Text style={styles.name}>My</Text>. 
-                It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
-            </Text>
+                    <Text style={styles.welcome_text}>
+                        Good afternoon, <Text style={styles.name}>My</Text>. 
+                        It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
+                    </Text>
 
-            
-            <TestChart />
-            
-            <View style={styles.squares_container}>
-                <Square />
-                <Text style={styles.category}>Plastic</Text>
-                <Square1 />
-                <Text style={styles.category}>Aluminum</Text>
-                <Square2 />
-                <Text style={styles.category}>Paper</Text>
-            </View>
-            
-            <View style={styles.summary_container}>
-                <Text style={styles.summary_text}>
-                    <Text style={styles.summary_word}>Summary:</Text> 
-                </Text>
-                <Text style={styles.summary_text2}>
-                    You've recycled a total of <Text style={styles.name}>2478</Text> pounds
-                </Text>
-            </View>
-        </View>
-    );
+                    
+                    <TestChart />
+                    
+                    <View style={styles.squares_container}>
+                        <Square />
+                        <Text style={styles.category}>Plastic</Text>
+                        <Square1 />
+                        <Text style={styles.category}>Aluminum</Text>
+                        <Square2 />
+                        <Text style={styles.category}>Paper</Text>
+                    </View>
+                    
+                    <View style={styles.summary_container}>
+                        <Text style={styles.summary_text}>
+                            <Text style={styles.summary_word}>Summary:</Text> 
+                        </Text>
+                        <Text style={styles.summary_text2}>
+                            You've recycled a total of <Text style={styles.name}>2478</Text> pounds
+                        </Text>
+                    </View>
+                </View>
+            </ScrollView>
+        </SafeAreaView>
+    ); 
 }
 
 // Edit style stuff here
 const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+        backgroundColor: '#C4D8BF',
+    },
+
+    scrollViewContainer: {
+        flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
     container: {
         flex: 1,
         backgroundColor: '#C4D8BF',
@@ -83,13 +98,14 @@ const styles = StyleSheet.create({
     welcome_text: {
         alignItems: 'center',
         fontSize: 15,
-        fontFamily: 'NunitoRegular-vmABZ',
+        fontFamily: 'Nunito-Regular',
         color: '#2D5A3D',
     },
 
     name: {
         alignItems: 'center',
         color: '#68A77C',
+        fontFamily: 'Nunito-Regular',
     },
 
     shapes_container: {
@@ -114,7 +130,7 @@ const styles = StyleSheet.create({
     square1: {
         width: 50,
         height: 50,
-        backgroundColor: '#FFFFFF',
+        backgroundColor: '#99DAB3',
         alignSelf: 'center', // Center the square horizontally
         marginLeft: 10,
     },
@@ -130,6 +146,8 @@ const styles = StyleSheet.create({
         color: '#000000',
         marginLeft: 10,
         alignContent: 'left', 
+        fontSize: 10, 
+        fontFamily: 'Nunito-Regular',
     },
 
     summary_container: {
@@ -142,18 +160,19 @@ const styles = StyleSheet.create({
     summary_text: {
         alignItems: 'center',
         fontSize: 15,
-        fontFamily: 'NunitoRegular-vmABZ',
+        fontFamily: 'Nunito-Regular',
         color: '#2D5A3D',
     },
 
     summary_text2: {
         alignItems: 'center',
         fontSize: 15,
-        fontFamily: 'NunitoRegular-vmABZ',
+        fontFamily: 'Nunito-Regular',
         color: '#2D5A3D',
     },
 
     summary_word: {
         color: '#264131',
+        fontFamily: 'Nunito-Regular',
     },
 });

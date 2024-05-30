@@ -24,12 +24,13 @@ const styles = StyleSheet.create({
 
     title: {
         fontSize: 30,
-        fontFamily: 'NunitoRegular-vmABZ',
+        fontFamily: 'Nunito-Regular',
         color: '#34724B',
     },
 
     title2: {
         color: '#FCFCFE',
+        fontFamily: 'Nunito-Regular',
     },
 
     horizontalLine: {
