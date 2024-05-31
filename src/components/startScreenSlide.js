@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, ScrollView, Image, Dimensions, StyleSheet } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, ScrollView, Image, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
@@ -12,26 +12,54 @@ const images = [
 ];
 
 const Slideshow = () => {
+    const scrollViewRef = useRef(null);
+    const [activeIndex, setActiveIndex] = useState(0);
+
+    const handleScroll = (event) => {
+        const slideSize = width * 0.75;
+        const index = Math.round(event.nativeEvent.contentOffset.x / slideSize);
+        setActiveIndex(index);
+    };
+
+    const scrollToIndex = (index) => {
+        scrollViewRef.current.scrollTo({ x: index * width * 0.75, animated: true });
+    };
+
     return (
-        <View style={styles.container}>
-            <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                contentContainerStyle={styles.scrollViewContainer}
-            >
-                {images.map((uri, index) => (
-                    <Image key={index} source={{ uri }} style={styles.image} />
+        <View style={styles.wrapper}>
+            <View style={styles.container}>
+                <ScrollView
+                    horizontal
+                    pagingEnabled
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={styles.scrollViewContainer}
+                    onScroll={handleScroll}
+                    scrollEventThrottle={16}
+                    ref={scrollViewRef}
+                >
+                    {images.map((uri, index) => (
+                        <Image key={index} source={{ uri }} style={styles.image} />
+                    ))}
+                </ScrollView>
+            </View>
+            <View style={styles.pagination}>
+                {images.map((_, index) => (
+                    <TouchableOpacity key={index} onPress={() => scrollToIndex(index)}>
+                        <View style={[styles.dot, activeIndex === index ? styles.activeDot : styles.inactiveDot]} />
+                    </TouchableOpacity>
                 ))}
-            </ScrollView>
+            </View>
         </View>
     );
 };
 
 const styles = StyleSheet.create({
+    wrapper: {
+        alignItems: 'center',
+    },
     container: {
         width: width * 0.75,
-        height: height * 0.5, // Adjust the height as needed
+        height: height * 0.55, // Adjust the height as needed
         alignSelf: 'center', // Center the container horizontally
     },
     scrollViewContainer: {
@@ -41,8 +69,26 @@ const styles = StyleSheet.create({
     },
     image: {
         width: width * 0.75,
-        height: height * 0.5,
+        height: height * 0.55,
         resizeMode: 'cover',
+    },
+    pagination: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 10, // Add some margin to create space between the slider and the dots
+    },
+    dot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        marginHorizontal: 5,
+    },
+    activeDot: {
+        backgroundColor: 'rgba(255, 255, 255, 0.92)',
+    },
+    inactiveDot: {
+        backgroundColor: 'rgba(255, 255, 255, 0.4)',
     },
 });
 
