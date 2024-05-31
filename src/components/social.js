@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, Image, SafeAreaView, ActivityIndicator } from 'react-native';
+import ThemeContext from '../context/ThemeContext';
 
 // Mock data fetching function
 const fetchRecyclingData = async (page) => {
@@ -28,6 +29,9 @@ export default function CommunityRecords() {
   const [data, setData] = useState([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
+
 
   const loadMoreData = async () => {
     if (loading) return;
@@ -81,6 +85,100 @@ export default function CommunityRecords() {
     );
   };
 
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      padding: 16,
+    },
+    listContainer: {
+      paddingBottom: 16,
+    },
+    itemContainer: {
+      flexDirection: 'row',
+      marginVertical: 10,
+      width: '90%',
+      alignItems: 'flex-end',
+      alignSelf: 'center', // Center the container itself
+      justifyContent: 'flex-end', // Center the content within the container
+    },
+    currentUserContainer: {
+      justifyContent: 'flex-end',
+      alignItems: 'flex-end', // Align all items to the right
+    },
+    friendContainer: {
+      flexDirection: 'row', // Ensure profile pic is on the left
+      justifyContent: 'flex-start',
+    },
+    profilePic: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginHorizontal: 10,
+    },
+    textContainer: {
+      maxWidth: '80%',
+    },
+    currentUserTextContainer: {
+      alignItems: 'flex-end',
+      marginLeft: 'auto', // Push the current user's text container to the right
+    },
+    friendTextContainer: {
+      alignItems: 'flex-start',
+    },
+    currentUserChatBubble: {
+      backgroundColor: '#2D5A3D',
+      padding: 10,
+      borderBottomLeftRadius: 15,
+      borderTopRightRadius: 15,
+      borderTopLeftRadius: 15,
+    },
+    friendChatBubble: {
+      backgroundColor: '#FFFFFF',
+      padding: 10,
+      borderTopLeftRadius: 15,
+      borderTopRightRadius: 15,
+      borderBottomRightRadius: 15,
+    },
+    currentUserItemText: {
+      color: '#FFFFFF', // Text color for current user
+    },
+    friendItemText: {
+      color: '#000000', // Text color for friend
+    },
+    currentUserItemTextHighlight: {
+      color: '#C4D8BF', // Highlight color for current user
+    },
+    friendItemTextHighlight: {
+      color: '#68A77C', // Highlight color for friend
+    },
+    timeText: {
+      fontSize: 12,
+      color: '#2D5A3D',
+      marginTop: 5, // Add margin to separate from chat bubble
+    },
+    userName: {
+      fontSize: 14,
+      color: '#2D5A3D',
+      marginBottom: 5, // Add margin to separate from chat bubble
+    },
+    dateSeparator: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginVertical: 20,
+
+    },
+    separatorLine: {
+      flex: 1,
+      height: 1,
+      backgroundColor: '#82B37A',
+    },
+    dateSeparatorText: {
+      marginHorizontal: 10,
+      color: '#82B37A',
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <FlatList
@@ -97,96 +195,4 @@ export default function CommunityRecords() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#C4D8BF',
-    padding: 16,
-  },
-  listContainer: {
-    paddingBottom: 16,
-  },
-  itemContainer: {
-    flexDirection: 'row',
-    marginVertical: 10,
-    width: '90%',
-    alignItems: 'flex-end',
-    alignSelf: 'center', // Center the container itself
-    justifyContent: 'flex-end', // Center the content within the container
-  },
-  currentUserContainer: {
-    justifyContent: 'flex-end',
-    alignItems: 'flex-end', // Align all items to the right
-  },
-  friendContainer: {
-    flexDirection: 'row', // Ensure profile pic is on the left
-    justifyContent: 'flex-start',
-  },
-  profilePic: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginHorizontal: 10,
-  },
-  textContainer: {
-    maxWidth: '80%',
-  },
-  currentUserTextContainer: {
-    alignItems: 'flex-end',
-    marginLeft: 'auto', // Push the current user's text container to the right
-  },
-  friendTextContainer: {
-    alignItems: 'flex-start',
-  },
-  currentUserChatBubble: {
-    backgroundColor: '#2D5A3D',
-    padding: 10,
-    borderBottomLeftRadius:15,
-    borderTopRightRadius: 15,
-    borderTopLeftRadius: 15,
-  },
-  friendChatBubble: {
-    backgroundColor: '#FFFFFF',
-    padding: 10,
-    borderTopLeftRadius: 15,
-    borderTopRightRadius: 15,
-    borderBottomRightRadius: 15,
-  },
-  currentUserItemText: {
-    color: '#FFFFFF', // Text color for current user
-  },
-  friendItemText: {
-    color: '#000000', // Text color for friend
-  },
-  currentUserItemTextHighlight: {
-    color: '#C4D8BF', // Highlight color for current user
-  },
-  friendItemTextHighlight: {
-    color: '#68A77C', // Highlight color for friend
-  },
-  timeText: {
-    fontSize: 12,
-    color: '#2D5A3D',
-    marginTop: 5, // Add margin to separate from chat bubble
-  },
-  userName: {
-    fontSize: 14,
-    color: '#2D5A3D',
-    marginBottom: 5, // Add margin to separate from chat bubble
-  },
-  dateSeparator: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginVertical: 20,
-    
-  },
-  separatorLine: {
-    flex: 1,
-    height: 1,
-    backgroundColor: '#82B37A',
-  },
-  dateSeparatorText: {
-    marginHorizontal: 10,
-    color: '#82B37A',
-  },
-});
+

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 
+
 const ProfileNavigation = ({ state, descriptors, navigation }) => {
   return (
     <View style={styles.navContainer}>
