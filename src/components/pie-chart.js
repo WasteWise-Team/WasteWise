@@ -1,12 +1,12 @@
-import React, { Component } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
-import PieChart from 'react-native-pie-chart'
+import React, { Component } from 'react';
+import { StyleSheet, Text, View } from 'react-native';
+import PieChart from 'react-native-pie-chart';
 
 export default class TestChart extends Component {
   render() {
-    const widthAndHeight = 250
-    const series = [123, 321, 123,]
-    const sliceColor = ['#99DAB3', '#2D5A3D', '#FFFFFF',]
+    const widthAndHeight = 250;
+    const series = [123, 321, 123];
+    const sliceColor = ['#99DAB3', '#2D5A3D', '#FFFFFF'];
 
     return (
       <View style={styles.container}>
@@ -19,20 +19,18 @@ export default class TestChart extends Component {
           coverFill={'#C4D8BF'}
         />
       </View>
-    )
+    );
   }
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
+    justifyContent: 'center',
   },
-
   title: {
     fontSize: 18,
-    margin: 10,
-    color: '#000000',
-    paddingTop: 20,
+    marginVertical: 30, // Reduce vertical margin to minimize space
+    color: '#2D5A3D',
   },
-})
+});
