@@ -30,6 +30,7 @@ const styles = StyleSheet.create({
 
     title2: {
         color: '#FCFCFE',
+        fontFamily: 'Nunito-Regular',
     },
 
     horizontalLine: {
