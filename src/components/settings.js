@@ -29,13 +29,13 @@ export default function Settings() {
         },
         title: {
             fontSize: 12,
-            color: theme === 'dark' ? '#FFFFFF' : '#2D5A3D',
+            color: theme === 'dark' ? '#C4D8BF70' : '#2D5A3D',
             marginLeft: 18,
             marginRight: 18,
             marginTop: 10,
             marginBottom: 10,
             borderBottomWidth: 1,
-            borderBottomColor: theme === 'dark' ? '#FFFFFF' : '#2D5A3D',
+            borderBottomColor: theme === 'dark' ? '#C4D8BF70' : '#2D5A3D',
         },
         body_container: {
             flex: 1,
@@ -51,7 +51,7 @@ export default function Settings() {
         },
         text: {
             fontSize: 16,
-            color: theme === 'dark' ? '#FFFFFF' : '#2D5A3D',
+            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
             fontFamily: 'Nunito-Medium',
         },
         icon: {
@@ -64,11 +64,11 @@ export default function Settings() {
             marginTop: 40,
             marginBottom: 10,
             borderBottomWidth: 1,
-            borderBottomColor: theme === 'dark' ? '#FFFFFF' : '#2D5A3D',
+            borderBottomColor: theme === 'dark' ? '#C4D8BF70' : '#2D5A3D',
         },
         sectionTitle: {
             fontSize: 12,
-            color: theme === 'dark' ? '#FFFFFF' : '#2D5A3D',
+            color: theme === 'dark' ? '#C4D8BF70' : '#2D5A3D',
         },
     });
 
@@ -79,11 +79,11 @@ export default function Settings() {
                 <View style={styles.body_container}>
                     <View style={styles.row}>
                         <Text style={styles.text}>Edit Profile</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#FFFFFF' : '#2D5A3D'} style={styles.icon} />
+                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.text}>Change Password</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#FFFFFF' : '#2D5A3D'} style={styles.icon} />
+                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.text}>Dark Mode</Text>
@@ -101,15 +101,15 @@ export default function Settings() {
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.text}>About Us</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#FFFFFF' : '#2D5A3D'} style={styles.icon} />
+                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.text}>Privacy Policy</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#FFFFFF' : '#2D5A3D'} style={styles.icon} />
+                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                     <View style={styles.row}>
                         <Text style={styles.text}>Terms and Conditions</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#FFFFFF' : '#2D5A3D'} style={styles.icon} />
+                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                 </View>
             </ScrollView>

@@ -127,14 +127,14 @@ export default function CommunityRecords() {
       alignItems: 'flex-start',
     },
     currentUserChatBubble: {
-      backgroundColor: '#2D5A3D',
+      backgroundColor: theme === 'dark' ? '#03624C' : '#2D5A3D', 
       padding: 10,
       borderBottomLeftRadius: 15,
       borderTopRightRadius: 15,
       borderTopLeftRadius: 15,
     },
     friendChatBubble: {
-      backgroundColor: '#FFFFFF',
+      backgroundColor: theme === 'dark' ? '#C2D9BF' : '#FFFFFF',
       padding: 10,
       borderTopLeftRadius: 15,
       borderTopRightRadius: 15,
@@ -144,22 +144,23 @@ export default function CommunityRecords() {
       color: '#FFFFFF', // Text color for current user
     },
     friendItemText: {
-      color: '#000000', // Text color for friend
+      
+      color: theme === 'dark' ? 'black' : '#68A77C',
     },
     currentUserItemTextHighlight: {
-      color: '#C4D8BF', // Highlight color for current user
+      color: theme === 'dark' ? '#99DAB3' : '#C4D8BF', // Highlight color for current user
     },
     friendItemTextHighlight: {
-      color: '#68A77C', // Highlight color for friend
+      color: theme === 'dark' ? '#03624C' : '#000000', // Text color for friend
     },
     timeText: {
       fontSize: 12,
-      color: '#2D5A3D',
+      color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
       marginTop: 5, // Add margin to separate from chat bubble
     },
     userName: {
       fontSize: 14,
-      color: '#2D5A3D',
+      color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
       marginBottom: 5, // Add margin to separate from chat bubble
     },
     dateSeparator: {
@@ -167,15 +168,16 @@ export default function CommunityRecords() {
       alignItems: 'center',
       marginVertical: 20,
 
+
     },
     separatorLine: {
       flex: 1,
       height: 1,
-      backgroundColor: '#82B37A',
+      backgroundColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
     },
     dateSeparatorText: {
       marginHorizontal: 10,
-      color: '#82B37A',
+      color: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
     },
   });
 
