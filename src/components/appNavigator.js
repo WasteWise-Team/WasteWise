@@ -1,9 +1,10 @@
-import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import React, { useContext } from 'react';
+import { TouchableOpacity, useColorScheme, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import ThemeContext from '../context/ThemeContext';
 
 // Screens
 import HomeScreen from '../screens/HomeScreen';
@@ -44,9 +45,7 @@ const ScanStack = () => (
     <Stack.Screen name="ScannerStack" component={Scan} />
     <Stack.Screen name="ScanItem" component={CameraScreen} />
     <Stack.Screen name="UploadImage" component={UploadScreen} />
-    
     <Stack.Screen name="Starting" component={StartingScreen} />
- 
   </Stack.Navigator>
 );
 
@@ -55,13 +54,14 @@ const MainStack = () => (
     <Stack.Screen name="Starting" component={StartingScreen} />
     <Stack.Screen name="CreateAccount" component={CreateAccount} />
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
-
-    <Stack.Screen name="AppTabs" component={AppTabs} />
+    <Stack.Screen name="AppTabs">
+      {() => <AppTabs theme={useContext(ThemeContext).theme} />}
+    </Stack.Screen>
     <Stack.Screen name="BinMap" component={BinMapScreen}/>
   </Stack.Navigator>
 );
 
-const AppTabs = () => (
+const AppTabs = ({ theme }) => ( // Accept theme as a prop
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -81,12 +81,12 @@ const AppTabs = () => (
 
         return <Ionicons name={iconName} size={size} color={color} />;
       },
-      tabBarActiveTintColor: '#2D5A3D',
-      tabBarInactiveTintColor: '#2D5A3D',
+      tabBarActiveTintColor: theme === 'dark' ? '#99DAB3' : '#2D5A3D',
+      tabBarInactiveTintColor: theme === 'dark' ? '#FFF' : '#2D5A3D',
       headerShown: false,
-      tabBarInactiveBackgroundColor: '#C4D8BF',
-      tabBarActiveBackgroundColor: '#C4D8BF',
-      tabBarStyle: { backgroundColor: '#C4D8BF', shadowColor: 'transparent', elevation: 0, borderBlockColor: 'transparent' },
+      tabBarInactiveBackgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      tabBarActiveBackgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      tabBarStyle: { backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF', shadowColor: 'transparent', elevation: 0, borderBlockColor: 'transparent' },
     })}
   >
     <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
@@ -98,6 +98,7 @@ const AppTabs = () => (
 );
 
 export default function AppNavigator() {
+  const { theme } = useContext(ThemeContext);
   return (
     <NavigationContainer>
       <MainStack />

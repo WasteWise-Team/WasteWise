@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useContext } from 'react';
 import * as Font from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import { View, StyleSheet } from 'react-native';
 import AppNavigator from './src/components/appNavigator';
+import { ThemeProvider } from './src/context/ThemeContext';
+import ThemeContext from './src/context/ThemeContext';
 
-// Keep the splash screen visible while we fetch resources
 SplashScreen.preventAutoHideAsync();
 
 const loadFonts = async () => {
@@ -14,7 +15,6 @@ const loadFonts = async () => {
     'Nunito-Light': require('./assets/fonts/Nunito-Light.ttf'),
     'Nunito-Medium': require('./assets/fonts/Nunito-Medium.ttf'),
     'Nunito-SemiBold': require('./assets/fonts/Nunito-SemiBold.ttf')
-    // add more fonts here
   });
 };
 
@@ -28,7 +28,6 @@ const App = () => {
       } catch (e) {
         console.warn(e);
       } finally {
-        // Tell the application to render
         setAppIsReady(true);
       }
     }
@@ -38,11 +37,6 @@ const App = () => {
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
-      // This tells the splash screen to hide immediately! If we call this after
-      // `setAppIsReady`, then we may see a blank screen while the app is
-      // loading its initial state and rendering its first pixels. So instead,
-      // we hide the splash screen once we know the root view has already
-      // performed layout.
       await SplashScreen.hideAsync();
     }
   }, [appIsReady]);
@@ -52,16 +46,27 @@ const App = () => {
   }
 
   return (
-    <View style={styles.container} onLayout={onLayoutRootView}>
+    <ThemeProvider>
+      <ThemedApp onLayout={onLayoutRootView} />
+    </ThemeProvider>
+  );
+};
+
+const ThemedApp = ({ onLayout }) => {
+  const { theme } = useContext(ThemeContext);
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+    },
+  });
+
+  return (
+    <View style={styles.container} onLayout={onLayout}>
       <AppNavigator />
     </View>
   );
 };
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-});
 
 export default App;

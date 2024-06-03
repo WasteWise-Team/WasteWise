@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView, Image } from 'react-native';
+import ThemeContext from '../context/ThemeContext';
 
 // Mock data fetching function
 const fetchLeaderboardData = async () => {
@@ -16,6 +17,7 @@ const fetchLeaderboardData = async () => {
 export default function Leaderboard({ navigation }) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
 
   useEffect(() => {
     const loadData = async () => {
@@ -38,6 +40,64 @@ export default function Leaderboard({ navigation }) {
     </View>
   );
 
+
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      padding: 16,
+    },
+    content: {
+      width: '90%',
+      height: '95%',
+      alignSelf: 'center',
+    },
+    title: {
+      fontSize: 20,
+      fontWeight: 'bold',
+      textAlign: 'Left',
+      paddingLeft: 25,
+      marginVertical: 20,
+      fontFamily: 'Nunito-Bold',
+      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    },
+    listContainer: {
+      paddingBottom: 16,
+      paddingRight: 20,
+      paddingLeft: 20,
+    },
+    item: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      padding: 10,
+      borderBottomWidth: 1,
+      borderBottomColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A', // Border color
+    },
+    photo: {
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      marginRight: 10,
+    },
+    itemInfo: {
+      flex: 1,
+      alignItems: 'flex-end', // Align items to the right
+    },
+    itemName: {
+      fontSize: 18,
+      fontfamily: 'Nunito-SemiBold',
+      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    },
+    itemCity: {
+      fontSize: 14,
+      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    },
+    itemRecycledItems: {
+      fontSize: 14,
+      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    },
+  });
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
@@ -54,62 +114,7 @@ export default function Leaderboard({ navigation }) {
         )}
       </View>
     </SafeAreaView>
-  );        
+  );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#C4D8BF',
-    padding: 16,
-  },
-  content: {
-    width: '90%',
-    height: '95%',
-    alignSelf: 'center',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'Left',
-    paddingLeft: 25,
-    marginVertical: 20,
-    fontFamily: 'Nunito-Bold',
-    color: '#2D5A3D'
-  },
-  listContainer: {
-    paddingBottom: 16,
-    paddingRight: 20,
-    paddingLeft: 20,
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    padding: 10,
-    borderBottomWidth: 1,
-    borderBottomColor: '#82B37A', // Border color
-  },
-  photo: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    marginRight: 10,
-  },
-  itemInfo: {
-    flex: 1,
-    alignItems: 'flex-end', // Align items to the right
-  },
-  itemName: {
-    fontSize: 18,
-    fontfamily: 'Nunito-SemiBold',
-    color: '#2D5A3D'
-  },
-  itemCity: {
-    fontSize: 14,
-    color: '#2D5A3D'
-  },
-  itemRecycledItems: {
-    fontSize: 14,
-    color: '#2D5A3D'
-  },
-});
+
