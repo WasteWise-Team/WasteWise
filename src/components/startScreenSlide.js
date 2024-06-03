@@ -1,13 +1,19 @@
 import React, { useRef, useState } from 'react';
-import { View, ScrollView, Image, Dimensions, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, ScrollView, Image, Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
+import communityImageLight from '../../assets/graphics/light-mode/community.png'; // Correct import path
+import communityImageDark from '../../assets/graphics/dark-mode/community.png';
+import circularLight from '../../assets/graphics/light-mode/graphics1.png'
+import circularDark from '../../assets/graphics/dark-mode/graphics1.2.png'
+import sloganLight from '../../assets/graphics/light-mode/graphics2.png'
+import sloganDark from '../../assets/graphics/dark-mode/graphics2.2.png'
 
 const { width } = Dimensions.get('window');
 const { height } = Dimensions.get('window');
 
 const images = [
-    'https://i.pinimg.com/564x/2a/cb/a2/2acba250c520f76108e9db8534b8496a.jpg',
-    'https://i.pinimg.com/474x/5e/ce/77/5ece776bd7caac725b45d7d9dc784f13.jpg',
-    'https://i.pinimg.com/474x/25/c3/d0/25c3d09c2f0b895f23e5af615c6d4a2d.jpg',
+    communityImageLight, 
+    circularLight,
+    sloganLight,
     // Add more URLs as needed
 ];
 
@@ -37,8 +43,12 @@ const Slideshow = () => {
                     scrollEventThrottle={16}
                     ref={scrollViewRef}
                 >
-                    {images.map((uri, index) => (
-                        <Image key={index} source={{ uri }} style={styles.image} />
+                    {images.map((image, index) => (
+                        <Image 
+                            key={index} 
+                            source={typeof image === 'string' ? { uri: image } : image} 
+                            style={styles.image} 
+                        />
                     ))}
                 </ScrollView>
             </View>
