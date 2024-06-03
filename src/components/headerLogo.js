@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         width: '100%', // Ensure the container takes the full width
         paddingHorizontal: 20, // Add padding to make the line appear properly
+        paddingTop: 5,
     },
 
     title: {
@@ -37,6 +38,6 @@ const styles = StyleSheet.create({
         marginTop: 10, // Space between the title and the line
         width: '120%', // Full width
         height: 1, // Line height
-        backgroundColor: '#264131', // Line color
+        backgroundColor: '#82B37A', // Line color
     },
 });
