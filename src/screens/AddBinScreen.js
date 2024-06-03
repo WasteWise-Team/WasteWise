@@ -1,8 +1,82 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
 import HeaderLogo from '../components/headerLogo';
+import ThemeContext from '../context/ThemeContext';
+
 
 export default function BinScreen({ navigation }) {
+    const { theme, toggleTheme } = useContext(ThemeContext);
+
+
+    // Edit style stuff here
+    const styles = StyleSheet.create({
+        safeArea: {
+            flex: 1,
+            backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF', 
+        },
+        scrollViewContainer: {
+            flexGrow: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: 16,
+        },
+        container: {
+            flex: 1,
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+        },
+        sectionContainer: {
+            width: '90%',
+            marginBottom: 15,
+            alignItems: 'right',
+            paddingLeft: 10,
+        },
+        headerSection: {
+            fontFamily: 'Nunito-Bold',
+            fontSize: 20,
+            marginBottom: 8,
+            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+            textAlign: 'left',
+        },
+        paragraph: {
+            fontFamily: 'Nunito-Regular',
+            fontSize: 16,
+            marginBottom: 8,
+            textAlign: 'left',
+            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+        },
+        stepsContainer: {
+            flexDirection: 'row',
+            width: '100%',
+            paddingHorizontal: 20,
+            marginBottom: 20,
+        },
+        verticalLine: {
+            width: 1.5,
+            backgroundColor: '#2D5A3D',
+            marginRight: 10,
+            color: '#2D5A3D',
+        },
+        stepsContent: {
+            flex: 1,
+        },
+        button: {
+            marginTop: 20,
+            paddingVertical: 10,
+            paddingHorizontal: 20,
+            borderWidth: 2,
+            borderColor: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+            width: '65%',
+            alignSelf: 'center',
+        },
+        buttonText: {
+            fontSize: 16,
+            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+            textAlign: 'center',
+        },
+    });
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <HeaderLogo />
@@ -43,71 +117,4 @@ export default function BinScreen({ navigation }) {
     );
 }
 
-// Edit style stuff here
-const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-        backgroundColor: '#C4D8BF',
-    },
-    scrollViewContainer: {
-        flexGrow: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: 16,
-    },
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: '100%',
-    },
-    sectionContainer: {
-        width: '90%',
-        marginBottom: 15,
-        alignItems: 'right',
-        paddingLeft: 10,
-    },
-    headerSection: {
-        fontFamily: 'Nunito-Bold',
-        fontSize: 20,
-        marginBottom: 8,
-        color: '#2D5A3D',
-        textAlign: 'left',
-    },
-    paragraph: {
-        fontFamily: 'Nunito-Regular',
-        fontSize: 16,
-        marginBottom: 8,
-        textAlign: 'left',
-        color: '#2D5A3D',
-    },
-    stepsContainer: {
-        flexDirection: 'row',
-        width: '100%',
-        paddingHorizontal: 20,
-        marginBottom: 20,
-    },
-    verticalLine: {
-        width: 1.5,
-        backgroundColor: '#2D5A3D',
-        marginRight: 10,
-        color: '#2D5A3D',
-    },
-    stepsContent: {
-        flex: 1,
-    },
-    button: {
-        marginTop: 20,
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderWidth: 2,
-        borderColor: '#2D5A3D',
-        width: '65%',
-        alignSelf: 'center',
-    },
-    buttonText: {
-        fontSize: 16,
-        color: '#2D5A3D',
-        textAlign: 'center',
-    },
-});
+
