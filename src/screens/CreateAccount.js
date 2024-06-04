@@ -1,7 +1,10 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, SafeAreaView, ScrollView } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import ThemeContext from '../context/ThemeContext';
+import { FIREBASE_AUTH } from '../../firebaseConfig';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+
 
 
 const { width, height } = Dimensions.get('window');
@@ -9,6 +12,21 @@ const { width, height } = Dimensions.get('window');
 const CreateAccount = ({ navigation }) => {
 
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const auth  = FIREBASE_AUTH;
+
+  const signUp = async () => {
+    try {
+      const response = await createUserWithEmailAndPassword(auth, email, password);
+      console.log(response);
+      alert('Sign Up successful!')
+    }  catch(error) {
+      console.log(error);
+      alert('Sign up failed!' + error.message);
+    }
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -92,11 +110,11 @@ const CreateAccount = ({ navigation }) => {
 
             <View style={styles.formContainer}>
               <TextInput style={styles.input} placeholder="Name" placeholderTextColor="#666" />
-              <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" />
-              <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#666" secureTextEntry />
+              <TextInput value={email} style={styles.input} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" onChangeText={(text) => setEmail(text)} />
+              <TextInput value={password} style={styles.input} placeholder="Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setPassword(text)} />
               <TextInput style={styles.input} placeholder="Retype Password" placeholderTextColor="#666" secureTextEntry />
 
-              <TouchableOpacity style={styles.signUpButton}>
+              <TouchableOpacity style={styles.signUpButton} onPress={signUp}>
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
               </TouchableOpacity>
 
