@@ -33,7 +33,7 @@ export default class TestChart extends Component {
           series={series}
           sliceColor={sliceColor}
           coverRadius={0.6}
-          coverFill={'#C4D8BF'}
+          coverFill={theme === 'dark' ? '#042222' : '#C4D8BF'}
         />
       </View>
     );

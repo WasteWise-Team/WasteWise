@@ -7,6 +7,8 @@ export default function Settings() {
     const { theme, toggleTheme } = useContext(ThemeContext);
     
     const [isDarkModeEnabled, setIsDarkModeEnabled] = useState(theme === 'dark');
+    const [isDataEnabled, setIsDataEnabled] = useState(false);
+    const [isAccountPublic, setIsAccountPublic] = useState(false);
 
     useEffect(() => {
         setIsDarkModeEnabled(theme === 'dark');
@@ -16,6 +18,11 @@ export default function Settings() {
         const newTheme = theme === 'light' ? 'dark' : 'light';
         toggleTheme(newTheme);
     };
+
+    const toggleDataSwitch = () => setIsDataEnabled(previousState => !previousState);
+
+    const publicAccountSwitch = () => setIsAccountPublic(previousState => !previousState);
+    
 
     const styles = StyleSheet.create({
         safeArea: {
@@ -93,6 +100,28 @@ export default function Settings() {
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={handleToggleTheme}
                             value={isDarkModeEnabled}
+                            style={styles.switch}
+                        />
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.text}>Data Collection</Text>
+                        <Switch
+                            trackColor={{ false: '#767577', true: '#2D593D' }}
+                            thumbColor={isDarkModeEnabled ? '#99DAB3' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={toggleDataSwitch}
+                            value={isDataEnabled}
+                            style={styles.switch}
+                        />
+                    </View>
+                    <View style={styles.row}>
+                        <Text style={styles.text}>Make My Account Public</Text>
+                        <Switch
+                            trackColor={{ false: '#767577', true: '#2D593D' }}
+                            thumbColor={isDarkModeEnabled ? '#99DAB3' : '#f4f3f4'}
+                            ios_backgroundColor="#3e3e3e"
+                            onValueChange={publicAccountSwitch}
+                            value={isAccountPublic}
                             style={styles.switch}
                         />
                     </View>
