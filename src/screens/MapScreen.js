@@ -6,6 +6,9 @@ import * as Linking from 'expo-linking';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
 
+// Import Firestore functions
+import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs } from '../../firebaseConfig';
+
 const MapScreen = () => {
   const { theme } = useContext(ThemeContext);
   const [location, setLocation] = useState(null);
@@ -25,6 +28,7 @@ const MapScreen = () => {
     };
 
     requestLocationPermission();
+    fetchMarkers();
   }, []);
 
   const getLocation = async () => {
@@ -40,14 +44,70 @@ const MapScreen = () => {
     }
   };
 
-  const addBinMarker = () => {
-    const newMarker = {
-      latitude: location.latitude,
-      longitude: location.longitude,
-    };
-    const updatedMarkers = [...markers, newMarker];
-    setMarkers(updatedMarkers);
-    setModalVisible(false);
+  const fetchMarkers = async () => {
+    try {
+      const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
+      const fetchedMarkers = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          latitude: data.binLocation.latitude,
+          longitude: data.binLocation.longitude,
+        };
+      });
+      setMarkers(fetchedMarkers);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'Failed to fetch markers from database');
+    }
+  };
+
+  const addBinMarker = async () => {
+    if (!location) {
+      Alert.alert('Error', 'Current location is not available');
+      return;
+    }
+
+    try {
+      // Define a radius (in degrees, approx. for small distances)
+      const radius = 0.0001; // ~11 meters
+  
+      // Query Firestore for bins within the radius
+      const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
+      const existingBins = querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          latitude: data.binLocation.latitude,
+          longitude: data.binLocation.longitude,
+        };
+      });
+  
+      // Check if any existing bin has the exact same coordinates
+      const binExists = existingBins.some(bin => {
+        return bin.latitude === location.latitude && bin.longitude === location.longitude;
+      });
+  
+      if (binExists) {
+        Alert.alert('Error', 'A bin already exists at this location');
+        return;
+      }
+
+      // if no bin exists yet, add the marker
+      await addDoc(collection(FIRESTORE_DB, 'bins'), {
+        binApproval: null,
+        binLocation: new GeoPoint(location.latitude, location.longitude),
+        dateAdded: Timestamp.fromDate(new Date()),
+        disposalType: null,
+      });
+      const updatedMarkers = [...markers, {
+        latitude: location.latitude,
+        longitude: location.longitude
+      }];
+      setMarkers(updatedMarkers);
+      setModalVisible(false);
+    } catch (error) {
+      console.log(error);
+      Alert.alert('Error', 'Failed to add bin to database');
+    }
   };
 
   const navigateToMarker = (marker) => {
@@ -106,5 +166,9 @@ const MapScreen = () => {
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  // Add your styles here
+});
 
 export default MapScreen;

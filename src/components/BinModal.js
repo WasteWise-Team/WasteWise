@@ -14,7 +14,7 @@ export default function BinModal({ visible, onClose, onNavigate }) {
         },
         modalContent: {
             width: '80%',
-            backgroundColor: theme === 'dark' ? '#04222270' : '#C4D8BF',
+            backgroundColor: theme === 'dark' ? '#04222290' : '#C4D8BF',
             padding: 20,
             borderRadius: 10,
             alignItems: 'center',
