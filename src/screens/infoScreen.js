@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
@@ -18,6 +18,65 @@ const recyclingData = [
 ];
 
 const RecyclingInfoPage = () => {
+
+    const { theme } = useContext(ThemeContext);
+
+    const styles = StyleSheet.create({
+        safeArea: {
+            flex: 1,
+            backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+        },
+        container: {
+            flex: 1,
+            padding: 20,
+            backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+        },
+        title: {
+            fontSize: 24,
+            fontWeight: 'bold',
+            marginBottom: 20,
+            textAlign: 'center',
+            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+            fontFamily: 'Nunito-Regular',
+            fontWeight: 'bold',
+        },
+        card: {
+            backgroundColor: theme === 'dark' ? '#A3B99E' : '#DFEEDB',
+            borderRadius: 10,
+            padding: 15,
+            marginBottom: 20,
+            shadowColor: '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 5,
+        },
+        symbolImage: {
+            width: 100,
+            height: 100,
+            resizeMode: 'contain',
+            alignSelf: 'center',
+        },
+        description: {
+            fontSize: 16,
+            color: '#2D5A3D',
+            marginVertical: 10,
+            textAlign: 'center',
+            fontFamily: 'Nunito-Regular',
+        },
+        productsTitle: {
+            fontSize: 17,
+            fontFamily: 'Nunito-Medium',
+            marginTop: 10,
+            color: '#2D5A3D',
+        },
+        productItem: {
+            fontSize: 16,
+            fontFamily: 'Nunito-Regular',
+            color: '#2D5A3D',
+            marginVertical: 2,
+        },
+    });
+
     return (
         <SafeAreaView style={styles.safeArea}>
             <HeaderLogo />
@@ -38,59 +97,6 @@ const RecyclingInfoPage = () => {
     );
 };
 
-const styles = StyleSheet.create({
-    safeArea: {
-        flex: 1,
-    },
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#C4D8BF',
-    },
-    title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
-        textAlign: 'center',
-        color: '#2D5A3D',
-        fontFamily: 'Nunito-Regular',
-        fontWeight: 'bold',
-    },
-    card: {
-        backgroundColor: '#DFEEDB',
-        borderRadius: 10,
-        padding: 15,
-        marginBottom: 20,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 5,
-    },
-    symbolImage: {
-        width: 100,
-        height: 100,
-        resizeMode: 'contain',
-        alignSelf: 'center',
-    },
-    description: {
-        fontSize: 16,
-        color: '#2D5A3D',
-        marginVertical: 10,
-        textAlign: 'center',
-        fontFamily: 'Nunito-Regular',
-    },
-    productsTitle: {
-        fontSize: 17,
-        fontFamily: 'Nunito-Medium',
-        marginTop: 10,
-        color: '#2D5A3D',
-    },
-    productItem: {
-        fontSize: 16,
-        fontFamily: 'Nunito-Regular',
-        color: '#2D5A3D',
-        marginVertical: 2,
-    },
-});
+
 
 export default RecyclingInfoPage;
