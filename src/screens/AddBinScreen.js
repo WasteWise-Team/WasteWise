@@ -1,120 +1,96 @@
-import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
 import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
 
+const recyclingData = [
+    {
+        symbol: 'https://i.pinimg.com/564x/80/51/b5/8051b578162618e43a372a6f75e427b7.jpg', // Replace with actual URL
+        description: 'Harry Potter in snow',
+        products: ['Product 1', 'Product 2', 'Product 3'],
+    },
+    {
+        symbol: 'https://i.pinimg.com/564x/73/28/44/732844e4cf8e90940766a2e68da4f4a0.jpg', // Replace with actual URL
+        description: 'Hermione and Ron',
+        products: ['Product 4', 'Product 5', 'Product 6'],
+    },
+    // Add more recycling symbols and their descriptions here
+];
 
-export default function BinScreen({ navigation }) {
-    const { theme, toggleTheme } = useContext(ThemeContext);
-
-
-    // Edit style stuff here
-    const styles = StyleSheet.create({
-        safeArea: {
-            flex: 1,
-            backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF', 
-        },
-        scrollViewContainer: {
-            flexGrow: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: 16,
-        },
-        container: {
-            flex: 1,
-            alignItems: 'center',
-            justifyContent: 'center',
-            width: '100%',
-        },
-        sectionContainer: {
-            width: '90%',
-            marginBottom: 15,
-            alignItems: 'right',
-            paddingLeft: 10,
-        },
-        headerSection: {
-            fontFamily: 'Nunito-Bold',
-            fontSize: 20,
-            marginBottom: 8,
-            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-            textAlign: 'left',
-        },
-        paragraph: {
-            fontFamily: 'Nunito-Regular',
-            fontSize: 16,
-            marginBottom: 8,
-            textAlign: 'left',
-            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-        },
-        stepsContainer: {
-            flexDirection: 'row',
-            width: '100%',
-            paddingHorizontal: 20,
-            marginBottom: 20,
-        },
-        verticalLine: {
-            width: 1.5,
-            backgroundColor: '#2D5A3D',
-            marginRight: 10,
-            color: '#2D5A3D',
-        },
-        stepsContent: {
-            flex: 1,
-        },
-        button: {
-            marginTop: 20,
-            paddingVertical: 10,
-            paddingHorizontal: 20,
-            borderWidth: 2,
-            borderColor: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-            width: '65%',
-            alignSelf: 'center',
-        },
-        buttonText: {
-            fontSize: 16,
-            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-            textAlign: 'center',
-        },
-    });
-
+const RecyclingInfoPage = () => {
     return (
         <SafeAreaView style={styles.safeArea}>
             <HeaderLogo />
-            <ScrollView contentContainerStyle={styles.scrollViewContainer}>
-                <View style={styles.container}>
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.intro}>
-                            <Text style={styles.paragraph}>
-                                See a bin that doesn’t show up in our maps?
-                            </Text>
-                        </View>
+            <ScrollView style={styles.container}>
+                <Text style={styles.title}>Recycling Tips</Text>
+                {recyclingData.map((item, index) => (
+                    <View key={index} style={styles.card}>
+                        <Image source={{ uri: item.symbol }} style={styles.symbolImage} />
+                        <Text style={styles.description}>{item.description}</Text>
+                        <Text style={styles.productsTitle}>Common Products:</Text>
+                        {item.products.map((product, idx) => (
+                            <Text key={idx} style={styles.productItem}>• {product}</Text>
+                        ))}
                     </View>
-                    <View style={styles.sectionContainer}>
-                        <Text style={styles.headerSection}>
-                            Contribute to the Community,{'\n'}
-                            Add a Bin.
-                        </Text>
-                    </View>
-                    <View style={styles.sectionContainer}>
-                        <View style={styles.stepsContainer}>
-                            <View style={styles.verticalLine} />
-                            <View style={styles.stepsContent}>
-                                <Text style={styles.paragraph}>
-                                    1. Walk to the bin{'\n'}
-                                    2. Take a picture{'\n'}
-                                    3. Contribute to the community!{'\n\n'}
-                                    Happy Recycling
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                    <TouchableOpacity style={styles.button} onPress={() => navigation.navigate("BinMap")}>
-                        <Text style={styles.buttonText}>Add My Bin</Text>
-                    </TouchableOpacity>
-                </View>
+                ))}
             </ScrollView>
         </SafeAreaView>
     );
-}
+};
 
+const styles = StyleSheet.create({
+    safeArea: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: '#C4D8BF',
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+        textAlign: 'center',
+        color: '#2D5A3D',
+        fontFamily: 'Nunito-Regular',
+        fontWeight: 'bold',
+    },
+    card: {
+        backgroundColor: '#DFEEDB',
+        borderRadius: 10,
+        padding: 15,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 5,
+    },
+    symbolImage: {
+        width: 100,
+        height: 100,
+        resizeMode: 'contain',
+        alignSelf: 'center',
+    },
+    description: {
+        fontSize: 16,
+        color: '#2D5A3D',
+        marginVertical: 10,
+        textAlign: 'center',
+        fontFamily: 'Nunito-Regular',
+    },
+    productsTitle: {
+        fontSize: 17,
+        fontFamily: 'Nunito-Medium',
+        marginTop: 10,
+        color: '#2D5A3D',
+    },
+    productItem: {
+        fontSize: 16,
+        fontFamily: 'Nunito-Regular',
+        color: '#2D5A3D',
+        marginVertical: 2,
+    },
+});
 
+export default RecyclingInfoPage;
