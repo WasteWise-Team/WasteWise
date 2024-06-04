@@ -18,13 +18,14 @@ import CreateAccount from '../screens/CreateAccount';
 import StartingScreen from '../screens/StartingScreen';
 import BinMapScreen from '../screens/BinMapScreen';
 import LoginScreen from '../screens/LoginScreen';
+import infoScreen from '../screens/infoScreen';
 
 // Screen names
 const homeName = 'Home';
 const MapName = 'Map';
 const ProfileName = 'Profile';
 const ScannerName = 'Scanner';
-const BinName = 'Bin';
+const InfoName = 'Info';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -57,7 +58,7 @@ const MainStack = () => (
     <Stack.Screen name="AppTabs">
       {() => <AppTabs theme={useContext(ThemeContext).theme} />}
     </Stack.Screen>
-    <Stack.Screen name="BinMap" component={BinMapScreen}/>
+    <Stack.Screen name="Info" component={infoScreen}/>
   </Stack.Navigator>
 );
 
@@ -75,8 +76,8 @@ const AppTabs = ({ theme }) => ( // Accept theme as a prop
           iconName = focused ? 'person' : 'person-outline';
         } else if (route.name === ScannerName) {
           iconName = focused ? 'camera' : 'camera-outline';
-        } else if (route.name === BinName) {
-          iconName = focused ? 'add-circle' : 'add-circle-outline';
+        } else if (route.name === InfoName) {
+          iconName = focused ? 'information-circle' : 'information-circle-outline';
         }
 
         return <Ionicons name={iconName} size={size} color={color} />;
@@ -92,7 +93,7 @@ const AppTabs = ({ theme }) => ( // Accept theme as a prop
     <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={MapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={ScannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={BinName} component={BinScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={InfoName} component={infoScreen} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={ProfileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
   </Tab.Navigator>
 );
