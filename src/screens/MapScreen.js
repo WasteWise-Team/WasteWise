@@ -1,13 +1,17 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { Text, View, TouchableOpacity, Alert } from 'react-native';
+import React, { useEffect, useState, useRef, useContext } from 'react';
+import { Text, View, TouchableOpacity, Alert, StyleSheet } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
+import BinModal from '../components/BinModal'; // Adjust the import path if needed
+import ThemeContext from '../context/ThemeContext';
 
 const MapScreen = () => {
+  const { theme } = useContext(ThemeContext);
   const [location, setLocation] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
+  const [modalVisible, setModalVisible] = useState(false);
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -36,13 +40,14 @@ const MapScreen = () => {
     }
   };
 
-  const addBinMarker = async () => {
+  const addBinMarker = () => {
     const newMarker = {
-      latitude: 34.096969,
-      longitude: -117.712773,
+      latitude: location.latitude,
+      longitude: location.longitude,
     };
     const updatedMarkers = [...markers, newMarker];
     setMarkers(updatedMarkers);
+    setModalVisible(false);
   };
 
   const navigateToMarker = (marker) => {
@@ -88,42 +93,18 @@ const MapScreen = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={addBinMarker}
+        onPress={() => setModalVisible(true)}
       >
         <Text style={{ color: 'white' }}>Add Bin</Text>
       </TouchableOpacity>
+      <BinModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        onNavigate={addBinMarker}
+      />
       {errorMsg ? <Text>{errorMsg}</Text> : null}
     </View>
   );
 };
 
 export default MapScreen;
-
-// import React from 'react';
-// import { View, Text, StyleSheet } from 'react-native';
-
-// export default function MapScreen({ navigation }) {
-//     return (
-//         <View style={styles.container}>
-//             <Text 
-//                 onPress={() => navigation.navigate('Home')}
-//                 style={styles.text}
-//             >
-//                 Bin Screen
-//             </Text>
-//         </View>
-//     );
-// }
-
-// // Edit style stuff here
-// const styles = StyleSheet.create({
-//     container: {
-//         flex: 1,
-//         alignItems: 'center',
-//         justifyContent: 'center',
-//     },
-//     text: {
-//         fontSize: 26,
-//         fontWeight: 'bold',
-//     },
-// });

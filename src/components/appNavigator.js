@@ -11,7 +11,7 @@ import HomeScreen from '../screens/HomeScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import Scan from '../screens/Scan';
-import BinScreen from '../screens/AddBinScreen';
+import BinScreen from '../screens/infoScreen';
 import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
 import CreateAccount from '../screens/CreateAccount';
