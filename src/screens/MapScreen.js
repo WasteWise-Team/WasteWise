@@ -24,24 +24,32 @@ const MapScreen = () => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-      getLocation();
+      watchLocation();
     };
 
     requestLocationPermission();
     fetchMarkers();
   }, []);
 
-  const getLocation = async () => {
-    let location = await Location.getCurrentPositionAsync({ accuracy: Location.Accuracy.High });
-    setLocation(location.coords);
-    if (mapRef.current) {
-      mapRef.current.animateToRegion({
-        latitude: location.coords.latitude,
-        longitude: location.coords.longitude,
-        latitudeDelta: 0.01,
-        longitudeDelta: 0.01,
-      }, 1000);
-    }
+  const watchLocation = async () => {
+    await Location.watchPositionAsync(
+      {
+        accuracy: Location.Accuracy.Highest,
+        timeInterval: 5000,
+        distanceInterval: 1,
+      },
+      (location) => {
+        setLocation(location.coords);
+        if (mapRef.current) {
+          mapRef.current.animateToRegion({
+            latitude: location.coords.latitude,
+            longitude: location.coords.longitude,
+            latitudeDelta: 0.01,
+            longitudeDelta: 0.01,
+          }, 1000);
+        }
+      }
+    );
   };
 
   const fetchMarkers = async () => {
