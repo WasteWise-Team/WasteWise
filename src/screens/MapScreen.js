@@ -1,9 +1,10 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Text, View, TouchableOpacity, Alert, StyleSheet } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
+import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
 
 // Import Firestore functions
@@ -15,6 +16,10 @@ const MapScreen = () => {
   const [markers, setMarkers] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
+  const [inputModalVisible, setInputModalVisible] = useState(false); // State for text input modal
+  const [binDescription, setBinDescription] = useState(''); // State for bin description
+  const [alertVisible, setAlertVisible] = useState(false); // State for custom alert modal
+  const [alertMessage, setAlertMessage] = useState(''); // State for alert message
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -65,21 +70,25 @@ const MapScreen = () => {
       setMarkers(fetchedMarkers);
     } catch (error) {
       console.log(error);
-      Alert.alert('Error', 'Failed to fetch markers from database');
+      setAlertMessage('Failed to fetch markers from database');
+      setAlertVisible(true);
     }
   };
 
   const addBinMarker = async () => {
     if (!location) {
-      Alert.alert('Error', 'Current location is not available');
+      setAlertMessage('Current location is not available');
+      setAlertVisible(true);
       return;
     }
 
+    setInputModalVisible(true); // Show the text input modal
+  };
+
+  const handleAddBin = async () => {
     try {
-      // Define a radius (in degrees, approx. for small distances)
       const radius = 0.0001; // ~11 meters
   
-      // Query Firestore for bins within the radius
       const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
       const existingBins = querySnapshot.docs.map(doc => {
         const data = doc.data();
@@ -89,18 +98,20 @@ const MapScreen = () => {
         };
       });
   
-      // Check if any existing bin has the exact same coordinates
       const binExists = existingBins.some(bin => {
         return bin.latitude === location.latitude && bin.longitude === location.longitude;
       });
   
       if (binExists) {
-        Alert.alert('Error', 'A bin already exists at this location');
+        setAlertMessage('A bin already exists at this location');
+        setAlertVisible(true);
         return;
       }
 
-      // if no bin exists yet, add the marker
       await addDoc(collection(FIRESTORE_DB, 'bins'), {
+        binDescription: binDescription, // Include the bin description
+        binImage: null,
+        binType: null,
         binApproval: null,
         binLocation: new GeoPoint(location.latitude, location.longitude),
         dateAdded: Timestamp.fromDate(new Date()),
@@ -112,15 +123,25 @@ const MapScreen = () => {
       }];
       setMarkers(updatedMarkers);
       setModalVisible(false);
+      setInputModalVisible(false); // Hide the text input modal
+      setBinDescription(''); // Clear the description input
+
+      // Show success message
+      setAlertMessage('Bin successfully added!');
+      setAlertVisible(true);
     } catch (error) {
       console.log(error);
-      Alert.alert('Error', 'Failed to add bin to database');
+      setAlertMessage('Failed to add bin to database');
+      setAlertVisible(true);
     }
   };
 
   const navigateToMarker = (marker) => {
     const url = `http://maps.apple.com/?daddr=${marker.latitude},${marker.longitude}`;
-    Linking.openURL(url).catch(err => Alert.alert('Error', 'Failed to open navigation'));
+    Linking.openURL(url).catch(err => {
+      setAlertMessage('Failed to open navigation');
+      setAlertVisible(true);
+    });
   };
 
   return (
@@ -161,7 +182,7 @@ const MapScreen = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={() => setModalVisible(true)}
+        onPress={() => addBinMarker()}
       >
         <Text style={{ color: 'white' }}>Add Bin</Text>
       </TouchableOpacity>
@@ -171,12 +192,84 @@ const MapScreen = () => {
         onNavigate={addBinMarker}
       />
       {errorMsg ? <Text>{errorMsg}</Text> : null}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={inputModalVisible}
+        onRequestClose={() => setInputModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setInputModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Describe the bin location</Text>
+                <TextInput
+                  style={styles.textInput}
+                  placeholder="Enter description"
+                  placeholderTextColor="#2D5A3D90"
+                  value={binDescription}
+                  onChangeText={setBinDescription}
+                />
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={handleAddBin}
+                >
+                  <Text style={styles.buttonText}>OK</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
+      <CustomAlert
+        visible={alertVisible}
+        title="Alert"
+        message={alertMessage}
+        onClose={() => setAlertVisible(false)}
+      />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  // Add your styles here
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+  },
+  modalContent: {
+    width: '80%',
+    backgroundColor: '#C4D8BF',
+    padding: 20,
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  modalTitle: {
+    fontSize: 18,
+    color: '#2D5A3D',
+    fontFamily: 'Nunito',
+    fontWeight: 'bold',
+    marginBottom: 15,
+  },
+  textInput: {
+    width: '100%',
+    padding: 10,
+    borderWidth: 1,
+    borderColor: '#2D5A3D',
+    color: '#2D5A3D',
+    borderRadius: 5,
+    marginBottom: 15,
+  },
+  button: {
+    backgroundColor: '#2D5A3D',
+    padding: 10,
+    borderRadius: 5,
+  },
+  buttonText: {
+    color: 'white',
+    fontWeight: 'bold',
+  },
 });
 
 export default MapScreen;
