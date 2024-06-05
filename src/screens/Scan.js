@@ -1,18 +1,10 @@
 import React from "react";
 import { View, Button, StyleSheet } from "react-native";
+import CameraScreen from "./cameraScreen";
 
 const Scan = ({ navigation }) => {
   return (
-    <View style={styles.container}>
-      <Button
-        title="Scan Item"
-        onPress={() => navigation.navigate("ScanItem")}
-      />
-      <Button
-        title="Upload Image"
-        onPress={() => navigation.navigate("UploadImage")}
-      />
-    </View>
+    <CameraScreen navigation={navigation}/>
   );
 };
 
