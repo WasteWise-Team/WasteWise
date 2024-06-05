@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button, Alert, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, Button, ActivityIndicator } from "react-native";
 import { CameraView, Camera } from "expo-camera";
+import ScanModal from "../components/ScanModal";
 
 export default function CameraScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
   const [showScanAgainButton, setShowScanAgainButton] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [modalVisible, setModalVisible] = useState(false);
+  const [productInfo, setProductInfo] = useState('');
+  const [isRecyclable, setIsRecyclable] = useState(false);
 
   useEffect(() => {
     const getCameraPermissions = async () => {
@@ -34,34 +38,29 @@ export default function CameraScreen({ navigation }) {
         console.log('Recyclability Section:', JSON.stringify(productData.product.packagings, null, 2)); // Print the recyclability section
 
         const materials = extractMaterials(productData.product.packagings);
-        const isRecyclable = determineRecyclability(materials);
-        const productInfo = productData.product.product_name;
-        Alert.alert(
-          "Product Information",
-          `Product: ${productInfo}\nRecyclable: ${isRecyclable ? 'Yes' : 'No'}`,
-          [
-            { text: "OK", onPress: () => {
-                setShowScanAgainButton(true);
-                setLoading(false);
-              }
-            }
-          ]
-        );
+        const recyclable = determineRecyclability(materials);
+        setProductInfo(productData.product.product_name);
+        setIsRecyclable(recyclable);
+        setModalVisible(true);
       } else {
         Alert.alert("Error", "Product data not found.", [
-          { text: "OK", onPress: () => {
+          {
+            text: "OK", onPress: () => {
               setScanned(false);
               setLoading(false);
-          }},
+            }
+          },
         ]);
       }
     } catch (error) {
       console.error("Error fetching product data:", error);
       Alert.alert("Error", "Failed to handle barcode scan.", [
-        { text: "OK", onPress: () => {
+        {
+          text: "OK", onPress: () => {
             setScanned(false);
             setLoading(false);
-        }},
+          }
+        },
       ]);
     }
   };
@@ -103,6 +102,18 @@ export default function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      <ScanModal
+        visible={modalVisible}
+        onClose={() => setModalVisible(false)}
+        productInfo={productInfo}
+        isRecyclable={isRecyclable}
+        onNavigate={() => {
+          setModalVisible(false);
+          setShowScanAgainButton(true);
+          setLoading(false);
+          navigation.navigate('Map');
+        }}
+      />
       {loading && <ActivityIndicator size="large" color="#0000ff" />}
       {!loading && !showScanAgainButton && (
         <CameraView
