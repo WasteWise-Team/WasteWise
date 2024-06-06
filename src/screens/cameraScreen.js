@@ -4,6 +4,7 @@ import { CameraView, Camera } from "expo-camera";
 import { Entypo } from '@expo/vector-icons'; // Import Entypo icon
 import ScanModal from "../components/ScanModal";
 
+
 export default function CameraScreen({ navigation }) {
   const [hasPermission, setHasPermission] = useState(null);
   const [scanned, setScanned] = useState(false);
@@ -12,12 +13,15 @@ export default function CameraScreen({ navigation }) {
   const [modalVisible, setModalVisible] = useState(false);
   const [productInfo, setProductInfo] = useState('');
   const [isRecyclable, setIsRecyclable] = useState(false);
+  
 
   useEffect(() => {
     const getCameraPermissions = async () => {
       const { status } = await Camera.requestCameraPermissionsAsync();
       setHasPermission(status === "granted");
     };
+
+    
 
     getCameraPermissions();
   }, []);
@@ -138,7 +142,8 @@ export default function CameraScreen({ navigation }) {
           setModalVisible(false);
           setShowScanAgainButton(true);
           setLoading(false);
-          navigation.navigate('Map');
+          navigation.navigate('Map', {fromScanner: true});
+          
         }}
       />
 
