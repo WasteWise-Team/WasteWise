@@ -10,9 +10,9 @@ import ThemeContext from '../context/ThemeContext';
 // Import Firestore functions
 import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs } from '../../firebaseConfig';
 
-const MapScreen = () => {
+const MapScreen = ({ route, fromScanner}) => {
   const { theme } = useContext(ThemeContext);
-  const [location, setLocation] = useState(null);
+  const [location, setLocation] = useState(route.params?.userLocation || null);
   const [markers, setMarkers] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
   const [modalVisible, setModalVisible] = useState(false);
@@ -21,7 +21,8 @@ const MapScreen = () => {
   const [alertVisible, setAlertVisible] = useState(false); // State for custom alert modal
   const [alertMessage, setAlertMessage] = useState(''); // State for alert message
   const mapRef = useRef(null);
-
+  const markerRefs = useRef([]); // Store references to marker components
+  
   useEffect(() => {
     const requestLocationPermission = async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
@@ -29,12 +30,25 @@ const MapScreen = () => {
         setErrorMsg('Permission to access location was denied');
         return;
       }
-      watchLocation();
+      if (!location) {
+        watchLocation();
+      } else {
+        animateToLocation(location);
+      }
     };
 
     requestLocationPermission();
     fetchMarkers();
   }, []);
+
+  useEffect(() => {
+    if (location && markers.length) {
+      if (route.params?.fromScanner) {
+        findAndFocusNearestBin();
+      }
+      
+    }
+  }, [location, markers, fromScanner]);
 
   const watchLocation = async () => {
     await Location.watchPositionAsync(
@@ -45,24 +59,29 @@ const MapScreen = () => {
       },
       (location) => {
         setLocation(location.coords);
-        if (mapRef.current) {
-          mapRef.current.animateToRegion({
-            latitude: location.coords.latitude,
-            longitude: location.coords.longitude,
-            latitudeDelta: 0.01,
-            longitudeDelta: 0.01,
-          }, 1000);
-        }
+        animateToLocation(location.coords);
       }
     );
+  };
+
+  const animateToLocation = (coords) => {
+    if (mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: coords.latitude,
+        longitude: coords.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }, 1000);
+    }
   };
 
   const fetchMarkers = async () => {
     try {
       const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
-      const fetchedMarkers = querySnapshot.docs.map(doc => {
+      const fetchedMarkers = querySnapshot.docs.map((doc, index) => {
         const data = doc.data();
         return {
+          id: index,
           latitude: data.binLocation.latitude,
           longitude: data.binLocation.longitude,
         };
@@ -73,6 +92,67 @@ const MapScreen = () => {
       setAlertMessage('Failed to fetch markers from database');
       setAlertVisible(true);
     }
+  };
+
+  const findAndFocusNearestBin = () => {
+    if (!location || markers.length === 0) return;
+
+    let nearestBin = null;
+    let minDistance = Number.MAX_SAFE_INTEGER;
+
+    markers.forEach((marker) => {
+      const distance = getDistance(
+        { latitude: location.latitude, longitude: location.longitude },
+        { latitude: marker.latitude, longitude: marker.longitude }
+      );
+
+      if (distance < minDistance) {
+        nearestBin = marker;
+        minDistance = distance;
+      }
+    });
+
+    if (nearestBin && mapRef.current) {
+      mapRef.current.animateToRegion({
+        latitude: nearestBin.latitude,
+        longitude: nearestBin.longitude,
+        latitudeDelta: 0.01,
+        longitudeDelta: 0.01,
+      }, 1000);
+
+      // Show callout for the nearest marker
+      const nearestMarkerRef = markerRefs.current[nearestBin.id];
+      if (nearestMarkerRef) {
+        nearestMarkerRef.showCallout();
+      }
+    }
+  };
+
+  const getDistance = (loc1, loc2) => {
+    const toRadian = (angle) => (Math.PI / 180) * angle;
+    const distance = (a, b) => (Math.PI / 180) * (a - b);
+    const RADIUS_OF_EARTH_IN_KM = 6371;
+
+    const dLat = distance(loc2.latitude, loc1.latitude);
+    const dLon = distance(loc2.longitude, loc1.longitude);
+
+    const lat1 = toRadian(loc1.latitude);
+    const lat2 = toRadian(loc2.latitude);
+
+    const a =
+      Math.pow(Math.sin(dLat / 2), 2) +
+      Math.pow(Math.sin(dLon / 2), 2) * Math.cos(lat1) * Math.cos(lat2);
+    const c = 2 * Math.asin(Math.sqrt(a));
+
+    return RADIUS_OF_EARTH_IN_KM * c * 1000; // distance in meters
+  };
+
+  const navigateToMarker = (marker) => {
+    const url = `http://maps.apple.com/?daddr=${marker.latitude},${marker.longitude}`;
+    Linking.openURL(url).catch(err => {
+      setAlertMessage('Failed to open navigation');
+      setAlertVisible(true);
+    });
   };
 
   const addBinMarker = async () => {
@@ -88,7 +168,7 @@ const MapScreen = () => {
   const handleAddBin = async () => {
     try {
       const radius = 0.0001; // ~11 meters
-  
+
       const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
       const existingBins = querySnapshot.docs.map(doc => {
         const data = doc.data();
@@ -97,11 +177,11 @@ const MapScreen = () => {
           longitude: data.binLocation.longitude,
         };
       });
-  
+
       const binExists = existingBins.some(bin => {
         return bin.latitude === location.latitude && bin.longitude === location.longitude;
       });
-  
+
       if (binExists) {
         setAlertMessage('A bin already exists at this location');
         setAlertVisible(true);
@@ -118,6 +198,7 @@ const MapScreen = () => {
         disposalType: null,
       });
       const updatedMarkers = [...markers, {
+        id: markers.length,
         latitude: location.latitude,
         longitude: location.longitude
       }];
@@ -136,22 +217,14 @@ const MapScreen = () => {
     }
   };
 
-  const navigateToMarker = (marker) => {
-    const url = `http://maps.apple.com/?daddr=${marker.latitude},${marker.longitude}`;
-    Linking.openURL(url).catch(err => {
-      setAlertMessage('Failed to open navigation');
-      setAlertVisible(true);
-    });
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <MapView
         ref={mapRef}
         style={{ width: '100%', height: '100%' }}
         initialRegion={{
-          latitude: 28.693602091083623,
-          longitude: 77.21464383448563,
+          latitude: location ? location.latitude : 28.693602091083623,
+          longitude: location ? location.longitude : 77.21464383448563,
           latitudeDelta: 0.01,
           longitudeDelta: 0.01,
         }}
@@ -159,7 +232,11 @@ const MapScreen = () => {
         followsUserLocation
       >
         {markers.map((marker, index) => (
-          <Marker key={index} coordinate={marker}>
+          <Marker
+            key={index}
+            coordinate={marker}
+            ref={ref => markerRefs.current[marker.id] = ref}
+          >
             <Callout>
               <View>
                 <Text>Bin {index + 1}</Text>
