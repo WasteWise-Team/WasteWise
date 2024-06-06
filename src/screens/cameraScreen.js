@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Text, View, StyleSheet, Button, ActivityIndicator } from "react-native";
+import { Text, View, StyleSheet, TouchableOpacity, ActivityIndicator, Button } from "react-native";
 import { CameraView, Camera } from "expo-camera";
+import { Entypo } from '@expo/vector-icons'; // Import Entypo icon
 import ScanModal from "../components/ScanModal";
 
 export default function CameraScreen({ navigation }) {
@@ -21,11 +22,13 @@ export default function CameraScreen({ navigation }) {
     getCameraPermissions();
   }, []);
 
-  const handleBarCodeScanned = ({ type, data }) => {
+  const handleBarCodeScanned = async ({ type, data }) => {
     if (!scanned) {
       setScanned(true);
       setLoading(true);
-      fetchProductData(data);
+      await fetchProductData(data); // Wait for the product data to be fetched
+      setLoading(false); // Disable loading indicator
+      setShowScanAgainButton(true); // Show the scan again button
     }
   };
 
@@ -102,9 +105,33 @@ export default function CameraScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+      {!showScanAgainButton && (
+        <CameraView
+          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
+          barcodeScannerSettings={{
+            barcodeTypes: ["qr", "upc_e", "upc_a"],
+          }}
+          style={StyleSheet.absoluteFillObject}
+        />
+      )}
+
+      {/* Icon Button */}
+      <TouchableOpacity style={styles.iconButton} onPress={() => console.log("Upload image")}>
+        <View style={styles.iconContainer}>
+          <Entypo name="image" size={24} color="white" />
+        </View>
+      </TouchableOpacity>
+
+      {/* Loading Indicator */}
+      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+
+      {/* Scan Modal */}
       <ScanModal
         visible={modalVisible}
-        onClose={() => setModalVisible(false)}
+        onClose={() => {
+          setModalVisible(false);
+          setShowScanAgainButton(true);
+        }}
         productInfo={productInfo}
         isRecyclable={isRecyclable}
         onNavigate={() => {
@@ -114,18 +141,10 @@ export default function CameraScreen({ navigation }) {
           navigation.navigate('Map');
         }}
       />
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
-      {!loading && !showScanAgainButton && (
-        <CameraView
-          onBarcodeScanned={scanned ? undefined : handleBarCodeScanned}
-          barcodeScannerSettings={{
-            barcodeTypes: ["qr", "upc_e", "upc_a"],
-          }}
-          style={StyleSheet.absoluteFillObject}
-        />
-      )}
+
+      {/* Scan Again Buttons */}
       {showScanAgainButton && (
-        <>
+        <View style={styles.centeredButtons}>
           <Button
             title={"Tap to Scan Again"}
             onPress={() => {
@@ -137,7 +156,7 @@ export default function CameraScreen({ navigation }) {
             title={"Go Back"}
             onPress={() => navigation.goBack()}
           />
-        </>
+        </View>
       )}
     </View>
   );
@@ -146,7 +165,28 @@ export default function CameraScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: "column",
     justifyContent: "center",
   },
+  iconButton: {
+    position: 'absolute',
+    bottom: 20,
+    left: 20,
+    backgroundColor: 'transparent',
+    padding: 10,
+    borderRadius: 20,
+    elevation: 2, // Add elevation for shadow on Android
+  },
+  iconContainer: {
+    backgroundColor: 'black',
+    borderRadius: 50,
+    padding: 10,
+    opacity: .7
+  },
+  centeredButtons: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });
+
+
