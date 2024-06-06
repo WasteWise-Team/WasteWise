@@ -1,8 +1,9 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
+import * as ImagePicker from 'expo-image-picker';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
 import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
@@ -20,6 +21,7 @@ const MapScreen = () => {
   const [binDescription, setBinDescription] = useState(''); // State for bin description
   const [alertVisible, setAlertVisible] = useState(false); // State for custom alert modal
   const [alertMessage, setAlertMessage] = useState(''); // State for alert message
+  const [binImage, setBinImage] = useState(null); // State for bin image
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -82,7 +84,16 @@ const MapScreen = () => {
       return;
     }
 
-    setInputModalVisible(true); // Show the text input modal
+    // Open the camera
+    let result = await ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      quality: 1,
+    });
+
+    if (!result.cancelled) {
+      setBinImage(result.uri); // Save the image URI
+      setInputModalVisible(true); // Show the text input modal
+    }
   };
 
   const handleAddBin = async () => {
@@ -110,7 +121,7 @@ const MapScreen = () => {
 
       await addDoc(collection(FIRESTORE_DB, 'bins'), {
         binDescription: binDescription, // Include the bin description
-        binImage: null,
+        binImage: binImage, // Include the bin image
         binType: null,
         binApproval: null,
         binLocation: new GeoPoint(location.latitude, location.longitude),
@@ -125,6 +136,7 @@ const MapScreen = () => {
       setModalVisible(false);
       setInputModalVisible(false); // Hide the text input modal
       setBinDescription(''); // Clear the description input
+      setBinImage(null); // Clear the image URI
 
       // Show success message
       setAlertMessage('Bin successfully added!');
