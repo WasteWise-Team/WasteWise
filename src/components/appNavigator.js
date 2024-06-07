@@ -1,5 +1,4 @@
 import React, { useContext } from 'react';
-import { TouchableOpacity, useColorScheme, StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -11,21 +10,25 @@ import HomeScreen from '../screens/HomeScreen';
 import MapScreen from '../screens/MapScreen';
 import ProfileScreen from '../screens/ProfileScreen';
 import Scan from '../screens/Scan';
-import BinScreen from '../screens/infoScreen';
 import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
 import CreateAccount from '../screens/CreateAccount';
 import StartingScreen from '../screens/StartingScreen';
 import BinMapScreen from '../screens/BinMapScreen';
 import LoginScreen from '../screens/LoginScreen';
-import infoScreen from '../screens/infoScreen';
+import InfoScreen from '../screens/infoScreen';
+import { TouchableOpacity } from 'react-native';
+import GuestHomeScreen from '../screens/GuestHomeScreen';
+import GuestProfileScreen from '../screens/GuestProfileScreen';
+
 
 // Screen names
 const homeName = 'Home';
-const MapName = 'Map';
-const ProfileName = 'Profile';
-const ScannerName = 'Scanner';
-const InfoName = 'Info';
+const mapName = 'Map';
+const profileName = 'Profile';
+const scannerName = 'Scanner';
+const infoName = 'Info';
+const guestHomeName = 'GuestHome';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -46,23 +49,31 @@ const ScanStack = () => (
     <Stack.Screen name="ScannerStack" component={Scan} />
     <Stack.Screen name="ScanItem" component={CameraScreen} />
     <Stack.Screen name="UploadImage" component={UploadScreen} />
-    <Stack.Screen name="Starting" component={StartingScreen} />
   </Stack.Navigator>
 );
 
-const MainStack = () => (
+const AuthStack = () => (
   <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
     <Stack.Screen name="Starting" component={StartingScreen} />
     <Stack.Screen name="CreateAccount" component={CreateAccount} />
     <Stack.Screen name="LoginScreen" component={LoginScreen} />
-    <Stack.Screen name="AppTabs">
-      {() => <AppTabs theme={useContext(ThemeContext).theme} />}
-    </Stack.Screen>
-    <Stack.Screen name="Info" component={infoScreen}/>
+    <Stack.Screen name="GuestTabs" component={GuestTabs} />
+    <Stack.Screen name="Info" component={InfoScreen} />
   </Stack.Navigator>
 );
 
-const AppTabs = ({ theme }) => ( // Accept theme as a prop
+
+const MainStack = ({theme}) => (
+  <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
+     <Stack.Screen name="AppTabs">
+      {(props) => <AppTabs {...props} theme={theme} />}
+    </Stack.Screen>
+    <Stack.Screen name="Info" component={InfoScreen} />
+  </Stack.Navigator>
+);
+
+
+const GuestTabs = ({ theme }) => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
       tabBarIcon: ({ focused, color, size }) => {
@@ -70,13 +81,51 @@ const AppTabs = ({ theme }) => ( // Accept theme as a prop
 
         if (route.name === homeName) {
           iconName = focused ? 'home' : 'home-outline';
-        } else if (route.name === MapName) {
+        } else if (route.name === mapName) {
           iconName = focused ? 'navigate' : 'navigate-outline';
-        } else if (route.name === ProfileName) {
+        } else if (route.name === profileName) {
           iconName = focused ? 'person' : 'person-outline';
-        } else if (route.name === ScannerName) {
+        } else if (route.name === scannerName) {
           iconName = focused ? 'camera' : 'camera-outline';
-        } else if (route.name === InfoName) {
+        } else if (route.name === infoName) {
+          iconName = focused ? 'information-circle' : 'information-circle-outline';
+        }
+
+        return <Ionicons name={iconName} size={size} color={color} />;
+      },
+      tabBarActiveTintColor: theme === 'dark' ? '#99DAB3' : '#2D5A3D',
+      tabBarInactiveTintColor: theme === 'dark' ? '#FFF' : '#2D5A3D',
+      headerShown: false,
+      tabBarInactiveBackgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      tabBarActiveBackgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      tabBarStyle: { backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF', shadowColor: 'transparent', elevation: 0, borderBlockColor: 'transparent' },
+    })}
+  >
+    <Tab.Screen name={homeName} component={GuestHomeScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={mapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={scannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={infoName} component={InfoScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={profileName} component={GuestProfileScreen} options={{ tabBarButton: CustomTabButton }} />
+  </Tab.Navigator>
+);
+
+
+
+const AppTabs = ({ theme }) => (
+  <Tab.Navigator
+    screenOptions={({ route }) => ({
+      tabBarIcon: ({ focused, color, size }) => {
+        let iconName;
+
+        if (route.name === homeName) {
+          iconName = focused ? 'home' : 'home-outline';
+        } else if (route.name === mapName) {
+          iconName = focused ? 'navigate' : 'navigate-outline';
+        } else if (route.name === profileName) {
+          iconName = focused ? 'person' : 'person-outline';
+        } else if (route.name === scannerName) {
+          iconName = focused ? 'camera' : 'camera-outline';
+        } else if (route.name === infoName) {
           iconName = focused ? 'information-circle' : 'information-circle-outline';
         }
 
@@ -91,18 +140,18 @@ const AppTabs = ({ theme }) => ( // Accept theme as a prop
     })}
   >
     <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={MapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={ScannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={InfoName} component={infoScreen} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={ProfileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={mapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={scannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={infoName} component={InfoScreen} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={profileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
   </Tab.Navigator>
 );
 
-export default function AppNavigator() {
+export default function AppNavigator({ isAuthenticated }) {
   const { theme } = useContext(ThemeContext);
   return (
     <NavigationContainer>
-      <MainStack />
+      {isAuthenticated ? <MainStack theme={theme}/> : <AuthStack />}
     </NavigationContainer>
   );
 }

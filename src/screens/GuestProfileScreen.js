@@ -1,57 +1,25 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import ProfileHeader from '../components/profileHeader';
+import React, { useContext } from 'react';
+import { View, StyleSheet, Dimensions, Text } from 'react-native';
+import GuestProfileHeader from '../components/GuestProfileHeader';
 import Settings from '../components/settings';
 import History from '../components/scanHistory';
 import Social from '../components/social';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Leaderboard from '../components/Leaderboard';
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH, FIRESTORE_DB, collection, getDoc, doc } from '../../firebaseConfig';
-
 
 const { width } = Dimensions.get('window');
 const baseFontSize = width > 350 ? 16 : 14;
 
 const Tab = createMaterialTopTabNavigator();
 
-export default function ProfileScreen({ navigation }) {
+export default function GuestProfileScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
-  const [name, setName] = useState('');
-
-
-  useEffect(() => {
-    const fetchDataFromFirestore = async () => {
-      try {
-        const currentUser = FIREBASE_AUTH.currentUser;
-        if (currentUser) {
-          const userId = currentUser.uid;
-          const userDocRef = doc(FIRESTORE_DB, 'users', userId);
-          const userDocSnap = await getDoc(userDocRef);
-
-          if (userDocSnap.exists()) {
-            const userData = userDocSnap.data();
-            setName(userData.name); // Update the name variable
-          } else {
-            console.log('User document does not exist.');
-          }
-        } else {
-          console.log('No current user.');
-        }
-      } catch (error) {
-        console.error('Error fetching data:', error);
-      }
-    };
-
-    fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
-  }, []); // Empty dependency array ensures it runs only once after mounting
-
-
 
   const profileData = {
     profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
-    username: 'dmalfoy',
-    bio: name,
+    username: 'Guest',
+    bio: 'Sign In',
   };
 
   const styles = StyleSheet.create({
@@ -62,41 +30,26 @@ export default function ProfileScreen({ navigation }) {
     scene: {
       flex: 1,
     },
+    welcome_text: {
+        fontSize: 45,
+        fontFamily: 'Nunito-Regular',
+        color: theme === 'dark' ? '#F8F8F8' : '#2D5A3D',
+        textAlign: 'center', // Center the text
+        marginBottom: 20, // Add margin to separate from the chart
+    },
   });
 
   return (
     <View style={styles.container}>
-      <ProfileHeader
+      <GuestProfileHeader
         profileImage={profileData.profileImage}
         username={profileData.username}
         bio={profileData.bio}
         navigation={navigation}
       />
-      <Tab.Navigator
-        screenOptions={{
-          tabBarIndicatorStyle: { backgroundColor: '#2D5A3D', height: 2 },
-          tabBarLabelStyle: {
-            fontSize: baseFontSize,
-            fontFamily: 'Nunito-Regular',
-            color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-            textTransform: 'none',
-            marginBottom: -5
-          },
-          tabBarStyle: {
-            backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
-            borderBottomWidth: 0,
-            shadowColor: 'transparent',
-            elevation: 0,
-          },
-          tabBarActiveTintColor: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
-          tabBarInactiveTintColor: '#2D5A3D',
-        }}
-      >
-        <Tab.Screen name="History" component={HistoryScreen} />
-        <Tab.Screen name="Ranks" component={RanksScreen} />
-        <Tab.Screen name="Social" component={SocialScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
-      </Tab.Navigator>
+      <Text style={styles.welcome_text}> 
+        Sign in to unlock features!
+      </Text>
     </View>
   );
 }

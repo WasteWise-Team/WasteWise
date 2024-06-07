@@ -12,7 +12,7 @@ const { height, width } = Dimensions.get('window');
 const HEADER_HEIGHT = height * 0.20;
 const LEFT_MARGIN = width * 0.2;
 
-const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
+const GuestProfileHeader = ({ profileImage, username, bio, navigation }) => {
 
   const { theme, toggleTheme } = useContext(ThemeContext);
 
@@ -63,7 +63,7 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
       </View>
       <TouchableOpacity
         style={styles.logoutButton}
-        onPress={() => FIREBASE_AUTH.signOut()}
+        onPress={() => navigation.navigate("Starting")}
         underlayColor="#68A77C" // Color when pressed, doesn't work yet
       >
         <AntDesign name="logout" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} />
@@ -74,4 +74,4 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
 
 
 
-export default ProfileHeader;
+export default GuestProfileHeader;

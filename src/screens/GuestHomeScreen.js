@@ -1,45 +1,15 @@
 import { StatusBar } from 'expo-status-bar';
-import React, { useContext, useState, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, SafeAreaView } from 'react-native';
 import TestChart from '../components/pie-chart';
 import HeaderLogo from '../components/headerLogo'; // Import the HeaderLogo component
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH, FIRESTORE_DB, getDoc, doc } from '../../firebaseConfig';
 
 
 
-
-export default function HomeScreen({ navigation }) {
+export default function GuestHomeScreen({ navigation }) {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
-    const [name, setName] = useState('');
-
-    useEffect(() => {
-        const fetchDataFromFirestore = async () => {
-            try {
-                const currentUser = FIREBASE_AUTH.currentUser;
-                if (currentUser) {
-                    const userId = currentUser.uid;
-                    const userDocRef = doc(FIRESTORE_DB, 'users', userId);
-                    const userDocSnap = await getDoc(userDocRef);
-
-                    if (userDocSnap.exists()) {
-                        const userData = userDocSnap.data();
-                        setName(userData.name); // Update the name variable
-                    } else {
-                        console.log('User document does not exist.');
-                    }
-                } else {
-                    console.log('No current user.');
-                }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
-        };
-
-        fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
-    }, []); // Empty dependency array ensures it runs only once after mounting
-
 
     // Get screen dimensions
     const { width } = Dimensions.get('window');
@@ -82,7 +52,7 @@ export default function HomeScreen({ navigation }) {
 
 
         welcome_text: {
-            fontSize: 15,
+            fontSize: 50,
             fontFamily: 'Nunito-Regular',
             color: theme === 'dark' ? '#F8F8F8' : '#2D5A3D',
             textAlign: 'center', // Center the text
@@ -90,7 +60,7 @@ export default function HomeScreen({ navigation }) {
         },
 
         name: {
-            color: theme === 'dark' ? '#00DF82' : '#68A77C',
+            color:  theme === 'dark' ? '#00DF82' : '#68A77C',
             fontFamily: 'Nunito-Regular',
         },
 
@@ -157,30 +127,9 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.container}>
                     <StatusBar style="auto" />
                     <Text style={styles.welcome_text}>
-                        Good afternoon, <Text style={styles.name}>{name}</Text>.
-                        It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
+                        Sign in to unlock features.
                     </Text>
 
-                    <View style={styles.chartContainer}>
-                        <TestChart />
-
-                        <View style={styles.squares_container}>
-                            <Square />
-                            <Text style={styles.category}>Plastic</Text>
-                            <Square1 />
-                            <Text style={styles.category}>Aluminum</Text>
-                            <Square2 />
-                            <Text style={styles.category}>Paper</Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.summary_container}>
-                        <Text style={styles.summary_text}>
-                            <Text style={styles.summary_word}>Summary:</Text>
-                            {"\n"}
-                            You've recycled a total of <Text style={styles.name}>2478</Text> pounds
-                        </Text>
-                    </View>
 
                 </View>
             </ScrollView>
