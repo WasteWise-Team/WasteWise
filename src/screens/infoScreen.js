@@ -1,22 +1,25 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image } from 'react-native';
 import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
+import Recycle from '../../assets/recycle.png';
+import EWaste from '../../assets/e-waste.png';
+import FoodWaste from '../../assets/food-waste.png';
 
 
 const recyclingData = [
     {
-        symbol: 'https://www.recycling.com/wp-content/uploads/recycling%20symbols/black/Black%20Recycling%20Symbol%20%28U%2B267B%29.png',
+        image: Recycle,
         description: 'Recycle',
         products: ['Empty Plastic Water Bottles', 'Tin Soda Cans', 'Paper'],
     },         
     {
-        symbol: 'https://static.vecteezy.com/system/resources/previews/006/844/970/original/container-for-battery-disposal-black-glyph-icon-recycling-and-reuse-electronic-waste-bin-lithium-accumulators-safe-storage-silhouette-symbol-on-white-space-isolated-illustration-vector.jpg', // Replace with actual URL
+        image: EWaste,
         description: 'E-Wastes',
         products: ['Laptops With LCD Monitors', 'LCD Plasma TV', 'OLED Tablets'],
     },
     {
-        symbol: 'https://static.vecteezy.com/system/resources/previews/005/352/153/non_2x/food-misuse-black-glyph-icon-excessive-nutrition-and-addictive-overeating-poverty-and-hunger-issue-food-imbalance-in-world-silhouette-symbol-on-white-space-isolated-illustration-vector.jpg', // Replace with actual URL
+        image: FoodWaste,
         description: 'Food Wastes',
         products: ['Coffee Grounds', 'Egg Shells', 'Fruits'],
     },
@@ -90,7 +93,7 @@ const RecyclingInfoPage = () => {
                 <Text style={styles.title}>Disposal Info</Text>
                 {recyclingData.map((item, index) => (
                     <View key={index} style={styles.card}>
-                        <Image source={{ uri: item.symbol }} style={styles.symbolImage} />
+                        <Image source={item.image} style={styles.symbolImage} />
                         <Text style={styles.description}>{item.description}</Text>
                         <Text style={styles.productsTitle}>Common Products:</Text>
                         {item.products.map((product, idx) => (
