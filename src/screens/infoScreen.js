@@ -3,16 +3,22 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Ima
 import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
 
+
 const recyclingData = [
     {
-        symbol: 'https://i.pinimg.com/564x/80/51/b5/8051b578162618e43a372a6f75e427b7.jpg', // Replace with actual URL
-        description: 'Harry Potter in snow',
-        products: ['Product 1', 'Product 2', 'Product 3'],
+        symbol: 'https://www.recycling.com/wp-content/uploads/recycling%20symbols/black/Black%20Recycling%20Symbol%20%28U%2B267B%29.png',
+        description: 'Recycle',
+        products: ['Empty Plastic Water Bottles', 'Tin Soda Cans', 'Paper'],
+    },         
+    {
+        symbol: 'https://static.vecteezy.com/system/resources/previews/006/844/970/original/container-for-battery-disposal-black-glyph-icon-recycling-and-reuse-electronic-waste-bin-lithium-accumulators-safe-storage-silhouette-symbol-on-white-space-isolated-illustration-vector.jpg', // Replace with actual URL
+        description: 'E-Wastes',
+        products: ['Laptops With LCD Monitors', 'LCD Plasma TV', 'OLED Tablets'],
     },
     {
-        symbol: 'https://i.pinimg.com/564x/73/28/44/732844e4cf8e90940766a2e68da4f4a0.jpg', // Replace with actual URL
-        description: 'Hermione and Ron',
-        products: ['Product 4', 'Product 5', 'Product 6'],
+        symbol: 'https://static.vecteezy.com/system/resources/previews/005/352/153/non_2x/food-misuse-black-glyph-icon-excessive-nutrition-and-addictive-overeating-poverty-and-hunger-issue-food-imbalance-in-world-silhouette-symbol-on-white-space-isolated-illustration-vector.jpg', // Replace with actual URL
+        description: 'Food Wastes',
+        products: ['Coffee Grounds', 'Egg Shells', 'Fruits'],
     },
     // Add more recycling symbols and their descriptions here
 ];
@@ -41,7 +47,7 @@ const RecyclingInfoPage = () => {
             fontWeight: 'bold',
         },
         card: {
-            backgroundColor: theme === 'dark' ? '#9FBCA5' : '#DFEEDB',
+            backgroundColor: theme === 'dark' ? '#9FBCA5' : '#FFFFFF',
             borderRadius: 10,
             padding: 15,
             marginBottom: 20,
@@ -81,7 +87,7 @@ const RecyclingInfoPage = () => {
         <SafeAreaView style={styles.safeArea}>
             <HeaderLogo />
             <ScrollView style={styles.container}>
-                <Text style={styles.title}>Recycling Tips</Text>
+                <Text style={styles.title}>Disposal Info</Text>
                 {recyclingData.map((item, index) => (
                     <View key={index} style={styles.card}>
                         <Image source={{ uri: item.symbol }} style={styles.symbolImage} />
