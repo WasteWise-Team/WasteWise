@@ -1,15 +1,17 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert, Platform } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
 import * as ImagePicker from 'expo-image-picker';
+import * as ImageManipulator from 'expo-image-manipulator';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
 import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
 
-// Import Firestore functions
-import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs } from '../../firebaseConfig';
+// Import Firestore and Storage functions
+import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, FIREBASE_STORAGE } from '../../firebaseConfig';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MapScreen = () => {
   const { theme } = useContext(ThemeContext);
@@ -77,22 +79,100 @@ const MapScreen = () => {
     }
   };
 
-  const addBinMarker = async () => {
-    if (!location) {
-      setAlertMessage('Current location is not available');
-      setAlertVisible(true);
+  const takePhoto = async () => {
+    const options = {
+      mediaType: 'photo',
+      quality: 1,
+    };
+
+    try {
+      let result = await ImagePicker.launchCameraAsync(options);
+      console.log(result); // Log the entire result object to debug
+
+      // if the request isn't cancelled, then add the image uri to the DB 
+      if (!result.cancelled && result.assets && result.assets.length > 0) {
+        const { uri } = result.assets[0]; // Extract the uri property from the first object in the assets array
+        console.log(uri)
+        if (uri) {
+          console.log(uri); // Log the uri to verify
+          await uploadImageToFirebase(uri); // Ensure this is awaited
+        } else {
+          console.error('Error: uri is undefined');
+        }
+      } else {
+        console.error('Error: Camera operation was cancelled or no assets found');
+      }
+    } catch (error) {
+      console.error('Error taking photo:', error);
+    }
+  };
+
+  const uploadImageToFirebase = async (uri) => {
+    if (!uri) {
+      console.error('Invalid URI:', uri);
       return;
     }
+  
+    try {
+      // Resize the image
+      const manipulatedImage = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800 } }], // Adjust width as needed
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+  
+      const resizedUri = manipulatedImage.uri;
+      console.log('Resized URI:', resizedUri);
+  
+      const filename = resizedUri.substring(resizedUri.lastIndexOf('/') + 1);
+      console.log('Filename:', filename);
+      const uploadUri = Platform.OS === 'ios' ? resizedUri.replace('file://', '') : resizedUri;
+      console.log('Upload URI:', uploadUri);
+  
+      // Specify the folder path (binImages) in the storage reference
+      const storageRef = ref(FIREBASE_STORAGE, `binImages/${filename}`);
+      console.log('Storage reference created:', storageRef);
+  
+      const img = await fetch(uploadUri);
+      console.log('Fetched image:', img);
+  
+      const bytes = await img.blob();
+      console.log('Image blob:', bytes);
+      console.log('Blob size:', bytes.size); // Log the size of the resized blob
+  
+      // Attempt to upload the image bytes to Firebase Storage
+      try {
+        await uploadBytes(storageRef, bytes);
+        console.log('Upload completed');
+  
+        // Attempt to get the download URL of the uploaded file
+        try {
+          const downloadUrl = await getDownloadURL(storageRef);
+          console.log('File available at:', downloadUrl);
+  
+          // Store the download URL in Firestore
+          await saveImageUrl(downloadUrl);
+        } catch (error) {
+          console.error('Error getting download URL:', error.message);
+          console.error('Stack Trace:', error.stack);
+        }
+      } catch (error) {
+        console.error('Error uploading bytes:', error.message);
+        console.error('Stack Trace:', error.stack);
+      }
+    } catch (error) {
+      console.error('Error during fetch or blob conversion:', error.message);
+      console.error('Stack Trace:', error.stack);
+    }
+  };
+  
 
-    // Open the camera
-    let result = await ImagePicker.launchCameraAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setBinImage(result.uri); // Save the image URI
+  const saveImageUrl = async (downloadUrl) => {
+    try {
+      setBinImage(downloadUrl); // Save the image URL
       setInputModalVisible(true); // Show the text input modal
+    } catch (e) {
+      console.error('Saving image URL failed:', e);
     }
   };
 
@@ -121,7 +201,7 @@ const MapScreen = () => {
 
       await addDoc(collection(FIRESTORE_DB, 'bins'), {
         binDescription: binDescription, // Include the bin description
-        binImage: binImage, // Include the bin image
+        binImage: binImage, // Include the bin image URL
         binType: null,
         binApproval: null,
         binLocation: new GeoPoint(location.latitude, location.longitude),
@@ -136,7 +216,7 @@ const MapScreen = () => {
       setModalVisible(false);
       setInputModalVisible(false); // Hide the text input modal
       setBinDescription(''); // Clear the description input
-      setBinImage(null); // Clear the image URI
+      setBinImage(null); // Clear the image URL
 
       // Show success message
       setAlertMessage('Bin successfully added!');
@@ -194,14 +274,14 @@ const MapScreen = () => {
           justifyContent: 'center',
           alignItems: 'center',
         }}
-        onPress={() => addBinMarker()}
+        onPress={takePhoto}
       >
         <Text style={{ color: 'white' }}>Add Bin</Text>
       </TouchableOpacity>
       <BinModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onNavigate={addBinMarker}
+        onNavigate={takePhoto}
       />
       {errorMsg ? <Text>{errorMsg}</Text> : null}
       <Modal
