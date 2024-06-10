@@ -278,11 +278,12 @@ const MapScreen = () => {
       alignItems: 'center',
     },
     modalTitle: {
-      fontSize: 20, // Increase font size
+      fontSize: 16, // Adjust font size to be smaller
       color: '#2D5A3D',
       fontFamily: 'Nunito',
       fontWeight: 'bold',
-      marginBottom: 20, // Increase bottom margin
+      marginBottom: 10, // Adjust bottom margin to be smaller
+      lineHeight: 20, // Adjust line height for better spacing
     },
     textInput: {
       width: '100%',
