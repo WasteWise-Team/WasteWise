@@ -18,6 +18,7 @@ const Tab = createMaterialTopTabNavigator();
 export default function ProfileScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const [name, setName] = useState('');
+  const [username, setUsername] = useState('');
 
 
   useEffect(() => {
@@ -31,7 +32,8 @@ export default function ProfileScreen({ navigation }) {
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            setName(userData.name); // Update the name variable
+            setName(userData.firstName); // Update the name variable
+            setUsername(userData.username) // update the username variable
           } else {
             console.log('User document does not exist.');
           }
@@ -50,7 +52,7 @@ export default function ProfileScreen({ navigation }) {
 
   const profileData = {
     profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
-    username: 'dmalfoy',
+    username: username,
     bio: name,
   };
 

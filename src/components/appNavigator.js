@@ -14,13 +14,11 @@ import CameraScreen from '../screens/cameraScreen';
 import UploadScreen from '../screens/UploadScreen';
 import CreateAccount from '../screens/CreateAccount';
 import StartingScreen from '../screens/StartingScreen';
-import BinMapScreen from '../screens/BinMapScreen';
-import LoginScreen from '../screens/LoginScreen';
 import InfoScreen from '../screens/infoScreen';
 import { TouchableOpacity } from 'react-native';
 import GuestHomeScreen from '../screens/GuestHomeScreen';
 import GuestProfileScreen from '../screens/GuestProfileScreen';
-
+import LoginScreen from '../screens/LoginScreen';
 
 // Screen names
 const homeName = 'Home';
@@ -62,16 +60,14 @@ const AuthStack = () => (
   </Stack.Navigator>
 );
 
-
-const MainStack = ({theme}) => (
+const MainStack = ({ theme }) => (
   <Stack.Navigator screenOptions={{ headerShown: false, gestureEnabled: false }}>
-     <Stack.Screen name="AppTabs">
+    <Stack.Screen name="AppTabs">
       {(props) => <AppTabs {...props} theme={theme} />}
     </Stack.Screen>
     <Stack.Screen name="Info" component={InfoScreen} />
   </Stack.Navigator>
 );
-
 
 const GuestTabs = ({ theme }) => (
   <Tab.Navigator
@@ -108,8 +104,6 @@ const GuestTabs = ({ theme }) => (
     <Tab.Screen name={profileName} component={GuestProfileScreen} options={{ tabBarButton: CustomTabButton }} />
   </Tab.Navigator>
 );
-
-
 
 const AppTabs = ({ theme }) => (
   <Tab.Navigator
@@ -151,7 +145,7 @@ export default function AppNavigator({ isAuthenticated }) {
   const { theme } = useContext(ThemeContext);
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainStack theme={theme}/> : <AuthStack />}
+      {isAuthenticated ? <MainStack key="main" theme={theme}/> : <AuthStack key="auth"/>}
     </NavigationContainer>
   );
 }

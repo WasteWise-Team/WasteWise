@@ -12,7 +12,7 @@ import { FIREBASE_AUTH, FIRESTORE_DB, getDoc, doc } from '../../firebaseConfig';
 export default function HomeScreen({ navigation }) {
 
     const { theme, toggleTheme } = useContext(ThemeContext);
-    const [name, setName] = useState('');
+    const [firstName, setFirstName] = useState('');
 
     useEffect(() => {
         const fetchDataFromFirestore = async () => {
@@ -25,7 +25,7 @@ export default function HomeScreen({ navigation }) {
 
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setName(userData.name); // Update the name variable
+                        setFirstName(userData.firstName); // Update the name variable
                     } else {
                         console.log('User document does not exist.');
                     }
@@ -157,7 +157,7 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.container}>
                     <StatusBar style="auto" />
                     <Text style={styles.welcome_text}>
-                        Good afternoon, <Text style={styles.name}>{name}</Text>.
+                        Good afternoon, <Text style={styles.name}>{firstName}</Text>.
                         It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
                     </Text>
 

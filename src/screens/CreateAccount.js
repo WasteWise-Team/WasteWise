@@ -11,17 +11,19 @@ import { doc, setDoc } from 'firebase/firestore';
 const { width, height } = Dimensions.get('window');
 
 const CreateAccount = ({ navigation }) => {
-  const [name, setName] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [retypePassword, setRetypePassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [username, setUsername] = useState('');
   const auth = FIREBASE_AUTH;
 
   const signUp = async () => {
 
-    if (!name || !email || !password || !retypePassword) {
+    if (!firstName || !lastName || !email || !password || !retypePassword || !username) {
       alert('All fields are required!');
       return;
     }
@@ -39,13 +41,16 @@ const CreateAccount = ({ navigation }) => {
       // Add user to Firestore
       const userDocRef = doc(FIRESTORE_DB, 'users', uid);
       await setDoc(userDocRef, {
-        name: name,
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
         createdAt: new Date()
       });
 
       console.log(response);
+     
+
       alert('Sign Up successful!')
-      navigation.navigate('LoginScreen');
     } catch (error) {
       console.log(error);
       alert('Sign up failed!' + error.message);
@@ -135,7 +140,11 @@ const CreateAccount = ({ navigation }) => {
             </View>
 
             <View style={styles.formContainer}>
-              <TextInput value={name} style={styles.input} placeholder="Name" placeholderTextColor="#666" onChangeText={(text) => setName(text)} />
+              <TextInput value={firstName} style={styles.input} placeholder="First Name" placeholderTextColor="#666" onChangeText={(text) => setFirstName(text)} />
+              <TextInput value={lastName} style={styles.input} placeholder="Last Name" placeholderTextColor="#666" onChangeText={(text) => setLastName(text)} />
+              
+              <TextInput value={username} style={styles.input} placeholder="Username" placeholderTextColor="#666" onChangeText={(text) => setUsername(text)} />
+              
               <TextInput value={email} style={styles.input} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" onChangeText={(text) => setEmail(text)} />
               <TextInput value={password} style={styles.input} placeholder="Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setPassword(text)} />
               <TextInput value={retypePassword} style={styles.input} placeholder="Retype Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setRetypePassword(text)} />
