@@ -15,7 +15,7 @@ import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, FIREBAS
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MapScreen = () => {
-  const { theme } = useContext(ThemeContext);
+  const { theme, toggleTheme } = useContext(ThemeContext);
   const navigation = useNavigation(); // Get the navigation prop
   const [location, setLocation] = useState(null);
   const [markers, setMarkers] = useState([]);
@@ -233,6 +233,78 @@ const MapScreen = () => {
     setAlertVisible(false);
   };
 
+  // CSS
+  const styles = StyleSheet.create({
+    calloutContainer: {
+      width: 200, // Adjust width as needed
+      padding: 10,
+      backgroundColor: theme === 'dark' ? '#042222' : '#dfebd8',
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    calloutTitle: {
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      fontFamily: 'Nunito',
+      fontWeight: 'bold',
+      marginBottom: 5,
+    },
+    calloutImage: {
+      width: '100%', // Use percentage to scale
+      height: 200, // Fixed height to maintain aspect ratio
+      marginBottom: 10,
+    },
+    calloutDescription: {
+      fontFamily: 'Nunito',
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      textAlign: 'center',
+      marginBottom: 10,
+    },
+    calloutNavigate: {
+      fontFamily: 'Nunito',
+      color: theme === 'dark' ? '#f9fff7' : 'green',
+    },
+    modalContainer: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+      width: '90%', // Increase width to 90%
+      height: '50%', // Adjust height to ensure it takes more space
+      backgroundColor: '#C4D8BF',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
+    modalTitle: {
+      fontSize: 20, // Increase font size
+      color: '#2D5A3D',
+      fontFamily: 'Nunito',
+      fontWeight: 'bold',
+      marginBottom: 20, // Increase bottom margin
+    },
+    textInput: {
+      width: '100%',
+      padding: 15, // Increase padding
+      borderWidth: 1,
+      borderColor: '#2D5A3D',
+      color: '#2D5A3D',
+      borderRadius: 10, // Increase border radius
+      marginBottom: 20, // Increase bottom margin
+    },
+    button: {
+      backgroundColor: '#2D5A3D',
+      padding: 15, // Increase padding
+      borderRadius: 10, // Increase border radius
+    },
+    buttonText: {
+      color: 'white',
+      fontWeight: 'bold',
+      fontSize: 16, // Increase font size
+    },
+  });
+
   return (
     <View style={{ flex: 1 }}>
       <MapView
@@ -331,70 +403,5 @@ const MapScreen = () => {
   );
 };
 
-const styles = StyleSheet.create({
-  calloutContainer: {
-    width: 200, // Adjust width as needed
-    padding: 10,
-    backgroundColor: 'white',
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  calloutTitle: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  calloutImage: {
-    width: '100%', // Use percentage to scale
-    height: 200, // Fixed height to maintain aspect ratio
-    marginBottom: 10,
-  },
-  calloutDescription: {
-    textAlign: 'center',
-    marginBottom: 10,
-  },
-  calloutNavigate: {
-    color: 'blue',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-  },
-  modalContent: {
-    width: '90%', // Increase width to 90%
-    height: '50%', // Adjust height to ensure it takes more space
-    backgroundColor: '#C4D8BF',
-    padding: 20,
-    borderRadius: 10,
-    alignItems: 'center',
-  },
-  modalTitle: {
-    fontSize: 20, // Increase font size
-    color: '#2D5A3D',
-    fontFamily: 'Nunito',
-    fontWeight: 'bold',
-    marginBottom: 20, // Increase bottom margin
-  },
-  textInput: {
-    width: '100%',
-    padding: 15, // Increase padding
-    borderWidth: 1,
-    borderColor: '#2D5A3D',
-    color: '#2D5A3D',
-    borderRadius: 10, // Increase border radius
-    marginBottom: 20, // Increase bottom margin
-  },
-  button: {
-    backgroundColor: '#2D5A3D',
-    padding: 15, // Increase padding
-    borderRadius: 10, // Increase border radius
-  },
-  buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 16, // Increase font size
-  },
-});
 
 export default MapScreen;
