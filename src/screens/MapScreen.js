@@ -194,7 +194,7 @@ const MapScreen = () => {
         binImage: binImage, // Include the bin image URL
         binType: null,
         addedBy: null,
-        binApproval: null,
+        binApproval: null, // for AI filter
         binLocation: new GeoPoint(location.latitude, location.longitude),
         dateAdded: Timestamp.fromDate(new Date()),
         disposalType: null,
@@ -249,20 +249,21 @@ const MapScreen = () => {
       >
         {markers.map((marker, index) => (
           <Marker key={index} coordinate={marker}>
-            <Callout>
-              <View>
-                <Text>Bin {index + 1}</Text>
+            <Callout tooltip>
+              <View style={styles.calloutContainer}>
+                <Text style={styles.calloutTitle}>Bin {index + 1}</Text>
                 {marker.imageUrl && (
                   <Image
                     source={{ uri: marker.imageUrl }}
-                    style={{ width: 100, height: 100, marginBottom: 10 }}
+                    style={styles.calloutImage}
+                    resizeMode="contain" // Maintain aspect ratio
                   />
                 )}
                 {marker.description && (
-                  <Text>{marker.description}</Text>
+                  <Text style={styles.calloutDescription}>{marker.description}</Text>
                 )}
                 <TouchableOpacity onPress={() => navigateToMarker(marker)}>
-                  <Text style={{ color: 'blue' }}>Navigate Here</Text>
+                  <Text style={styles.calloutNavigate}>Navigate Here</Text>
                 </TouchableOpacity>
               </View>
             </Callout>
@@ -331,6 +332,29 @@ const MapScreen = () => {
 };
 
 const styles = StyleSheet.create({
+  calloutContainer: {
+    width: 200, // Adjust width as needed
+    padding: 10,
+    backgroundColor: 'white',
+    borderRadius: 10,
+    alignItems: 'center',
+  },
+  calloutTitle: {
+    fontWeight: 'bold',
+    marginBottom: 5,
+  },
+  calloutImage: {
+    width: '100%', // Use percentage to scale
+    height: 200, // Fixed height to maintain aspect ratio
+    marginBottom: 10,
+  },
+  calloutDescription: {
+    textAlign: 'center',
+    marginBottom: 10,
+  },
+  calloutNavigate: {
+    color: 'blue',
+  },
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -338,36 +362,38 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '90%', // Make the modal larger
+    width: '90%', // Increase width to 90%
+    height: '50%', // Adjust height to ensure it takes more space
     backgroundColor: '#C4D8BF',
-    padding: 30, // Increase padding for better spacing
+    padding: 20,
     borderRadius: 10,
     alignItems: 'center',
   },
   modalTitle: {
-    fontSize: 18,
+    fontSize: 20, // Increase font size
     color: '#2D5A3D',
     fontFamily: 'Nunito',
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginBottom: 20, // Increase bottom margin
   },
   textInput: {
     width: '100%',
-    padding: 10,
+    padding: 15, // Increase padding
     borderWidth: 1,
     borderColor: '#2D5A3D',
     color: '#2D5A3D',
-    borderRadius: 5,
-    marginBottom: 15,
+    borderRadius: 10, // Increase border radius
+    marginBottom: 20, // Increase bottom margin
   },
   button: {
     backgroundColor: '#2D5A3D',
-    padding: 10,
-    borderRadius: 5,
+    padding: 15, // Increase padding
+    borderRadius: 10, // Increase border radius
   },
   buttonText: {
     color: 'white',
     fontWeight: 'bold',
+    fontSize: 16, // Increase font size
   },
 });
 
