@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert, Platform } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert, Platform, Image } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
@@ -8,6 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
 import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
+import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 // Import Firestore and Storage functions
 import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, FIREBASE_STORAGE } from '../../firebaseConfig';
@@ -15,6 +16,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 
 const MapScreen = () => {
   const { theme } = useContext(ThemeContext);
+  const navigation = useNavigation(); // Get the navigation prop
   const [location, setLocation] = useState(null);
   const [markers, setMarkers] = useState([]);
   const [errorMsg, setErrorMsg] = useState(null);
@@ -69,6 +71,8 @@ const MapScreen = () => {
         return {
           latitude: data.binLocation.latitude,
           longitude: data.binLocation.longitude,
+          imageUrl: data.binImage, // Ensure the imageUrl is fetched
+          description: data.binDescription, // Ensure the description is fetched
         };
       });
       setMarkers(fetchedMarkers);
@@ -85,26 +89,43 @@ const MapScreen = () => {
       quality: 1,
     };
 
-    try {
-      let result = await ImagePicker.launchCameraAsync(options);
-      console.log(result); // Log the entire result object to debug
+    Alert.alert(
+      'Take a Photo',
+      'Please take a photo of the bin.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'OK',
+          onPress: async () => {
+            try {
+              let result = await ImagePicker.launchCameraAsync(options);
+              console.log(result); // Log the entire result object to debug
 
-      // if the request isn't cancelled, then add the image uri to the DB 
-      if (!result.cancelled && result.assets && result.assets.length > 0) {
-        const { uri } = result.assets[0]; // Extract the uri property from the first object in the assets array
-        console.log(uri)
-        if (uri) {
-          console.log(uri); // Log the uri to verify
-          await uploadImageToFirebase(uri); // Ensure this is awaited
-        } else {
-          console.error('Error: uri is undefined');
-        }
-      } else {
-        console.error('Error: Camera operation was cancelled or no assets found');
-      }
-    } catch (error) {
-      console.error('Error taking photo:', error);
-    }
+              if (result.cancelled || result.canceled) {
+                console.log('Camera operation was cancelled.');
+              } else if (result.assets && result.assets.length > 0) {
+                const { uri } = result.assets[0]; // Extract the uri property from the first object in the assets array
+                console.log(uri);
+                if (uri) {
+                  console.log(uri); // Log the uri to verify
+                  await uploadImageToFirebase(uri); // Ensure this is awaited
+                } else {
+                  console.error('Error: uri is undefined');
+                }
+              } else {
+                console.error('Error: No assets found');
+              }
+            } catch (error) {
+              console.error('Error taking photo:', error);
+            }
+          },
+        },
+      ],
+      { cancelable: true }
+    );
   };
 
   const uploadImageToFirebase = async (uri) => {
@@ -112,60 +133,29 @@ const MapScreen = () => {
       console.error('Invalid URI:', uri);
       return;
     }
-  
+
     try {
-      // Resize the image
       const manipulatedImage = await ImageManipulator.manipulateAsync(
         uri,
-        [{ resize: { width: 800 } }], // Adjust width as needed
+        [{ resize: { width: 800 } }],
         { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
       );
-  
+
       const resizedUri = manipulatedImage.uri;
-      console.log('Resized URI:', resizedUri);
-  
       const filename = resizedUri.substring(resizedUri.lastIndexOf('/') + 1);
-      console.log('Filename:', filename);
       const uploadUri = Platform.OS === 'ios' ? resizedUri.replace('file://', '') : resizedUri;
-      console.log('Upload URI:', uploadUri);
-  
-      // Specify the folder path (binImages) in the storage reference
       const storageRef = ref(FIREBASE_STORAGE, `binImages/${filename}`);
-      console.log('Storage reference created:', storageRef);
-  
       const img = await fetch(uploadUri);
-      console.log('Fetched image:', img);
-  
       const bytes = await img.blob();
-      console.log('Image blob:', bytes);
-      console.log('Blob size:', bytes.size); // Log the size of the resized blob
-  
-      // Attempt to upload the image bytes to Firebase Storage
-      try {
-        await uploadBytes(storageRef, bytes);
-        console.log('Upload completed');
-  
-        // Attempt to get the download URL of the uploaded file
-        try {
-          const downloadUrl = await getDownloadURL(storageRef);
-          console.log('File available at:', downloadUrl);
-  
-          // Store the download URL in Firestore
-          await saveImageUrl(downloadUrl);
-        } catch (error) {
-          console.error('Error getting download URL:', error.message);
-          console.error('Stack Trace:', error.stack);
-        }
-      } catch (error) {
-        console.error('Error uploading bytes:', error.message);
-        console.error('Stack Trace:', error.stack);
-      }
+
+      await uploadBytes(storageRef, bytes);
+      const downloadUrl = await getDownloadURL(storageRef);
+      await saveImageUrl(downloadUrl);
     } catch (error) {
-      console.error('Error during fetch or blob conversion:', error.message);
+      console.error('Error during upload:', error.message);
       console.error('Stack Trace:', error.stack);
     }
   };
-  
 
   const saveImageUrl = async (downloadUrl) => {
     try {
@@ -203,6 +193,7 @@ const MapScreen = () => {
         binDescription: binDescription, // Include the bin description
         binImage: binImage, // Include the bin image URL
         binType: null,
+        addedBy: null,
         binApproval: null,
         binLocation: new GeoPoint(location.latitude, location.longitude),
         dateAdded: Timestamp.fromDate(new Date()),
@@ -210,7 +201,9 @@ const MapScreen = () => {
       });
       const updatedMarkers = [...markers, {
         latitude: location.latitude,
-        longitude: location.longitude
+        longitude: location.longitude,
+        imageUrl: binImage, // Include the image URL in the new marker
+        description: binDescription, // Include the description in the new marker
       }];
       setMarkers(updatedMarkers);
       setModalVisible(false);
@@ -236,6 +229,10 @@ const MapScreen = () => {
     });
   };
 
+  const handleAlertConfirm = () => {
+    setAlertVisible(false);
+  };
+
   return (
     <View style={{ flex: 1 }}>
       <MapView
@@ -255,6 +252,15 @@ const MapScreen = () => {
             <Callout>
               <View>
                 <Text>Bin {index + 1}</Text>
+                {marker.imageUrl && (
+                  <Image
+                    source={{ uri: marker.imageUrl }}
+                    style={{ width: 100, height: 100, marginBottom: 10 }}
+                  />
+                )}
+                {marker.description && (
+                  <Text>{marker.description}</Text>
+                )}
                 <TouchableOpacity onPress={() => navigateToMarker(marker)}>
                   <Text style={{ color: 'blue' }}>Navigate Here</Text>
                 </TouchableOpacity>
@@ -318,6 +324,7 @@ const MapScreen = () => {
         title="Alert"
         message={alertMessage}
         onClose={() => setAlertVisible(false)}
+        onConfirm={handleAlertConfirm}
       />
     </View>
   );
@@ -331,9 +338,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
-    width: '80%',
+    width: '90%', // Make the modal larger
     backgroundColor: '#C4D8BF',
-    padding: 20,
+    padding: 30, // Increase padding for better spacing
     borderRadius: 10,
     alignItems: 'center',
   },

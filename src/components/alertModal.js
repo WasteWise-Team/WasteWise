@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { Modal, View, Text, TouchableOpacity, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
 
-const CustomAlert = ({ visible, title, message, onClose }) => {
+const CustomAlert = ({ visible, title, message, onClose, onConfirm }) => {
   const { theme } = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
@@ -70,7 +70,7 @@ const CustomAlert = ({ visible, title, message, onClose }) => {
                 <Text style={styles.headerSection}>{title}</Text>
                 <Text style={styles.paragraph}>{message}</Text>
               </View>
-              <TouchableOpacity onPress={onClose} style={styles.button}>
+              <TouchableOpacity onPress={onConfirm || onClose} style={styles.button}>
                 <Text style={styles.buttonText}>OK</Text>
               </TouchableOpacity>
             </View>
