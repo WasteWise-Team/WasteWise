@@ -25,7 +25,7 @@ const MapScreen = () => {
   const [binDescription, setBinDescription] = useState(''); // State for bin description
   const [alertVisible, setAlertVisible] = useState(false); // State for custom alert modal
   const [alertMessage, setAlertMessage] = useState(''); // State for alert message
-  const [binImage, setBinImage] = useState(null); // State for bin image
+  const [binImageUri, setBinImageUri] = useState(null); // State for bin image URI
   const mapRef = useRef(null);
 
   useEffect(() => {
@@ -110,8 +110,8 @@ const MapScreen = () => {
                 const { uri } = result.assets[0]; // Extract the uri property from the first object in the assets array
                 console.log(uri);
                 if (uri) {
-                  console.log(uri); // Log the uri to verify
-                  await uploadImageToFirebase(uri); // Ensure this is awaited
+                  setBinImageUri(uri);
+                  setInputModalVisible(true); // Show the text input modal
                 } else {
                   console.error('Error: uri is undefined');
                 }
@@ -150,19 +150,11 @@ const MapScreen = () => {
 
       await uploadBytes(storageRef, bytes);
       const downloadUrl = await getDownloadURL(storageRef);
-      await saveImageUrl(downloadUrl);
+      return downloadUrl;
     } catch (error) {
       console.error('Error during upload:', error.message);
       console.error('Stack Trace:', error.stack);
-    }
-  };
-
-  const saveImageUrl = async (downloadUrl) => {
-    try {
-      setBinImage(downloadUrl); // Save the image URL
-      setInputModalVisible(true); // Show the text input modal
-    } catch (e) {
-      console.error('Saving image URL failed:', e);
+      return null;
     }
   };
 
@@ -189,9 +181,17 @@ const MapScreen = () => {
         return;
       }
 
+      const downloadUrl = await uploadImageToFirebase(binImageUri); // Upload image after description
+
+      if (!downloadUrl) {
+        setAlertMessage('Failed to upload image');
+        setAlertVisible(true);
+        return;
+      }
+
       await addDoc(collection(FIRESTORE_DB, 'bins'), {
         binDescription: binDescription, // Include the bin description
-        binImage: binImage, // Include the bin image URL
+        binImage: downloadUrl, // Include the bin image URL
         binType: null,
         addedBy: null,
         binApproval: null, // for AI filter
@@ -199,17 +199,18 @@ const MapScreen = () => {
         dateAdded: Timestamp.fromDate(new Date()),
         disposalType: null,
       });
+
       const updatedMarkers = [...markers, {
         latitude: location.latitude,
         longitude: location.longitude,
-        imageUrl: binImage, // Include the image URL in the new marker
+        imageUrl: downloadUrl, // Include the image URL in the new marker
         description: binDescription, // Include the description in the new marker
       }];
       setMarkers(updatedMarkers);
       setModalVisible(false);
       setInputModalVisible(false); // Hide the text input modal
       setBinDescription(''); // Clear the description input
-      setBinImage(null); // Clear the image URL
+      setBinImageUri(null); // Clear the image URI
 
       // Show success message
       setAlertMessage('Bin successfully added!');
