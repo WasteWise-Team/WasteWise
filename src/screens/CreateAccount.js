@@ -4,8 +4,19 @@ import { AntDesign } from '@expo/vector-icons';
 import ThemeContext from '../context/ThemeContext';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
+function isValidPassword(password) {
+  // Regular expression to match the criteria
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+  // Check if the password matches the criteria
+  return passwordRegex.test(password);
+}
+
+// Example usage:
+const password = "MyPassword123";
+console.log(isValidPassword(password)); // Output: true
 
 
 const { width, height } = Dimensions.get('window');
@@ -21,10 +32,35 @@ const CreateAccount = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const auth = FIREBASE_AUTH;
 
+  const checkUsernameExists = async (username) => {
+    const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
+    const usernameDoc = await getDoc(usernameDocRef);
+    return usernameDoc.exists();
+  };
+  
+
+
   const signUp = async () => {
 
     if (!firstName || !lastName || !email || !password || !retypePassword || !username) {
       alert('All fields are required!');
+      return;
+    }
+
+    if (/\s/.test(username)) {
+      alert('Username should not contain spaces!');
+      return;
+    }
+
+    const validLength = username.length >= 3 && username.length <= 15;
+
+    if (!validLength) {
+      alert('Username should be between 3 and 15 letters!');
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      alert('Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one digit. ');
       return;
     }
 
@@ -35,6 +71,13 @@ const CreateAccount = ({ navigation }) => {
 
 
     try {
+      const usernameExists = await checkUsernameExists(username);
+      if (usernameExists) {
+        alert('Username already exists. Please choose another.');
+        return;
+      }
+
+
       const response = await createUserWithEmailAndPassword(auth, email, password);
       const uid = response.user.uid;
 
@@ -46,6 +89,10 @@ const CreateAccount = ({ navigation }) => {
         username: username,
         createdAt: new Date()
       });
+
+      // Add username to Firestore
+      const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
+      await setDoc(usernameDocRef, {uid});
 
       console.log(response);
      

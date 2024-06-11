@@ -33,8 +33,9 @@ export default function ProfileScreen({ navigation }) {
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
             setName(userData.firstName); // Update the name variable
-            setUsername(userData.username) // update the username variable
-          } else {
+            setUsername(userData.username);
+          } 
+          else {
             console.log('User document does not exist.');
           }
         } else {
