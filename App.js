@@ -5,6 +5,9 @@ import { View, StyleSheet } from 'react-native';
 import AppNavigator from './src/components/appNavigator';
 import { ThemeProvider } from './src/context/ThemeContext';
 import ThemeContext from './src/context/ThemeContext';
+import { onAuthStateChanged } from 'firebase/auth';
+import { FIREBASE_AUTH } from './firebaseConfig';
+
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +23,7 @@ const loadFonts = async () => {
 
 const App = () => {
   const [appIsReady, setAppIsReady] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(null);
 
   useEffect(() => {
     async function prepare() {
@@ -35,6 +39,15 @@ const App = () => {
     prepare();
   }, []);
 
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(FIREBASE_AUTH, (user) => {
+      setIsAuthenticated(!!user);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
       await SplashScreen.hideAsync();
@@ -47,12 +60,12 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <ThemedApp onLayout={onLayoutRootView} />
+      <ThemedApp onLayout={onLayoutRootView} isAuthenticated={isAuthenticated}/>
     </ThemeProvider>
   );
 };
 
-const ThemedApp = ({ onLayout }) => {
+const ThemedApp = ({ onLayout, isAuthenticated }) => {
   const { theme } = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
@@ -64,7 +77,7 @@ const ThemedApp = ({ onLayout }) => {
 
   return (
     <View style={styles.container} onLayout={onLayout}>
-      <AppNavigator />
+      <AppNavigator isAuthenticated={isAuthenticated} />
     </View>
   );
 };

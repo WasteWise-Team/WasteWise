@@ -1,13 +1,20 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, SafeAreaView, ScrollView } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { FIREBASE_AUTH } from '../../firebaseConfig';
 import ThemeContext from '../context/ThemeContext';
+
 
 
 const { width, height } = Dimensions.get('window');
 
 const LoginScreen = ({ navigation }) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
+  const [email, setEmail] = useState(''); 
+  const [password, setPassword] = useState('');
+  
+  
 
   const styles = StyleSheet.create({
     container: {
@@ -77,6 +84,21 @@ const LoginScreen = ({ navigation }) => {
     },
   });
 
+  const signIn = async() => {
+    if (!email || !password ) {
+      alert('All fields are required!');
+      return;
+    }
+    
+    try {
+      const response = await signInWithEmailAndPassword(FIREBASE_AUTH, email, password);
+      console.log(response);
+      alert('Sign in successful');
+    } catch (error) {
+      console.log(error);
+      alert('Sign in failed:');
+    }
+  } 
 
 
   return (
@@ -92,10 +114,10 @@ const LoginScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.formContainer}>
-              <TextInput style={styles.input} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" />
-              <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#666" secureTextEntry />
+              <TextInput style={styles.input} value={email} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" onChangeText={(text) => setEmail(text)} />
+              <TextInput style={styles.input} value={password} placeholder="Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setPassword(text)} />
 
-              <TouchableOpacity style={styles.signUpButton}>
+              <TouchableOpacity style={styles.signUpButton} onPress={signIn}>
                 <Text style={styles.signUpButtonText}>Log In</Text>
               </TouchableOpacity>
 
