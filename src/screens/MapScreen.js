@@ -32,6 +32,10 @@ const MapScreen = () => {
   const [reportText, setReportText] = useState(''); // State for report text
   const [selectedMarker, setSelectedMarker] = useState(null); // State for selected marker for reporting
 
+  //bin types stuff
+  const [types] = useState(['General Trash', 'General Recyclables', 'E-waste', 'Hazardous Waste']);
+  const [typeModalVisible, setTypeModalVisible] = useState(false); // State for type selection modal visibility
+  const [selectedTypes, setSelectedTypes] = useState([]); // State for selected types
 
   useEffect(() => {
     const requestLocationPermission = async () => {
@@ -85,6 +89,7 @@ const MapScreen = () => {
           longitude: data.binLocation.longitude,
           imageUrl: data.binImage, // Ensure the imageUrl is fetched
           description: data.binDescription, // Ensure the description is fetched
+          types: data.binType,
         };
       });
       setMarkers(fetchedMarkers);
@@ -94,6 +99,66 @@ const MapScreen = () => {
       setAlertVisible(true);
     }
   };
+
+  /***
+   * This function saves the selected types and then closes the modal so the modal right after shows up
+   */
+  const handleSaveTypes = (types) => {
+    setSelectedTypes(types);
+    setInputModalVisible(true);
+    setTypeModalVisible(false);
+  };  
+
+  /***
+   * This function updates the list based on the user's toggle, ensuring that if an option is removed/unpressed, then that is reflected in the list 
+   */
+  const handleToggleOption = (option) => {
+    setSelectedTypes((prevSelected) =>
+      prevSelected.includes(option)
+        ? prevSelected.filter((item) => item !== option)
+        : [...prevSelected, option]
+    );
+  };
+
+  /***
+   * This function renders the selectType modal
+   */
+  const renderTypeSelectModal = () => (
+<Modal
+  animationType="fade"
+  transparent={true}
+  visible={typeModalVisible}
+  onRequestClose={() => setTypeModalVisible(false)}
+>
+  <TouchableWithoutFeedback onPress={() => setTypeModalVisible(false)}>
+    <View style={styles.modalContainer}>
+      <TouchableWithoutFeedback onPress={() => {}}>
+        <View style={styles.modalContentType}>
+          <Text style={styles.modalTitle}>Select Types</Text>
+          <View style={styles.optionsContainer}>
+            {types.map((option, index) => (
+              <TouchableOpacity
+                key={index}
+                style={[
+                  styles.optionButton,
+                  selectedTypes.includes(option) && styles.selectedOptionButton,
+                ]}
+                onPress={() => handleToggleOption(option)}
+              >
+                <Text style={styles.optionText}>{option}</Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TouchableOpacity style={styles.button} onPress={() => handleSaveTypes(selectedTypes)}>
+            <Text style={styles.buttonText}>Save</Text>
+          </TouchableOpacity>
+        </View>
+      </TouchableWithoutFeedback>
+    </View>
+  </TouchableWithoutFeedback>
+</Modal>
+);
+  
 
   /***
    * This function takes the photo via the camera and saves/provesses the image
@@ -126,7 +191,7 @@ const MapScreen = () => {
                 console.log(uri);
                 if (uri) {
                   setBinImageUri(uri);
-                  setInputModalVisible(true); // Show the text input modal
+                  setTypeModalVisible(true); // Show the type selection modal
                 } else {
                   console.error('Error: uri is undefined');
                 }
@@ -214,7 +279,7 @@ const MapScreen = () => {
       await addDoc(collection(FIRESTORE_DB, 'bins'), {
         binDescription: binDescription, // Include the bin description
         binImage: downloadUrl, // Include the bin image URL
-        binType: null,
+        binType: selectedTypes,
         addedBy: null,
         binApproval: null, // for AI filter
         binLocation: new GeoPoint(location.latitude, location.longitude),
@@ -232,6 +297,7 @@ const MapScreen = () => {
       setModalVisible(false);
       setInputModalVisible(false); // Hide the text input modal
       setBinDescription(''); // Clear the description input
+      setTypeModalVisible(false); // Hide the type selection modal
       setBinImageUri(null); // Clear the image URI
 
       // Show success message
@@ -270,7 +336,6 @@ const MapScreen = () => {
       setAlertVisible(true);
     }
   };
-  
 
   /***
    * navigation function (redirect to maps)
@@ -337,6 +402,14 @@ const MapScreen = () => {
       borderRadius: 10,
       alignItems: 'center',
     },
+    modalContentType: {
+      width: '90%', // Increase width to 90%
+      height: '30%', // Adjust height to ensure it takes more space
+      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      padding: 20,
+      borderRadius: 10,
+      alignItems: 'center',
+    },
     modalTitle: {
       fontSize: 16, // Adjust font size to be smaller
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
@@ -356,7 +429,7 @@ const MapScreen = () => {
     },
     button: {
       backgroundColor: theme === 'dark' ? '#bed4bc' : '#2D5A3D',
-      padding: 15, // Increase padding
+      padding: 13, // Increase padding
       borderRadius: 10, // Increase border radius
     },
     buttonText: {
@@ -364,6 +437,24 @@ const MapScreen = () => {
       fontFamily: 'Nunito',
       fontWeight: 'bold',
       fontSize: 12, // Increase font size
+    },
+    optionsContainer: {
+      marginBottom: 5,
+      justifyContent: 'center',
+      alignItems: 'center', // Center items horizontally
+    },
+    optionButton: {
+      padding: 5,
+      margin: 5,
+    },
+    selectedOptionButton: {
+      borderColor: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      borderWidth: 1,
+    },
+    optionText: {
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      fontSize: 14,
+      fontFamily: 'Nunito',
     },
   });
 
@@ -489,6 +580,7 @@ const MapScreen = () => {
           </View>
         </TouchableWithoutFeedback>
       </Modal>
+      {renderTypeSelectModal()}
       <CustomAlert
         visible={alertVisible}
         title="Alert"
