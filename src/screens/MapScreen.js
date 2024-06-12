@@ -251,13 +251,12 @@ const MapScreen = () => {
     if (selectedMarker) {
       if (reportText.length < 10) {
         console.log("reportText is less than 10 characters");
-        setAlertMessage('Brevity is key but please say a little more than that.');
-        setAlertVisible(true);
+        alert('Brevity is key but please say a little more than that.');
         return;
       }
       try {
         await addDoc(collection(FIRESTORE_DB, 'reports'), {
-          binId: selectedMarker.id,
+          binId: selectedMarker.id, 
           reportText,
           timestamp: new Date(),
         });
@@ -332,15 +331,15 @@ const MapScreen = () => {
     },
     modalContent: {
       width: '90%', // Increase width to 90%
-      height: '50%', // Adjust height to ensure it takes more space
-      backgroundColor: '#C4D8BF',
+      height: '20%', // Adjust height to ensure it takes more space
+      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
       padding: 20,
       borderRadius: 10,
       alignItems: 'center',
     },
     modalTitle: {
       fontSize: 16, // Adjust font size to be smaller
-      color: '#2D5A3D',
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       fontFamily: 'Nunito',
       fontWeight: 'bold',
       marginBottom: 10, // Adjust bottom margin to be smaller
@@ -350,20 +349,21 @@ const MapScreen = () => {
       width: '100%',
       padding: 15, // Increase padding
       borderWidth: 1,
-      borderColor: '#2D5A3D',
-      color: '#2D5A3D',
+      borderColor: theme === 'dark' ? '#b7c4b390' : '#2D5A3D',
+      color: theme === 'dark' ? '#b7c4b3' : '#2D5A3D',
       borderRadius: 10, // Increase border radius
       marginBottom: 20, // Increase bottom margin
     },
     button: {
-      backgroundColor: '#2D5A3D',
+      backgroundColor: theme === 'dark' ? '#bed4bc' : '#2D5A3D',
       padding: 15, // Increase padding
       borderRadius: 10, // Increase border radius
     },
     buttonText: {
       color: 'white',
+      fontFamily: 'Nunito',
       fontWeight: 'bold',
-      fontSize: 16, // Increase font size
+      fontSize: 12, // Increase font size
     },
   });
 
@@ -432,7 +432,7 @@ const MapScreen = () => {
       />
       {errorMsg ? <Text>{errorMsg}</Text> : null}
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={inputModalVisible}
         onRequestClose={() => setInputModalVisible(false)}
@@ -453,7 +453,7 @@ const MapScreen = () => {
                   style={styles.button}
                   onPress={handleAddBin}
                 >
-                  <Text style={styles.buttonText}>OK</Text>
+                  <Text style={styles.buttonText}>Add Bin</Text>
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
@@ -461,7 +461,7 @@ const MapScreen = () => {
         </TouchableWithoutFeedback>
       </Modal>
       <Modal
-        animationType="slide"
+        animationType="fade"
         transparent={true}
         visible={reportModalVisible}
         onRequestClose={() => setReportModalVisible(false)}
@@ -483,12 +483,6 @@ const MapScreen = () => {
                   onPress={handleReportSubmit}
                 >
                   <Text style={styles.buttonText}>Submit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.buttonCancel}
-                  onPress={() => setReportModalVisible(false)}
-                >
-                  <Text style={styles.buttonText}>Cancel</Text>
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
