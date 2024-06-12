@@ -372,11 +372,23 @@ const MapScreen = () => {
       height: 200, // Fixed height to maintain aspect ratio
       marginBottom: 10,
     },
+    typesContainer: {
+      margin: 5,
+    },
+    calloutTypes: {
+      fontFamily: 'Nunito',
+      fontSize: 10,
+      color: theme === 'dark' ? '#b7c4b3' : '#2D5A3D',
+    },
+    calloutTypesTitle: {
+      fontSize: 12,
+      fontFamily: 'Nunito',
+    },
     calloutDescription: {
       fontFamily: 'Nunito',
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       textAlign: 'center',
-      marginBottom: 10,
+      marginBottom: 2,
     },
     calloutNavigate: {
       fontFamily: 'Nunito',
@@ -486,6 +498,11 @@ const MapScreen = () => {
                 )}
                 {marker.description && (
                   <Text style={styles.calloutDescription}>{marker.description}</Text>
+                )}
+                {marker.types && marker.types.length > 0 && (
+                  <View style={styles.typesContainer}>
+                    <Text style={styles.calloutTypes}>Types: {marker.types.join(', ')}</Text>
+                  </View>
                 )}
                 <TouchableOpacity onPress={() => navigateToMarker(marker)}>
                   <Text style={styles.calloutNavigate}>Navigate Here</Text>
