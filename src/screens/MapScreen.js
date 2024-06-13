@@ -26,6 +26,7 @@ const MapScreen = () => {
   const [alertVisible, setAlertVisible] = useState(false); // State for custom alert modal
   const [alertMessage, setAlertMessage] = useState(''); // State for alert message
   const [binImageUri, setBinImageUri] = useState(null); // State for bin image URI
+  const [viewReportModalVisible, setViewReportModalVisible] = useState(false); // report display thing
   const mapRef = useRef(null);
 
   const [reportModalVisible, setReportModalVisible] = useState(false); // State for report modal visibility
@@ -76,20 +77,30 @@ const MapScreen = () => {
   };
 
   /***
-   * This function fetches all the markers from the DB
+   * This function fetches all the markers from the DB and fetches report data on the bin 
    */
   const fetchMarkers = async () => {
     try {
-      const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
-      const fetchedMarkers = querySnapshot.docs.map(doc => {
+      const binQuerySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
+      const reportQuerySnapshot = await getDocs(collection(FIRESTORE_DB, 'reports'));
+  
+      const reports = reportQuerySnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+  
+      const fetchedMarkers = binQuerySnapshot.docs.map(doc => {
         const data = doc.data();
+        const relatedReports = reports.filter(report => report.binId === doc.id);
+  
         return {
-          id: doc.id, // Ensure the document ID is included
+          id: doc.id,
           latitude: data.binLocation.latitude,
           longitude: data.binLocation.longitude,
-          imageUrl: data.binImage, // Ensure the imageUrl is fetched
-          description: data.binDescription, // Ensure the description is fetched
+          imageUrl: data.binImage,
+          description: data.binDescription,
           types: data.binType,
+          reports: relatedReports,
         };
       });
       setMarkers(fetchedMarkers);
@@ -99,6 +110,7 @@ const MapScreen = () => {
       setAlertVisible(true);
     }
   };
+  
 
   /***
    * This function saves the selected types and then closes the modal so the modal right after shows up
@@ -400,6 +412,9 @@ const MapScreen = () => {
       fontFamily: 'Nunito',
       color: theme === 'dark' ? '#f9fff7' : 'green',
     },
+    calloutReportPin: {
+      fontSize: 15,
+    },
     modalContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -468,6 +483,25 @@ const MapScreen = () => {
       fontSize: 14,
       fontFamily: 'Nunito',
     },
+    reportText: {
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      fontFamily: 'Nunito',
+      fontSize: 15,
+      justifyContent: 'center',
+      alignItems: 'center',
+      paddingTop: 20,
+    },
+    voteButton: {
+      backgroundColor: theme === 'dark' ? '#bed4bc' : '#2D5A3D',
+      padding: 10,
+      borderRadius: 10,
+      margin: 5,
+    },
+    voteButtonText: {
+      color: 'white',
+      fontFamily: 'Nunito',
+      fontWeight: 'bold',
+    },
   });
 
   return (
@@ -493,7 +527,7 @@ const MapScreen = () => {
                   <Image
                     source={{ uri: marker.imageUrl }}
                     style={styles.calloutImage}
-                    resizeMode="contain" // Maintain aspect ratio
+                    resizeMode="contain"
                   />
                 )}
                 {marker.description && (
@@ -507,17 +541,27 @@ const MapScreen = () => {
                 <TouchableOpacity onPress={() => navigateToMarker(marker)}>
                   <Text style={styles.calloutNavigate}>Navigate Here</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => {
-                  setSelectedMarker(marker);
-                  setReportModalVisible(true);
-                }}>
-                  <Text style={styles.calloutReport}>Report Bin Updates</Text>
-                </TouchableOpacity>
+                {marker.reports && marker.reports.length > 0 ? (
+                  <TouchableOpacity onPress={() => {
+                    setSelectedMarker(marker);
+                    setViewReportModalVisible(true);
+                  }}>
+                    <Text style={styles.calloutReportPin}>❗</Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity onPress={() => {
+                    setSelectedMarker(marker);
+                    setReportModalVisible(true);
+                  }}>
+                    <Text style={styles.calloutReport}>Report Bin Updates</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             </Callout>
           </Marker>
         ))}
       </MapView>
+
       <TouchableOpacity
         style={{
           width: '90%',
@@ -605,6 +649,33 @@ const MapScreen = () => {
         onClose={() => setAlertVisible(false)}
         onConfirm={handleAlertConfirm}
       />
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={viewReportModalVisible}
+        onRequestClose={() => setViewReportModalVisible(false)}
+      >
+        <TouchableWithoutFeedback onPress={() => setViewReportModalVisible(false)}>
+          <View style={styles.modalContainer}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.modalContent}>
+                <Text style={styles.modalTitle}>Bin Reports</Text>
+                {selectedMarker && selectedMarker.reports.map(report => (
+                  <Text key={report.id} style={styles.reportText}>{report.reportText}</Text>
+                ))}
+                <View style={{ flexDirection: 'row', padding: 30, justifyContent: 'space-between' }}>
+                  <TouchableOpacity style={[styles.voteButton, { marginRight: 15 }]}>
+                    <Text style={styles.voteButtonText}>False</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity style={[styles.voteButton, { marginLeft: 15 }]}>
+                    <Text style={styles.voteButtonText}>True</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
     </View>
   );
 };
