@@ -11,8 +11,10 @@ import ThemeContext from '../context/ThemeContext';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
 
 // Import Firestore and Storage functions
-import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, FIREBASE_STORAGE } from '../../firebaseConfig';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
+import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, doc, setDoc, getDoc, FIREBASE_STORAGE } from '../../firebaseConfig';
+import { increment, deleteDoc, onSnapshot } from "firebase/firestore";
+import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
+import { updateEmail } from 'firebase/auth';
 
 const MapScreen = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
@@ -79,34 +81,47 @@ const MapScreen = () => {
   /***
    * This function fetches all the markers from the DB and fetches report data on the bin 
    */
-  const fetchMarkers = async () => {
+  const fetchMarkers = () => {
     try {
-      const binQuerySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
-      const reportQuerySnapshot = await getDocs(collection(FIRESTORE_DB, 'reports'));
+      const binCollectionRef = collection(FIRESTORE_DB, 'bins');
+      const reportCollectionRef = collection(FIRESTORE_DB, 'reports');
   
-      const reports = reportQuerySnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      onSnapshot(binCollectionRef, (binSnapshot) => {
+        onSnapshot(reportCollectionRef, (reportSnapshot) => {
+          const reports = reportSnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
   
-      const fetchedMarkers = binQuerySnapshot.docs.map(doc => {
-        const data = doc.data();
-        const relatedReports = reports.filter(report => report.binId === doc.id);
+          const fetchedMarkers = binSnapshot.docs.map(doc => {
+            const data = doc.data();
+            const relatedReports = reports.filter(report => report.binId === doc.id);
   
-        return {
-          id: doc.id,
-          latitude: data.binLocation.latitude,
-          longitude: data.binLocation.longitude,
-          imageUrl: data.binImage,
-          description: data.binDescription,
-          types: data.binType,
-          reports: relatedReports,
-        };
+            return {
+              id: doc.id,
+              latitude: data.binLocation.latitude,
+              longitude: data.binLocation.longitude,
+              imageUrl: data.binImage,
+              description: data.binDescription,
+              types: data.binType,
+              reports: relatedReports,
+            };
+          });
+  
+          setMarkers(fetchedMarkers);
+        }, (error) => {
+          console.error('Failed to get reports from DB:', error);
+          setAlertMessage('Failed to get reports from database');
+          setAlertVisible(true);
+        });
+      }, (error) => {
+        console.error('Failed to get bins from DB:', error);
+        setAlertMessage('Failed to get bins from database');
+        setAlertVisible(true);
       });
-      setMarkers(fetchedMarkers);
     } catch (error) {
-      console.log(error);
-      setAlertMessage('Failed to fetch markers from database');
+      console.error('Failed to set up snapshot listeners:', error);
+      setAlertMessage('Failed to set up snapshot listeners');
       setAlertVisible(true);
     }
   };
@@ -136,40 +151,40 @@ const MapScreen = () => {
    * This function renders the selectType modal
    */
   const renderTypeSelectModal = () => (
-<Modal
-  animationType="fade"
-  transparent={true}
-  visible={typeModalVisible}
-  onRequestClose={() => setTypeModalVisible(false)}
->
-  <TouchableWithoutFeedback onPress={() => setTypeModalVisible(false)}>
-    <View style={styles.modalContainer}>
-      <TouchableWithoutFeedback onPress={() => {}}>
-        <View style={styles.modalContentType}>
-          <Text style={styles.modalTitle}>Select Types</Text>
-          <View style={styles.optionsContainer}>
-            {types.map((option, index) => (
-              <TouchableOpacity
-                key={index}
-                style={[
-                  styles.optionButton,
-                  selectedTypes.includes(option) && styles.selectedOptionButton,
-                ]}
-                onPress={() => handleToggleOption(option)}
-              >
-                <Text style={styles.optionText}>{option}</Text>
+    <Modal
+      animationType="fade"
+      transparent={true}
+      visible={typeModalVisible}
+      onRequestClose={() => setTypeModalVisible(false)}
+    >
+      <TouchableWithoutFeedback onPress={() => setTypeModalVisible(false)}>
+        <View style={styles.modalContainer}>
+          <TouchableWithoutFeedback onPress={() => {}}>
+            <View style={styles.modalContentType}>
+              <Text style={styles.modalTitle}>Select Types</Text>
+              <View style={styles.optionsContainer}>
+                {types.map((option, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.optionButton,
+                      selectedTypes.includes(option) && styles.selectedOptionButton,
+                    ]}
+                    onPress={() => handleToggleOption(option)}
+                  >
+                    <Text style={styles.optionText}>{option}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+              <TouchableOpacity style={styles.button} onPress={() => handleSaveTypes(selectedTypes)}>
+                <Text style={styles.buttonText}>Save</Text>
               </TouchableOpacity>
-            ))}
-          </View>
-          <TouchableOpacity style={styles.button} onPress={() => handleSaveTypes(selectedTypes)}>
-            <Text style={styles.buttonText}>Save</Text>
-          </TouchableOpacity>
+            </View>
+          </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
-    </View>
-  </TouchableWithoutFeedback>
-</Modal>
-);
+    </Modal>
+  );
   
 
   /***
@@ -327,8 +342,8 @@ const MapScreen = () => {
    */
   const handleReportSubmit = async () => {
     if (selectedMarker) {
-      if (reportText.length < 10) {
-        console.log("reportText is less than 10 characters");
+      if (reportText.length < 5) {
+        console.log("reportText is less than 5 characters");
         alert('Brevity is key but please say a little more than that.');
         return;
       }
@@ -337,6 +352,8 @@ const MapScreen = () => {
           binId: selectedMarker.id, 
           reportText,
           timestamp: new Date(),
+          trueCount: 0,
+          falseCount: 0,
         });
         setAlertMessage('Report submitted successfully!');
         setReportModalVisible(false); // Close the modal after submission
@@ -346,6 +363,115 @@ const MapScreen = () => {
         console.log(error);
       }
       setAlertVisible(true);
+    }
+  };
+
+  /***
+   * This function handles the true/false vote count of each report to see if they're true or not
+   */
+  // const handleVote = async (reportId, isTrueVote) => {
+  //   const reportRef = doc(FIRESTORE_DB, 'reports', reportId);
+  //   const voteRef = doc(reportRef, 'votes', userId); // see which users have voted
+  
+  //   try {
+  //     // check if the user has already voted
+  //     const voteSnap = await getDoc(voteRef);
+  //     if (voteSnap.exists()) {
+  //       setAlertMessage('You have already voted!');
+  //       setAlertVisible(true);
+  //     } else {
+  //       await setDoc(voteRef, {
+  //         voted: true,
+  //         voteType: isTrueVote ? 'True' : 'False'
+  //       });
+  //       // if user has not already voted, then let them vote
+  //       await updateDoc(reportRef, {
+  //         trueCount: isTrueVote ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
+  //         falseCount: isTrueVote ? firebase.firestore.FieldValue.increment(0) : firebase.firestore.FieldValue.increment(1),
+  //       });
+  //       setAlertMessage('Thanks for your input!');
+  //       setAlertVisible(true);
+  //     }
+  //   } catch (error) {
+  //     console.error('Failed to record vote:', error);
+  //     setAlertMessage('Failed to record input');
+  //     setAlertVisible(true);
+  //   }
+  // };
+  
+
+  /***
+   * TEMP HANDLEVOTE WITHOUT USER RESTRICTION
+   */
+
+  const handleVoteOnFirstReport = (selectedMarker, isTrueFalse) => {
+    if (selectedMarker.reports && selectedMarker.reports.length > 0) {
+        const firstReportId = selectedMarker.reports[0].id;
+        handleVote(firstReportId, isTrueFalse);
+    } else {
+        console.log("No reports available to vote on for this bin");
+    }
+  };
+
+  const handleVote = async (reportId, isTrueVote) => {
+    const reportRef = doc(FIRESTORE_DB, 'reports', reportId);
+
+    try {
+      // Firestore transaction to increment the correct counter
+      await updateDoc(reportRef, {
+        // Conditional update based on the value of isTrueVote
+        trueCount: isTrueVote ? increment(1) : increment(0),
+        falseCount: isTrueVote ? increment(0) : increment(1),
+      });
+
+      // Check if the criteria for deletion are met
+      const updatedDoc = await getDoc(reportRef);
+      const data = updatedDoc.data();
+
+      if (data.trueCount >= 5) {
+        // Remove the associated bin and its image
+        await deleteBinAndImage(data.binId);
+        await deleteDoc(reportRef);
+      }
+      // delete the report
+      if (data.falseCount >= 5) {
+        await deleteDoc(reportRef);
+      }
+
+      setViewReportModalVisible(false); // Close the modal after voting
+      alert('Thanks for your input!');
+    } catch (error) {
+      console.error('Failed to record vote:', error);
+      alert('Failed to record vote, please try again or send in a report to the team.');
+    }
+  };
+  
+  /***
+   * This function deletes the bin + image from storage after 5 votes is reached to keep bin locations updated
+   */
+  const deleteBinAndImage = async (binId) => {
+    try {
+      const binRef = doc(FIRESTORE_DB, 'bins', binId);
+      const binDoc = await getDoc(binRef);
+      
+      // if the bin doesn't exist for some reason (edge case)
+      if (!binDoc.exists()) {
+        console.log(`Bin with binId ${binId} does not exist.`);
+        return;
+      }
+      
+      const binData = binDoc.data();
+  
+      // if the imageUrl for the bin exists
+      if (binData.imageUrl) {
+        const imageRef = ref(FIREBASE_STORAGE, `binImages/${binData.imageUrl}`);
+        await deleteObject(imageRef);  // Delete the image from Firebase Storage
+      }
+  
+      await deleteDoc(binRef);  // Delete the bin document
+      console.log(`Bin and image deleted for binId ${binId}`);
+    } catch (error) {
+      console.error('Error deleting bin and image:', error);
     }
   };
 
@@ -664,10 +790,16 @@ const MapScreen = () => {
                   <Text key={report.id} style={styles.reportText}>{report.reportText}</Text>
                 ))}
                 <View style={{ flexDirection: 'row', padding: 30, justifyContent: 'space-between' }}>
-                  <TouchableOpacity style={[styles.voteButton, { marginRight: 15 }]}>
+                  <TouchableOpacity
+                    style={[styles.voteButton, { marginRight: 15 }]}
+                    onPress={() => handleVoteOnFirstReport(selectedMarker, false)}
+                  >
                     <Text style={styles.voteButtonText}>False</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={[styles.voteButton, { marginLeft: 15 }]}>
+                  <TouchableOpacity
+                    style={[styles.voteButton, { marginLeft: 15 }]}
+                    onPress={() => handleVoteOnFirstReport(selectedMarker, true)}
+                    >
                     <Text style={styles.voteButtonText}>True</Text>
                   </TouchableOpacity>
                 </View>
