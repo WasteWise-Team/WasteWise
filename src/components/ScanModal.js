@@ -65,7 +65,7 @@ export default function ScanModal({ visible, onClose, productInfo, isRecyclable,
               <Text style={styles.paragraph}>Product: {productInfo}</Text>
               <Text style={styles.paragraph}>Recyclable: {isRecyclable ? 'Yes' : 'No'}</Text>
               <TouchableOpacity style={styles.button} onPress={onNavigate}>
-                <Text style={styles.buttonText}>OK</Text>
+                <Text style={styles.buttonText}>Navigate</Text>
               </TouchableOpacity>
             </View>
           </TouchableWithoutFeedback>

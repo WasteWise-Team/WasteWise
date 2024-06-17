@@ -2,36 +2,114 @@ import React, { useContext, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Dimensions, TouchableWithoutFeedback, Keyboard, SafeAreaView, ScrollView } from 'react-native';
 import { AntDesign } from '@expo/vector-icons';
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH } from '../../firebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
+function isValidPassword(password) {
+  // Regular expression to match the criteria
+  const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+  // Check if the password matches the criteria
+  return passwordRegex.test(password);
+}
+
+// Example usage:
+const password = "MyPassword123";
+console.log(isValidPassword(password)); // Output: true
 
 
 const { width, height } = Dimensions.get('window');
 
 const CreateAccount = ({ navigation }) => {
-
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const { theme, toggleTheme } = useContext(ThemeContext);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [retypePassword, setRetypePassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const auth  = FIREBASE_AUTH;
+  const [username, setUsername] = useState('');
+  const auth = FIREBASE_AUTH;
+
+  const checkUsernameExists = async (username) => {
+    const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
+    const usernameDoc = await getDoc(usernameDocRef);
+    return usernameDoc.exists();
+  };
+  
+
 
   const signUp = async () => {
+
+    if (!firstName || !lastName || !email || !password || !retypePassword || !username) {
+      alert('All fields are required!');
+      return;
+    }
+
+    if (/\s/.test(username)) {
+      alert('Username should not contain spaces!');
+      return;
+    }
+
+    const validLength = username.length >= 3 && username.length <= 15;
+
+    if (!validLength) {
+      alert('Username should be between 3 and 15 letters!');
+      return;
+    }
+
+    if (!isValidPassword(password)) {
+      alert('Password must be at least 8 characters long and contain at least one lowercase letter, one uppercase letter, and one digit. ');
+      return;
+    }
+
+    if (password !== retypePassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+
     try {
+      const usernameExists = await checkUsernameExists(username);
+      if (usernameExists) {
+        alert('Username already exists. Please choose another.');
+        return;
+      }
+
+
       const response = await createUserWithEmailAndPassword(auth, email, password);
+      const uid = response.user.uid;
+
+      // Add user to Firestore
+      const userDocRef = doc(FIRESTORE_DB, 'users', uid);
+      await setDoc(userDocRef, {
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
+        createdAt: new Date()
+      });
+
+      // Add username to Firestore
+      const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
+      await setDoc(usernameDocRef, {uid});
+
       console.log(response);
+     
+
       alert('Sign Up successful!')
-    }  catch(error) {
+    } catch (error) {
       console.log(error);
       alert('Sign up failed!' + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: theme === 'dark' ?  '#042222' : '#fff',
+      backgroundColor: theme === 'dark' ? '#042222' : '#fff',
       paddingHorizontal: 20,
     },
     headerContainer: {
@@ -86,8 +164,8 @@ const CreateAccount = ({ navigation }) => {
     },
     safeArea: {
       flex: 1,
-      backgroundColor: theme === 'dark' ?  '#042222' : '#fff',
-      
+      backgroundColor: theme === 'dark' ? '#042222' : '#fff',
+
     },
     scrollViewContainer: {
       flexGrow: 1,
@@ -109,17 +187,17 @@ const CreateAccount = ({ navigation }) => {
             </View>
 
             <View style={styles.formContainer}>
-              <TextInput style={styles.input} placeholder="Name" placeholderTextColor="#666" />
+              <TextInput value={firstName} style={styles.input} placeholder="First Name" placeholderTextColor="#666" onChangeText={(text) => setFirstName(text)} />
+              <TextInput value={lastName} style={styles.input} placeholder="Last Name" placeholderTextColor="#666" onChangeText={(text) => setLastName(text)} />
+              
+              <TextInput value={username} style={styles.input} placeholder="Username" placeholderTextColor="#666" onChangeText={(text) => setUsername(text)} />
+              
               <TextInput value={email} style={styles.input} placeholder="Email" placeholderTextColor="#666" keyboardType="email-address" onChangeText={(text) => setEmail(text)} />
               <TextInput value={password} style={styles.input} placeholder="Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setPassword(text)} />
-              <TextInput style={styles.input} placeholder="Retype Password" placeholderTextColor="#666" secureTextEntry />
+              <TextInput value={retypePassword} style={styles.input} placeholder="Retype Password" placeholderTextColor="#666" secureTextEntry onChangeText={(text) => setRetypePassword(text)} />
 
               <TouchableOpacity style={styles.signUpButton} onPress={signUp}>
                 <Text style={styles.signUpButtonText}>Sign Up</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.forgotPasswordButton}>
-                <Text style={styles.forgotPasswordButtonText}>Forgot Your Password?</Text>
               </TouchableOpacity>
             </View>
           </View>

@@ -1,18 +1,27 @@
 import React, { useContext } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, SafeAreaView, Image } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, SafeAreaView, Image } from 'react-native';
 import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
+import Recycle from '../../assets/recycle.png';
+import EWaste from '../../assets/e-waste.png';
+import FoodWaste from '../../assets/food-waste.png';
+
 
 const recyclingData = [
     {
-        symbol: 'https://i.pinimg.com/564x/80/51/b5/8051b578162618e43a372a6f75e427b7.jpg', // Replace with actual URL
-        description: 'Harry Potter in snow',
-        products: ['Product 1', 'Product 2', 'Product 3'],
+        image: Recycle,
+        description: 'Recycle',
+        products: ['Empty Plastic Water Bottles', 'Tin Soda Cans', 'Paper'],
+    },         
+    {
+        image: EWaste,
+        description: 'E-Wastes',
+        products: ['Laptops With LCD Monitors', 'LCD Plasma TV', 'OLED Tablets'],
     },
     {
-        symbol: 'https://i.pinimg.com/564x/73/28/44/732844e4cf8e90940766a2e68da4f4a0.jpg', // Replace with actual URL
-        description: 'Hermione and Ron',
-        products: ['Product 4', 'Product 5', 'Product 6'],
+        image: FoodWaste,
+        description: 'Food Wastes',
+        products: ['Coffee Grounds', 'Egg Shells', 'Fruits'],
     },
     // Add more recycling symbols and their descriptions here
 ];
@@ -41,7 +50,7 @@ const RecyclingInfoPage = () => {
             fontWeight: 'bold',
         },
         card: {
-            backgroundColor: theme === 'dark' ? '#9FBCA5' : '#DFEEDB',
+            backgroundColor: theme === 'dark' ? '#9FBCA5' : '#FFFFFF',
             borderRadius: 10,
             padding: 15,
             marginBottom: 20,
@@ -81,10 +90,10 @@ const RecyclingInfoPage = () => {
         <SafeAreaView style={styles.safeArea}>
             <HeaderLogo />
             <ScrollView style={styles.container}>
-                <Text style={styles.title}>Recycling Tips</Text>
+                <Text style={styles.title}>Disposal Info</Text>
                 {recyclingData.map((item, index) => (
                     <View key={index} style={styles.card}>
-                        <Image source={{ uri: item.symbol }} style={styles.symbolImage} />
+                        <Image source={item.image} style={styles.symbolImage} />
                         <Text style={styles.description}>{item.description}</Text>
                         <Text style={styles.productsTitle}>Common Products:</Text>
                         {item.products.map((product, idx) => (
