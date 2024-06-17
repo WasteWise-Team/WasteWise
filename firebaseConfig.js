@@ -1,14 +1,11 @@
 // Import the functions you need from the SDKs you need
-// firebaseConfig.js
 import { initializeApp } from 'firebase/app';
-import { getFirestore, GeoPoint, Timestamp, collection, addDoc, getDocs, doc, getDoc } from 'firebase/firestore';
+import { getFirestore, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, doc, setDoc, getDoc } from 'firebase/firestore';
+import { getStorage } from 'firebase/storage';
 import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
 
 // Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
   apiKey: "AIzaSyCjLKIUWX2OpKcNjvIUeBSup-mA7IgFjIc",
   authDomain: "wastewise-f37f3.firebaseapp.com",
@@ -19,7 +16,6 @@ const firebaseConfig = {
   measurementId: "G-NTM8XBDBT3"
 };
 
-// Initialize Firebase
 // Initialize Firebase
 const FIREBASE_APP = initializeApp(firebaseConfig);
 
@@ -32,4 +28,7 @@ const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage)
 });
 
-export { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, doc, getDoc };
+// Initialize Firebase Storage
+const FIREBASE_STORAGE = getStorage(FIREBASE_APP);
+
+export { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, setDoc, doc, getDoc, FIREBASE_STORAGE };
