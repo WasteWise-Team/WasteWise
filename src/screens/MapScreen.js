@@ -272,70 +272,80 @@ const MapScreen = () => {
   /***
    * This function adds the bin once the 'OK' button is clicked
    */
-  const handleAddBin = async () => {
-    try {
-      const radius = 0.0001; // ~11 meters
-  
-      const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
-      const existingBins = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          latitude: data.binLocation.latitude,
-          longitude: data.binLocation.longitude,
-        };
-      });
-  
-      const binExists = existingBins.some(bin => {
-        return bin.latitude === location.latitude && bin.longitude === location.longitude;
-      });
-  
-      if (binExists) {
-        setAlertMessage('A bin already exists at this location');
-        setAlertVisible(true);
-        return;
-      }
+const handleAddBin = async () => {
+  try {
+    const radius = 0.0001; // ~11 meters
 
-      const downloadUrl = await uploadImageToFirebase(binImageUri); // Upload image after description
+    const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
+    const existingBins = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        latitude: data.binLocation.latitude,
+        longitude: data.binLocation.longitude,
+      };
+    });
 
-      if (!downloadUrl) {
-        setAlertMessage('Failed to upload image');
-        setAlertVisible(true);
-        return;
-      }
+    const binExists = existingBins.some(bin => {
+      return bin.latitude === location.latitude && bin.longitude === location.longitude;
+    });
 
-      await addDoc(collection(FIRESTORE_DB, 'bins'), {
-        binDescription: binDescription, // Include the bin description
-        binImage: downloadUrl, // Include the bin image URL
-        binType: selectedTypes,
-        addedBy: null,
-        binApproval: null, // for AI filter
-        binLocation: new GeoPoint(location.latitude, location.longitude),
-        dateAdded: Timestamp.fromDate(new Date()),
-        disposalType: null,
-      });
-
-      const updatedMarkers = [...markers, {
-        latitude: location.latitude,
-        longitude: location.longitude,
-        imageUrl: downloadUrl, // Include the image URL in the new marker
-        description: binDescription, // Include the description in the new marker
-      }];
-      setMarkers(updatedMarkers);
-      setModalVisible(false);
-      setInputModalVisible(false); // Hide the text input modal
-      setBinDescription(''); // Clear the description input
-      setTypeModalVisible(false); // Hide the type selection modal
-      setBinImageUri(null); // Clear the image URI
-
-      // Show success message
-      setAlertMessage('Bin successfully added!');
+    if (binExists) {
+      setAlertMessage('A bin already exists at this location');
       setAlertVisible(true);
-    } catch (error) {
-      console.log(error);
-      setAlertMessage('Failed to add bin to database');
-      setAlertVisible(true);
+      return;
     }
-  };
+
+    const downloadUrl = await uploadImageToFirebase(binImageUri); // Upload image after description
+
+    if (!downloadUrl) {
+      setAlertMessage('Failed to upload image');
+      setAlertVisible(true);
+      return;
+    }
+
+    const newBinData = {
+      binDescription: binDescription, // Include the bin description
+      binImage: downloadUrl, // Include the bin image URL
+      binType: selectedTypes,
+      addedBy: null,
+      binApproval: null, // for AI filter
+      binLocation: new GeoPoint(location.latitude, location.longitude),
+      dateAdded: Timestamp.fromDate(new Date()),
+      disposalType: null,
+    };
+
+    const docRef = await addDoc(collection(FIRESTORE_DB, 'bins'), newBinData);
+
+    const newMarker = {
+      id: docRef.id, // Add the document ID to the marker
+      latitude: location.latitude,
+      longitude: location.longitude,
+      imageUrl: downloadUrl, // Include the image URL in the new marker
+      description: binDescription, // Include the description in the new marker
+      types: selectedTypes, // the types of the bin
+      reports: [] // Initialize reports as an empty array
+    };
+
+    // Use functional state update to ensure latest state
+    setMarkers(prevMarkers => [...prevMarkers, newMarker]);
+    setModalVisible(false);
+    setInputModalVisible(false); // Hide the text input modal
+    setBinDescription(''); // Clear the description input
+    setTypeModalVisible(false); // Hide the type selection modal
+    setBinImageUri(null); // Clear the image URI
+    setSelectedTypes([]); // Reset the selected types
+
+    // Show success message
+    setAlertMessage('Bin successfully added!');
+    setAlertVisible(true);
+  } catch (error) {
+    console.log(error);
+    setAlertMessage('Failed to add bin to database');
+    setAlertVisible(true);
+  }
+};
+
+  
 
   /***
    * This function adds the user report of the bin (updates, removal, etc) to the database
@@ -461,10 +471,19 @@ const MapScreen = () => {
       }
       
       const binData = binDoc.data();
+      const imageUrl = binData.binImage;
   
       // if the imageUrl for the bin exists
-      if (binData.imageUrl) {
-        const imageRef = ref(FIREBASE_STORAGE, `binImages/${binData.imageUrl}`);
+      if (imageUrl) {
+        // Decode the URL to handle special characters
+        const decodedUrl = decodeURIComponent(imageUrl);
+        console.log('Decoded URL:', decodedUrl); // Debugging line
+  
+        // Extract the filename from the decoded URL
+        const filename = decodedUrl.substring(decodedUrl.lastIndexOf('/') + 1, decodedUrl.indexOf('?'));
+        console.log('Filename:', filename); // Debugging line
+  
+        const imageRef = ref(FIREBASE_STORAGE, `binImages/${filename}`);
         await deleteObject(imageRef);  // Delete the image from Firebase Storage
       }
   
@@ -474,6 +493,8 @@ const MapScreen = () => {
       console.error('Error deleting bin and image:', error);
     }
   };
+  
+  
 
   /***
    * navigation function (redirect to maps)
