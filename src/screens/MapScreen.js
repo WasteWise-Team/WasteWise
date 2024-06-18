@@ -333,7 +333,6 @@ const handleAddBin = async () => {
       binApproval: null, // for AI filter
       binLocation: new GeoPoint(location.latitude, location.longitude),
       dateAdded: Timestamp.fromDate(new Date()),
-      disposalType: null,
     };
 
     const docRef = await addDoc(collection(FIRESTORE_DB, 'bins'), newBinData);
