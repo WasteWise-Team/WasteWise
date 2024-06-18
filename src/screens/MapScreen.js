@@ -333,7 +333,6 @@ const handleAddBin = async () => {
       binApproval: null, // for AI filter
       binLocation: new GeoPoint(location.latitude, location.longitude),
       dateAdded: Timestamp.fromDate(new Date()),
-      disposalType: null,
     };
 
     const docRef = await addDoc(collection(FIRESTORE_DB, 'bins'), newBinData);
@@ -594,7 +593,7 @@ const handleAddBin = async () => {
     },
     modalContent: {
       width: '90%', // Increase width to 90%
-      height: '20%', // Adjust height to ensure it takes more space
+      height: '25%', // Adjust height to ensure it takes more space
       backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
       padding: 20,
       borderRadius: 10,
