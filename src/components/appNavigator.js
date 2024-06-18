@@ -145,7 +145,7 @@ export default function AppNavigator({ isAuthenticated }) {
   const { theme } = useContext(ThemeContext);
   return (
     <NavigationContainer>
-      {isAuthenticated ? <MainStack key="main" theme={theme}/> : <AuthStack key="auth"/>}
+      {isAuthenticated ? <MainStack key="main" theme={theme}/> : <AuthStack key="auth" theme={theme}/>}
     </NavigationContainer>
   );
 }

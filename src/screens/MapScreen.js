@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef, useContext } from 'react';
-import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert, Platform, Image } from 'react-native';
+import { Text, View, TouchableOpacity, StyleSheet, Modal, TextInput, TouchableWithoutFeedback, Alert, Platform, Image, ActivityIndicator } from 'react-native';
 import MapView, { Marker, Callout } from 'react-native-maps';
 import * as Location from 'expo-location';
 import * as Linking from 'expo-linking';
@@ -9,6 +9,8 @@ import BinModal from '../components/BinModal'; // Adjust the import path if need
 import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
 import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { getAuth } from 'firebase/auth';
+
 
 // Import Firestore and Storage functions
 import { FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, doc, setDoc, getDoc, FIREBASE_STORAGE } from '../../firebaseConfig';
@@ -30,6 +32,8 @@ const MapScreen = () => {
   const [binImageUri, setBinImageUri] = useState(null); // State for bin image URI
   const [viewReportModalVisible, setViewReportModalVisible] = useState(false); // report display thing
   const mapRef = useRef(null);
+
+  const [isLoading, setIsLoading] = useState(false);
 
   const [reportModalVisible, setReportModalVisible] = useState(false); // State for report modal visibility
   const [reportText, setReportText] = useState(''); // State for report text
@@ -191,6 +195,14 @@ const MapScreen = () => {
    * This function takes the photo via the camera and saves/provesses the image
    */
   const takePhoto = async () => {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      setAlertMessage('Please sign in to add a bin!');
+      setAlertVisible(true);
+      return;
+    }
     const options = {
       mediaType: 'photo',
       quality: 1,
@@ -273,7 +285,17 @@ const MapScreen = () => {
    * This function adds the bin once the 'OK' button is clicked
    */
 const handleAddBin = async () => {
+  setIsLoading(true); // Set loading state to true
   try {
+    const auth = getAuth();
+    const user = auth.currentUser;
+
+    if (!user) {
+      setAlertMessage('User is not authenticated');
+      setAlertVisible(true);
+      return;
+    }
+
     const radius = 0.0001; // ~11 meters
 
     const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
@@ -284,7 +306,7 @@ const handleAddBin = async () => {
         longitude: data.binLocation.longitude,
       };
     });
-
+    
     const binExists = existingBins.some(bin => {
       return bin.latitude === location.latitude && bin.longitude === location.longitude;
     });
@@ -307,7 +329,7 @@ const handleAddBin = async () => {
       binDescription: binDescription, // Include the bin description
       binImage: downloadUrl, // Include the bin image URL
       binType: selectedTypes,
-      addedBy: null,
+      addedBy: user.uid,
       binApproval: null, // for AI filter
       binLocation: new GeoPoint(location.latitude, location.longitude),
       dateAdded: Timestamp.fromDate(new Date()),
@@ -342,6 +364,8 @@ const handleAddBin = async () => {
     console.log(error);
     setAlertMessage('Failed to add bin to database');
     setAlertVisible(true);
+  } finally {
+    setIsLoading(false); // Reset loading state
   }
 };
 
@@ -751,8 +775,13 @@ const handleAddBin = async () => {
                 <TouchableOpacity
                   style={styles.button}
                   onPress={handleAddBin}
+                  disabled={isLoading}
                 >
-                  <Text style={styles.buttonText}>Add Bin</Text>
+                  {isLoading ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={styles.buttonText}>Add Bin</Text>
+                  )}
                 </TouchableOpacity>
               </View>
             </TouchableWithoutFeedback>
