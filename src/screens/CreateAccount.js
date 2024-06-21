@@ -4,7 +4,7 @@ import { AntDesign } from '@expo/vector-icons';
 import ThemeContext from '../context/ThemeContext';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { doc, setDoc, query, where, getDocs, collection } from 'firebase/firestore';
 
 function isValidPassword(password) {
   // Regular expression to match the criteria
@@ -33,9 +33,10 @@ const CreateAccount = ({ navigation }) => {
   const auth = FIREBASE_AUTH;
 
   const checkUsernameExists = async (username) => {
-    const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
-    const usernameDoc = await getDoc(usernameDocRef);
-    return usernameDoc.exists();
+    const usersCollectionRef = collection(FIRESTORE_DB, 'users');
+    const q = query(usersCollectionRef, where('username', '==', username));
+    const querySnapshot = await getDocs(q);
+    return !querySnapshot.empty;
   };
   
 
@@ -89,10 +90,6 @@ const CreateAccount = ({ navigation }) => {
         username: username,
         createdAt: new Date()
       });
-
-      // Add username to Firestore
-      const usernameDocRef = doc(FIRESTORE_DB, 'usernames', username);
-      await setDoc(usernameDocRef, {uid});
 
       console.log(response);
      

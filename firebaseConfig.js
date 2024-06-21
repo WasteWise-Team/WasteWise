@@ -1,6 +1,6 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from 'firebase/app';
-import { getFirestore, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, doc, setDoc, getDoc } from 'firebase/firestore';
+import { getFirestore, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, doc, setDoc, getDoc, query, where } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 import { initializeAuth, getReactNativePersistence, getAuth } from 'firebase/auth';
 import ReactNativeAsyncStorage from '@react-native-async-storage/async-storage';
@@ -31,4 +31,4 @@ const FIREBASE_AUTH = initializeAuth(FIREBASE_APP, {
 // Initialize Firebase Storage
 const FIREBASE_STORAGE = getStorage(FIREBASE_APP);
 
-export { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, setDoc, doc, getDoc, FIREBASE_STORAGE };
+export { FIREBASE_APP, FIREBASE_AUTH, FIRESTORE_DB, GeoPoint, Timestamp, collection, addDoc, getDocs, updateDoc, setDoc, doc, getDoc, query, where, FIREBASE_STORAGE };
