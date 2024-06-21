@@ -10,6 +10,7 @@ import ThemeContext from '../context/ThemeContext';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
 
+import SettingsStack from '../backend/settingStack';  // Import the new SettingsStack component
 
 const { width } = Dimensions.get('window');
 const baseFontSize = width > 350 ? 16 : 14;
@@ -21,10 +22,10 @@ export default function ProfileScreen({ navigation }) {
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
   const [profileData, setProfileData] = useState({
-    // default pfp is draco lmao
+    // Guest Profile
     profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg', // default image
-    username: '',
-    bio: '',
+    username: 'Guest',
+    bio: 'Change me',
   });
 
 
@@ -42,7 +43,7 @@ export default function ProfileScreen({ navigation }) {
             setProfileData({
               profileImage: userData.profileImageLink || profileData.profileImage,
               username: userData.username || '',
-              bio: userData.bio || '',
+              bio: userData.bio || 'Change me!',
             });
           }
           else {
@@ -108,7 +109,7 @@ export default function ProfileScreen({ navigation }) {
         <Tab.Screen name="History" component={HistoryScreen} />
         <Tab.Screen name="Ranks" component={RanksScreen} />
         <Tab.Screen name="Social" component={SocialScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Settings" component={SettingsStack} />
       </Tab.Navigator>
     </View>
   );
