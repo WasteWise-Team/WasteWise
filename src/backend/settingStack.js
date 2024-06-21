@@ -1,13 +1,13 @@
 import React, { useContext } from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 import { StyleSheet, View, Text } from 'react-native';
-import Settings from '../components/settings';
+import Settings from '../components/settingsPage';
 import UserSettings from '../backend/userSettings';
 import ThemeContext from '../context/ThemeContext';
 
 const Stack = createStackNavigator();
 
-export default function SettingsStack() {
+export default function SettingsStack( {onUpdateBio} ) {
   const { theme } = useContext(ThemeContext);
 
   const styles = StyleSheet.create({
@@ -41,6 +41,7 @@ export default function SettingsStack() {
           title: '',
         }}
       />
+      {props => <UserSettings {...props} onUpdateBio ={onUpdateBio} />}
       <Stack.Screen
         name="UserSettings"
         component={UserSettings}

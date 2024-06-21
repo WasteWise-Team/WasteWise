@@ -5,9 +5,9 @@ import { doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { sendPasswordResetEmail } from 'firebase/auth';
 import ThemeContext from '../context/ThemeContext';
 
-export default function UserSettings() {
+export default function UserSettings({ onUpdateBio }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
-  const [status, setStatus] = useState('');
+  const [bio, setBio] = useState('');
 
   const handleChangePassword = () => {
     const user = FIREBASE_AUTH.currentUser;
@@ -22,13 +22,14 @@ export default function UserSettings() {
     }
   };
 
-  const handleChangeStatus = async () => {
+  const handleChangeBio = async () => {
     const user = FIREBASE_AUTH.currentUser;
     if (user) {
       const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
       try {
-        await updateDoc(userDocRef, { status });
-        Alert.alert('Success', 'Status updated successfully!');
+        await updateDoc(userDocRef, { bio });
+        onUpdateBio(bio);
+        Alert.alert('Success', 'Bio updated successfully!');
       } catch (error) {
         Alert.alert('Error', error.message);
       }
@@ -90,13 +91,13 @@ export default function UserSettings() {
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
-          placeholder="Change Status"
-          placeholderTextColor={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'}
-          value={status}
-          onChangeText={text => setStatus(text)}
+          placeholder="Change Bio"
+          placeholderTextColor={theme === 'dark' ? '#C4D8BF90' : '#2D5A3D90'}
+          value={bio}
+          onChangeText={text => setBio(text)}
         />
-        <TouchableOpacity style={styles.button} onPress={handleChangeStatus}>
-          <Text style={styles.buttonText}>Change Status</Text>
+        <TouchableOpacity style={styles.button} onPress={handleChangeBio}>
+          <Text style={styles.buttonText}>Change Bio</Text>
         </TouchableOpacity>
       </View>
       <View style={styles.inputContainer}>

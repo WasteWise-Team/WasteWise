@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
 import { View, StyleSheet, Dimensions, Text } from 'react-native';
 import GuestProfileHeader from '../components/GuestProfileHeader';
-import Settings from '../components/settings';
+import Settings from '../components/settingsPage';
 import History from '../components/scanHistory';
 import Social from '../components/social';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
