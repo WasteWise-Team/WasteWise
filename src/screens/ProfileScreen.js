@@ -7,7 +7,8 @@ import Social from '../components/social';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Leaderboard from '../components/Leaderboard';
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH, FIRESTORE_DB, collection, getDoc, doc } from '../../firebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
 
 const { width } = Dimensions.get('window');
@@ -19,6 +20,12 @@ export default function ProfileScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const [name, setName] = useState('');
   const [username, setUsername] = useState('');
+  const [profileData, setProfileData] = useState({
+    // default pfp is draco lmao
+    profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg', // default image
+    username: '',
+    bio: '',
+  });
 
 
   useEffect(() => {
@@ -32,9 +39,12 @@ export default function ProfileScreen({ navigation }) {
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            setName(userData.firstName); // Update the name variable
-            setUsername(userData.username);
-          } 
+            setProfileData({
+              profileImage: userData.profileImageLink || profileData.profileImage,
+              username: userData.username || '',
+              bio: userData.bio || '',
+            });
+          }
           else {
             console.log('User document does not exist.');
           }
@@ -49,12 +59,11 @@ export default function ProfileScreen({ navigation }) {
     fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
   }, []); // Empty dependency array ensures it runs only once after mounting
 
-
-
-  const profileData = {
-    profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
-    username: username,
-    bio: name,
+  const updateProfileImage = (newImageUri) => {
+    setProfileData((prevData) => ({
+      ...prevData,
+      profileImage: newImageUri,
+    }));
   };
 
   const styles = StyleSheet.create({
@@ -74,6 +83,7 @@ export default function ProfileScreen({ navigation }) {
         username={profileData.username}
         bio={profileData.bio}
         navigation={navigation}
+        onUpdateProfileImage={updateProfileImage} // Pass the callback to ProfileHeader
       />
       <Tab.Navigator
         screenOptions={{
