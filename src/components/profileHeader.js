@@ -1,4 +1,3 @@
-
 import React, { useContext, useState } from 'react';
 import { View, Text, Image, StyleSheet, Dimensions, TouchableOpacity, Alert, ActivityIndicator } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
@@ -14,7 +13,7 @@ import { updateDoc, doc } from 'firebase/firestore';
 const { height, width } = Dimensions.get('window');
 const HEADER_HEIGHT = height * 0.20;
 
-const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
+const ProfileHeader = ({ profileImage, username, bio, navigation, onUpdateProfileImage }) => {
   const { theme } = useContext(ThemeContext);
   const [uploading, setUploading] = useState(false);
 
@@ -39,10 +38,9 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
       });
 
       console.log('ImagePicker Result:', result);
-      console.log(result.assets[0]);
 
       if (!result.cancelled && result.assets && result.assets.length > 0) {
-        const uri = result.assets[0].uri; // Directly access the uri property
+        const uri = result.assets[0].uri;
         console.log('Selected Image URI:', uri);
         if (!uri) {
           throw new Error('Image URI is undefined');
@@ -53,7 +51,6 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
       }
     } catch (error) {
       console.error('Error during image picking:', error);
-      Alert.alert('Error', 'Could not pick an image. Please try again.');
     }
   };
 
@@ -61,45 +58,47 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
     setUploading(true);
     try {
       console.log('Uploading image from URI:', uri);
-  
+
       // Ensure the URI is accessible
       if (!uri) {
         throw new Error('Invalid URI');
       }
-  
+
       const response = await fetch(uri);
       console.log('Fetch response:', response);
-  
+
       const blob = await response.blob();
       console.log('Blob:', blob);
-  
+
       const user = FIREBASE_AUTH.currentUser;
       console.log('Current user:', user);
-  
+
       if (!user) {
         throw new Error('No user logged in');
       }
-  
+
       const filename = `${user.uid}/profile.jpg`;
       const storageRef = ref(FIREBASE_STORAGE, `profileimages/${filename}`);
       console.log('Storage reference:', storageRef);
-  
+
       // Upload the image
       await uploadBytes(storageRef, blob);
       console.log('Image uploaded successfully to storage');
-  
+
       // Get the download URL
       const downloadURL = await getDownloadURL(storageRef);
       console.log('Download URL:', downloadURL);
-  
+
       // Update Firestore with the new profile image URL
       const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
       console.log('User document reference:', userDocRef);
-  
-      await updateDoc(userDocRef, { profileImage: downloadURL });
+
+      await updateDoc(userDocRef, { profileImageLink: downloadURL });
       console.log('Firestore document updated with profile image URL');
-  
-      // Optionally, you can update the local state to show the new image immediately
+
+      // Call the onUpdateProfileImage callback to update the profile image in the state
+      onUpdateProfileImage(downloadURL);
+
       Alert.alert('Success', 'Profile image updated successfully');
     } catch (error) {
       console.error('Error during image upload:', error);
@@ -109,7 +108,6 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
       console.log('Uploading process finished');
     }
   };
-  
 
   const styles = StyleSheet.create({
     headerContainer: {
@@ -147,7 +145,7 @@ const ProfileHeader = ({ profileImage, username, bio, navigation }) => {
       right: 20,
       padding: 10,
       borderRadius: 5,
-    }
+    },
   });
 
   return (

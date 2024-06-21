@@ -89,10 +89,6 @@ export default function Settings() {
                         <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
                     </View>
                     <View style={styles.row}>
-                        <Text style={styles.text}>Change Password</Text>
-                        <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
-                    </View>
-                    <View style={styles.row}>
                         <Text style={styles.text}>Dark Mode</Text>
                         <Switch
                             trackColor={{ false: '#767577', true: '#2D593D' }}
