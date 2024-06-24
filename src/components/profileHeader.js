@@ -137,6 +137,7 @@ const ProfileHeader = ({ profileImage, username, bio, navigation, onUpdateProfil
     },
     bio: {
       fontSize: 14,
+      paddingTop: 8,
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
     },
     logoutButton: {
