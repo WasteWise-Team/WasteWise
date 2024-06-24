@@ -52,6 +52,7 @@ export default function ProfileScreen({ navigation }) {
     };
 
     fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
+    return () => unsubscribe();
   }, []); // Empty dependency array ensures it runs only once after mounting
 
   const updateProfileImage = (newImageUri) => {

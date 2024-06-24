@@ -41,16 +41,16 @@ export default function SettingsStack( {onUpdateBio} ) {
           title: '',
         }}
       />
-      {props => <UserSettings {...props} onUpdateBio ={onUpdateBio} />}
       <Stack.Screen
         name="UserSettings"
-        component={UserSettings}
         options={{
           title: 'Edit Profile',
           headerStyle: styles.headerStyle,
           headerTitleStyle: styles.headerTitleStyle,
         }}
-      />
+      >
+        {props => <UserSettings {...props} onUpdateBio={onUpdateBio} />}
+      </Stack.Screen>
     </Stack.Navigator>
   );
 }
