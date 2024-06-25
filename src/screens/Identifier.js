@@ -5,6 +5,8 @@ import OpenAI from 'openai';
 import { OPENAI_API_KEY } from '@env';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { collection, addDoc } from '../../firebaseConfig';
 
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
@@ -15,6 +17,8 @@ export default function Identifier({ navigation }) {
     const [response, setResponse] = useState('');
     const [modalVisible, setModalVisible] = useState(false);
     const [loading, setLoading] = useState(false);
+    const [materialType, setMaterialType] = useState('');
+    const [disposal, setDisposal] = useState('');
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -96,7 +100,7 @@ export default function Identifier({ navigation }) {
             throw error;
         }
     };
-    
+
     const blobToBase64 = async (blob) => {
         return new Promise((resolve, reject) => {
             const reader = new FileReader();
@@ -108,15 +112,38 @@ export default function Identifier({ navigation }) {
         });
     };
 
+    const saveScannedItem = async (materialType, disposal) => {
+        const user = FIREBASE_AUTH.currentUser;
+        if (user) {
+            try {
+                await addDoc(collection(FIRESTORE_DB, 'scannedItems'), {
+                    userId: user.uid,
+                    materialType: materialType,
+                    disposal: disposal,
+                    timestamp: new Date(),
+                });
+                console.log('Scanned item saved to Firestore');
+            } catch (error) {
+                console.error('Failed to save scanned item:', error);
+            }
+        }
+    };
+
 
     const analyzeImage = async (base64) => {
+        const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
         const params = {
             model: "gpt-4o",
+            response_format: { "type": "json_object" },
             messages: [
+                {
+                    role: "system",
+                    content: "You are a helpful recycling assistant designed to output JSON."
+                },
                 {
                     role: "user",
                     content: [
-                        { type: "text", text: "Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. In addition, provide instructions on how to properly dispose of this object. Be specific and concise." },
+                        { type: "text", text: prompt },
                         {
                             type: "image_url",
                             image_url: {
@@ -132,7 +159,13 @@ export default function Identifier({ navigation }) {
         try {
             const response = await openai.chat.completions.create(params);
             console.log('OpenAI API Response:', response.choices[0]);
-            setResponse(response.choices[0].message.content);
+
+            const jsonResponse = JSON.parse(response.choices[0].message.content);
+            const { material_type, disposal } = jsonResponse;
+
+            setMaterialType(material_type);
+            setDisposal(disposal);
+            saveScannedItem(material_type, disposal);
             setLoading(false);
             setModalVisible(true);
         } catch (error) {
@@ -181,7 +214,8 @@ export default function Identifier({ navigation }) {
                 <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPressOut={() => setModalVisible(false)}>
                     <View style={styles.modalContent}>
                         <Image source={{ uri: photoUri }} style={{ width: 300, height: 300 }} />
-                        <Text style={{ marginTop: 20, textAlign: 'center' }}>{response}</Text>
+                        <Text style={{ marginTop: 20, textAlign: 'center' }}>Material Type: {materialType}</Text>
+                        <Text style={{ marginTop: 20, textAlign: 'center' }}>Disposal: {disposal}</Text>
                         <TouchableOpacity
                             style={styles.navigateButton}
                             onPress={() => {
