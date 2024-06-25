@@ -387,6 +387,7 @@ const handleAddBin = async () => {
           timestamp: new Date(),
           trueCount: 0,
           falseCount: 0,
+          uid: user ? user.uid : null,
         });
         setAlertMessage('Report submitted successfully!');
         setReportModalVisible(false); // Close the modal after submission
@@ -400,44 +401,14 @@ const handleAddBin = async () => {
   };
 
   /***
-   * This function handles the true/false vote count of each report to see if they're true or not
+   * This function handles voting and checks if the user is logged in
    */
-  // const handleVote = async (reportId, isTrueVote) => {
-  //   const reportRef = doc(FIRESTORE_DB, 'reports', reportId);
-  //   const voteRef = doc(reportRef, 'votes', userId); // see which users have voted
-  
-  //   try {
-  //     // check if the user has already voted
-  //     const voteSnap = await getDoc(voteRef);
-  //     if (voteSnap.exists()) {
-  //       setAlertMessage('You have already voted!');
-  //       setAlertVisible(true);
-  //     } else {
-  //       await setDoc(voteRef, {
-  //         voted: true,
-  //         voteType: isTrueVote ? 'True' : 'False'
-  //       });
-  //       // if user has not already voted, then let them vote
-  //       await updateDoc(reportRef, {
-  //         trueCount: isTrueVote ? firebase.firestore.FieldValue.increment(1) : firebase.firestore.FieldValue.increment(0),
-  //         falseCount: isTrueVote ? firebase.firestore.FieldValue.increment(0) : firebase.firestore.FieldValue.increment(1),
-  //       });
-  //       setAlertMessage('Thanks for your input!');
-  //       setAlertVisible(true);
-  //     }
-  //   } catch (error) {
-  //     console.error('Failed to record vote:', error);
-  //     setAlertMessage('Failed to record input');
-  //     setAlertVisible(true);
-  //   }
-  // };
-  
-
-  /***
-   * TEMP HANDLEVOTE WITHOUT USER RESTRICTION
-   */
-
   const handleVoteOnFirstReport = (selectedMarker, isTrueFalse) => {
+    if (!user) {
+      console.log("User not logged in");
+      alert("You must be logged in to vote.");
+      return;
+    }
     if (selectedMarker.reports && selectedMarker.reports.length > 0) {
         const firstReportId = selectedMarker.reports[0].id;
         handleVote(firstReportId, isTrueFalse);
