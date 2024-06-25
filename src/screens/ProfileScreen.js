@@ -1,14 +1,15 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import ProfileHeader from '../components/profileHeader';
-import Settings from '../components/settings';
 import History from '../components/scanHistory';
 import Social from '../components/social';
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Leaderboard from '../components/Leaderboard';
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH, FIRESTORE_DB, collection, getDoc, doc } from '../../firebaseConfig';
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 
+import SettingsStack from '../backend/settingStack';  // Import the new SettingsStack component
 
 const { width } = Dimensions.get('window');
 const baseFontSize = width > 350 ? 16 : 14;
@@ -17,9 +18,11 @@ const Tab = createMaterialTopTabNavigator();
 
 export default function ProfileScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
-  const [name, setName] = useState('');
-  const [username, setUsername] = useState('');
-
+  const [profileData, setProfileData] = useState({
+    profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg', // default image
+    username: 'Guest',
+    bio: 'Change me',
+  });
 
   useEffect(() => {
     const fetchDataFromFirestore = async () => {
@@ -32,10 +35,12 @@ export default function ProfileScreen({ navigation }) {
 
           if (userDocSnap.exists()) {
             const userData = userDocSnap.data();
-            setName(userData.firstName); // Update the name variable
-            setUsername(userData.username);
-          } 
-          else {
+            setProfileData({
+              profileImage: userData.profileImageLink || profileData.profileImage,
+              username: userData.username || '',
+              bio: userData.bio || 'Change me!',
+            });
+          } else {
             console.log('User document does not exist.');
           }
         } else {
@@ -47,14 +52,21 @@ export default function ProfileScreen({ navigation }) {
     };
 
     fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
+    return () => unsubscribe();
   }, []); // Empty dependency array ensures it runs only once after mounting
 
+  const updateProfileImage = (newImageUri) => {
+    setProfileData((prevData) => ({
+      ...prevData,
+      profileImage: newImageUri,
+    }));
+  };
 
-
-  const profileData = {
-    profileImage: 'https://i.pinimg.com/564x/1b/2d/d6/1b2dd6610bb3570191685dcfb3e5e68e.jpg',
-    username: username,
-    bio: name,
+  const updateBio = (newBio) => {
+    setProfileData((prevData) => ({
+      ...prevData,
+      bio: newBio,
+    }));
   };
 
   const styles = StyleSheet.create({
@@ -74,6 +86,8 @@ export default function ProfileScreen({ navigation }) {
         username={profileData.username}
         bio={profileData.bio}
         navigation={navigation}
+        onUpdateProfileImage={updateProfileImage} // Pass the callback to ProfileHeader
+        onUpdateBio={updateBio}
       />
       <Tab.Navigator
         screenOptions={{
@@ -83,7 +97,7 @@ export default function ProfileScreen({ navigation }) {
             fontFamily: 'Nunito-Regular',
             color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
             textTransform: 'none',
-            marginBottom: -5
+            marginBottom: -5,
           },
           tabBarStyle: {
             backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
@@ -98,7 +112,9 @@ export default function ProfileScreen({ navigation }) {
         <Tab.Screen name="History" component={HistoryScreen} />
         <Tab.Screen name="Ranks" component={RanksScreen} />
         <Tab.Screen name="Social" component={SocialScreen} />
-        <Tab.Screen name="Settings" component={SettingsScreen} />
+        <Tab.Screen name="Settings">
+          {() => <SettingsStack onUpdateBio={updateBio} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </View>
   );
@@ -149,22 +165,6 @@ function SocialScreen({ navigation }) {
   return (
     <View style={styles.scene}>
       <Social navigation={navigation} />
-    </View>
-  );
-}
-
-function SettingsScreen({ navigation }) {
-  const { theme } = useContext(ThemeContext);
-  const styles = StyleSheet.create({
-    scene: {
-      flex: 1,
-      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
-    },
-  });
-
-  return (
-    <View style={styles.scene}>
-      <Settings navigation={navigation} />
     </View>
   );
 }
