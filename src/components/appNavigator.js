@@ -19,6 +19,7 @@ import { TouchableOpacity } from 'react-native';
 import GuestHomeScreen from '../screens/GuestHomeScreen';
 import GuestProfileScreen from '../screens/GuestProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
+import Identifier from '../screens/Identifier';
 
 // Screen names
 const homeName = 'Home';
@@ -66,6 +67,7 @@ const MainStack = ({ theme }) => (
       {(props) => <AppTabs {...props} theme={theme} />}
     </Stack.Screen>
     <Stack.Screen name="Info" component={InfoScreen} />
+    <Stack.Screen name="Identify" component={Identifier}/>
   </Stack.Navigator>
 );
 
@@ -135,7 +137,7 @@ const AppTabs = ({ theme }) => (
   >
     <Tab.Screen name={homeName} component={HomeScreen} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={mapName} component={MapScreen} options={{ tabBarButton: CustomTabButton }} />
-    <Tab.Screen name={scannerName} component={ScanStack} options={{ tabBarButton: CustomTabButton }} />
+    <Tab.Screen name={scannerName} component={Identifier} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={infoName} component={InfoScreen} options={{ tabBarButton: CustomTabButton }} />
     <Tab.Screen name={profileName} component={ProfileScreen} options={{ tabBarButton: CustomTabButton }} />
   </Tab.Navigator>
