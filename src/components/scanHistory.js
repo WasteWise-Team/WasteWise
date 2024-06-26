@@ -1,36 +1,92 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
+import { getAuth } from 'firebase/auth';
+import { FIRESTORE_DB } from '../../firebaseConfig'; // Import Firestore instance
+import { collection, query, where, orderBy, limit, startAfter, onSnapshot } from 'firebase/firestore';
 
-// Mock data fetching function
-const fetchHistoryData = async (page) => {
-  // Replace this with your actual data fetching logic
-  return new Array(10).fill(null).map((_, index) => ({
-    id: `${page}-${index}`,
-    name: `Item ${page}-${index}`,
-    date: new Date().toLocaleDateString(),
-  }));
+const fetchHistoryData = (lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+
+  if (!user) {
+    setMessage('Please sign in to use this function.');
+    setLoading(false);
+    return;
+  }
+
+  const userUid = user.uid;
+  const pageSize = 10; // Number of items per page
+
+  let itemsQuery = query(
+    collection(FIRESTORE_DB, 'scannedItems'),
+    where('userId', '==', userUid),
+    orderBy('timestamp', 'desc'),
+    limit(pageSize)
+  );
+
+  if (lastDoc) {
+    itemsQuery = query(
+      collection(FIRESTORE_DB, 'scannedItems'),
+      where('userId', '==', userUid),
+      orderBy('timestamp', 'desc'),
+      startAfter(lastDoc),
+      limit(pageSize)
+    );
+  }
+
+  const unsubscribe = onSnapshot(itemsQuery, (querySnapshot) => {
+    const newData = querySnapshot.docs.map(doc => {
+      const item = doc.data();
+      return {
+        id: doc.id,
+        name: item.name,
+        date: item.timestamp.toDate().toLocaleDateString(), // Format the timestamp
+      };
+    });
+
+    if (newData.length === 0) {
+      setHasMore(false);
+    }
+
+    setData(prevData => {
+      const newDataIds = newData.map(item => item.id);
+      const filteredPrevData = prevData.filter(item => !newDataIds.includes(item.id));
+      return [...filteredPrevData, ...newData];
+    });
+
+    const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+    setLastDoc(lastVisible);
+    setLoading(false);
+  }, (error) => {
+    console.error('Error fetching history data:', error);
+    setMessage('Failed to fetch history data');
+    setLoading(false);
+  });
+
+  return unsubscribe;
 };
 
-export default function ScanHistory({ history }) {
+export default function ScanHistory() {
   const [data, setData] = useState([]);
-  const [page, setPage] = useState(1);
+  const [lastDoc, setLastDoc] = useState(null);
   const [loading, setLoading] = useState(false);
-  const { theme, toggleTheme } = useContext(ThemeContext);
-
-
-  const loadMoreData = async () => {
-    if (loading) return;
-    setLoading(true);
-    const newData = await fetchHistoryData(page);
-    setData([...data, ...newData]);
-    setPage(page + 1);
-    setLoading(false);
-  };
+  const [hasMore, setHasMore] = useState(true);
+  const [message, setMessage] = useState('');
+  const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
-    loadMoreData();
-  }, []);
+    // setLoading(true);
+    const unsubscribe = fetchHistoryData(lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage);
+    return () => unsubscribe();
+  }, [lastDoc]);
+
+  const loadMoreData = () => {
+    if (loading || !hasMore) return;
+
+    // setLoading(true);
+    setLastDoc(prevLastDoc => prevLastDoc); // Trigger useEffect to fetch more data
+  };
 
   const renderItem = ({ item }) => (
     <View style={styles.item}>
@@ -46,7 +102,7 @@ export default function ScanHistory({ history }) {
       padding: 16, // Add padding around the container
     },
     content: {
-      width: '85%', // Make content 75% of the screen width
+      width: '87%', // Make content 87% of the screen width
       alignSelf: 'center', // Center the content
       height: '95%',
     },
@@ -82,24 +138,39 @@ export default function ScanHistory({ history }) {
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       fontSize: 15,
     },
+    emptyMessage: {
+      fontSize: 18,
+      textAlign: 'center',
+      marginTop: 20,
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+    },
   });
 
+  const renderFooter = () => {
+    if (!loading) return null;
+    return <ActivityIndicator size="large" color="#9ee8a4" />;
+  };
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Scan History</Text>
-        <FlatList
-          data={data}
-          renderItem={renderItem}
-          keyExtractor={(item) => item.id}
-          onEndReached={loadMoreData}
-          onEndReachedThreshold={0.5}
-          ListFooterComponent={loading && <ActivityIndicator size="large" color="#0000ff" />}
-          contentContainerStyle={styles.listContainer}
-        />
+        {message ? (
+          <Text style={styles.emptyMessage}>{message}</Text>
+        ) : data.length === 0 && !loading ? (
+          <Text style={styles.emptyMessage}>Scan your first item!</Text>
+        ) : (
+          <FlatList
+            data={data}
+            renderItem={renderItem}
+            keyExtractor={(item) => item.id}
+            onEndReached={loadMoreData}
+            onEndReachedThreshold={0.5}
+            ListFooterComponent={renderFooter}
+            contentContainerStyle={styles.listContainer}
+          />
+        )}
       </View>
     </SafeAreaView>
   );
 }
-
