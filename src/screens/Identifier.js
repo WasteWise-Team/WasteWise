@@ -19,7 +19,6 @@ export default function Identifier({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [materialType, setMaterialType] = useState('');
     const [disposal, setDisposal] = useState('');
-    const [name, setName] = useState('');
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -113,7 +112,7 @@ export default function Identifier({ navigation }) {
         });
     };
 
-    const saveScannedItem = async (materialType, disposal, name) => {
+    const saveScannedItem = async (materialType, disposal) => {
         const user = FIREBASE_AUTH.currentUser;
         if (user) {
             try {
@@ -121,7 +120,6 @@ export default function Identifier({ navigation }) {
                     userId: user.uid,
                     materialType: materialType,
                     disposal: disposal,
-                    name: name,
                     timestamp: new Date(),
                 });
                 console.log('Scanned item saved to Firestore');
@@ -133,7 +131,7 @@ export default function Identifier({ navigation }) {
 
 
     const analyzeImage = async (base64) => {
-        const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'name' which is the name of the object. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
+        const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
         const params = {
             model: "gpt-4o",
             response_format: { "type": "json_object" },
@@ -163,12 +161,11 @@ export default function Identifier({ navigation }) {
             console.log('OpenAI API Response:', response.choices[0]);
 
             const jsonResponse = JSON.parse(response.choices[0].message.content);
-            const { material_type, disposal, name } = jsonResponse;
+            const { material_type, disposal } = jsonResponse;
 
             setMaterialType(material_type);
             setDisposal(disposal);
-            setName(name);
-            saveScannedItem(material_type, disposal, name);
+            saveScannedItem(material_type, disposal);
             setLoading(false);
             setModalVisible(true);
         } catch (error) {
@@ -177,34 +174,6 @@ export default function Identifier({ navigation }) {
             setLoading(false);
         }
     };
-
-    const getBinTypeForItem = (itemType) => {
-        switch (itemType.toLowerCase()) {
-            case 'plastic':
-                return 'General Recyclables';
-            case 'paper':
-                return 'General Recyclables';
-            case 'metal':
-                return 'General Recyclables';
-            case 'glass':
-                return 'General Recyclables';
-            // Add more cases as needed for different types of items
-            default:
-                return null; // No specific bin type found
-        }
-    };
-
-
-    const navigateToMapScreen = () => {
-        const binType = getBinTypeForItem(materialType);
-        if (binType) {
-            setModalVisible(false);
-            navigation.navigate('Map', { binType });
-        } else {
-            Alert.alert('Error', 'No bin type found for the item');
-        }
-    };
-
 
     let cameraRef;
 
@@ -245,15 +214,13 @@ export default function Identifier({ navigation }) {
                 <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPressOut={() => setModalVisible(false)}>
                     <View style={styles.modalContent}>
                         <Image source={{ uri: photoUri }} style={{ width: 300, height: 300 }} />
-                        <Text style={{ marginTop: 20, textAlign: 'center' }}>Name: {name}</Text>
-
                         <Text style={{ marginTop: 20, textAlign: 'center' }}>Material Type: {materialType}</Text>
                         <Text style={{ marginTop: 20, textAlign: 'center' }}>Disposal: {disposal}</Text>
                         <TouchableOpacity
                             style={styles.navigateButton}
                             onPress={() => {
                                 setModalVisible(false);
-                                navigateToMapScreen();
+                                navigation.navigate('Map');
                             }}
                         >
                             <Text style={styles.buttonText}>Navigate</Text>
