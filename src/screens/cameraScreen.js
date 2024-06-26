@@ -127,7 +127,7 @@ export default function CameraScreen({ navigation }) {
       </TouchableOpacity>
 
       {/* Loading Indicator */}
-      {loading && <ActivityIndicator size="large" color="#0000ff" />}
+      {loading && <ActivityIndicator size="large" color="#9ee8a4" />}
 
       {/* Scan Modal */}
       <ScanModal

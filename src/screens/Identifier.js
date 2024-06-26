@@ -6,8 +6,7 @@ import { OPENAI_API_KEY } from '@env';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
-import { doc, updateDoc, increment, addDoc, getDoc, collection } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { collection, addDoc } from '../../firebaseConfig';
 
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
@@ -115,41 +114,23 @@ export default function Identifier({ navigation }) {
     };
 
     const saveScannedItem = async (materialType, disposal, name) => {
-        const user = getAuth().currentUser;
+        const user = FIREBASE_AUTH.currentUser;
         if (user) {
-          try {
-            // Add the scanned item to the 'scannedItems' collection
-            await addDoc(collection(FIRESTORE_DB, 'scannedItems'), {
-              userId: user.uid,
-              materialType: materialType,
-              disposal: disposal,
-              name: name,
-              timestamp: new Date(),
-            });
-            console.log('Scanned item saved to Firestore');
-      
-            // Reference to the user's document
-            const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
-            const userDocSnap = await getDoc(userDocRef);
-      
-            if (userDocSnap.exists()) {
-              // Update the itemCount field if the document exists
-              await updateDoc(userDocRef, {
-                itemCount: increment(1),
-              });
-              console.log('User item count updated');
-            } else {
-              // Create the document with itemCount = 1 if it doesn't exist
-              await setDoc(userDocRef, {
-                itemCount: 1,
-              });
-              console.log('User document created with itemCount');
+            try {
+                await addDoc(collection(FIRESTORE_DB, 'scannedItems'), {
+                    userId: user.uid,
+                    materialType: materialType,
+                    disposal: disposal,
+                    name: name,
+                    timestamp: new Date(),
+                });
+                console.log('Scanned item saved to Firestore');
+            } catch (error) {
+                console.error('Failed to save scanned item:', error);
             }
-          } catch (error) {
-            console.error('Failed to save scanned item or update item count:', error);
-          }
         }
-      };
+    };
+
 
     const analyzeImage = async (base64) => {
         const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'name' which is the name of the object. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
@@ -182,7 +163,7 @@ export default function Identifier({ navigation }) {
             console.log('OpenAI API Response:', response.choices[0]);
 
             const jsonResponse = JSON.parse(response.choices[0].message.content);
-            const { material_type, disposal, name } = jsonResponse;
+            const { name, material_type, disposal } = jsonResponse;
 
             setName(name);
             setMaterialType(material_type);
@@ -194,6 +175,34 @@ export default function Identifier({ navigation }) {
             console.error('Failed to analyze image:', error);
             Alert.alert('Error', 'Failed to analyze image');
             setLoading(false);
+        }
+    };
+
+    const getBinTypeForItem = (itemType) => {
+        switch (itemType.toLowerCase()) {
+            case 'plastic':
+                return 'General Recyclables';
+            case 'paper':
+                return 'General Recyclables';
+            case 'metal':
+                return 'General Recyclables';
+            case 'glass':
+                return 'General Recyclables';
+            // Add more cases as needed for different types of items
+            default:
+                return null; // No specific bin type found
+        }
+    };
+
+
+    const navigateToMapScreen = () => {
+        const binType = getBinTypeForItem(materialType);
+        console.log(binType);
+        if (binType) {
+            setModalVisible(false);
+            navigation.navigate('Map', { binType });
+        } else {
+            Alert.alert('Error', 'No bin type found for the item');
         }
     };
 
@@ -236,13 +245,14 @@ export default function Identifier({ navigation }) {
                 <TouchableOpacity style={styles.modalContainer} activeOpacity={1} onPressOut={() => setModalVisible(false)}>
                     <View style={styles.modalContent}>
                         <Image source={{ uri: photoUri }} style={{ width: 300, height: 300 }} />
+                        <Text style={{ marginTop: 20, textAlign: 'center' }}>Name: {name}</Text>
                         <Text style={{ marginTop: 20, textAlign: 'center' }}>Material Type: {materialType}</Text>
                         <Text style={{ marginTop: 20, textAlign: 'center' }}>Disposal: {disposal}</Text>
                         <TouchableOpacity
                             style={styles.navigateButton}
                             onPress={() => {
                                 setModalVisible(false);
-                                navigation.navigate('Map');
+                                navigateToMapScreen();
                             }}
                         >
                             <Text style={styles.buttonText}>Navigate</Text>
