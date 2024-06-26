@@ -60,6 +60,15 @@ const MapScreen = () => {
   }, []);
 
   /***
+   * This useEffect resets the modal options if the typeModal is not visible, clearing previous user input
+   */
+  useEffect(() => {
+    if (!typeModalVisible) {
+      resetModalOptions(); // Reset options when modal is closed
+    }
+  }, [typeModalVisible]);
+
+  /***
    * This function keeps track of the user's location and updates it
    */
   const watchLocation = async () => {
@@ -190,7 +199,13 @@ const MapScreen = () => {
       </TouchableWithoutFeedback>
     </Modal>
   );
-  
+
+  /***
+   * This function clears the selected type
+   */
+  const resetModalOptions = () => {
+    setSelectedTypes([]);
+  };
 
   /***
    * This function takes the photo via the camera and saves/provesses the image
@@ -221,6 +236,7 @@ const MapScreen = () => {
           text: 'OK',
           onPress: async () => {
             try {
+              resetModalOptions();
               let result = await ImagePicker.launchCameraAsync(options);
               console.log(result); // Log the entire result object to debug
               if (result.cancelled || result.canceled) {
