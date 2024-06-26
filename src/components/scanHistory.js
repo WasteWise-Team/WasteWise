@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState, useContext, useCallback } from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
 import { getAuth } from 'firebase/auth';
@@ -88,12 +88,12 @@ export default function ScanHistory() {
     setLastDoc(prevLastDoc => prevLastDoc); // Trigger useEffect to fetch more data
   };
 
-  const renderItem = ({ item }) => (
+  const renderItem = useCallback(({ item }) => (
     <View style={styles.item}>
       <Text style={styles.itemName}>{item.name}</Text>
       <Text style={styles.itemDate}>{item.date}</Text>
     </View>
-  );
+  ), []);
 
   const styles = StyleSheet.create({
     container: {
@@ -124,6 +124,7 @@ export default function ScanHistory() {
       fontFamily: 'Nunito-Regular',
       flexDirection: 'row',
       justifyContent: 'space-between',
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       padding: 10,
     },
     itemName: {
