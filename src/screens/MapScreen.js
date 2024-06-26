@@ -33,6 +33,7 @@ const MapScreen = () => {
   const [binImageUri, setBinImageUri] = useState(null); // State for bin image URI
   const [viewReportModalVisible, setViewReportModalVisible] = useState(false); // report display thing
   const mapRef = useRef(null);
+  const hello = 'hello';
 
   const [isLoading, setIsLoading] = useState(false);
 
