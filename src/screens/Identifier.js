@@ -168,7 +168,7 @@ export default function Identifier({ navigation }) {
             setName(name);
             setMaterialType(material_type);
             setDisposal(disposal);
-            saveScannedItem(material_type, disposal);
+            saveScannedItem(material_type, disposal, name);
             setLoading(false);
             setModalVisible(true);
         } catch (error) {
