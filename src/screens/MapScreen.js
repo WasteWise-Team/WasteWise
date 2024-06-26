@@ -59,14 +59,6 @@ const MapScreen = () => {
     fetchMarkers();
   }, []);
 
-  /***
-   * This useEffect resets the modal options if the typeModal is not visible, clearing previous user input
-   */
-  useEffect(() => {
-    if (!typeModalVisible) {
-      resetModalOptions(); // Reset options when modal is closed
-    }
-  }, [typeModalVisible]);
 
   /***
    * This function keeps track of the user's location and updates it
