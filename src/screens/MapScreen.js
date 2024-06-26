@@ -690,7 +690,6 @@ const handleAddBin = async () => {
       left: 0,
       right: 0,
       bottom: 0,
-      color: 'fff',
       justifyContent: 'center',
       alignItems: 'center',
       backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -758,7 +757,7 @@ const handleAddBin = async () => {
       {/* Loading Indicator */}
       {isLoading && (
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
+          <ActivityIndicator size="large" color="#9ee8a4" />
         </View>
       )}
       <TouchableOpacity
