@@ -19,6 +19,7 @@ export default function Identifier({ navigation }) {
     const [loading, setLoading] = useState(false);
     const [materialType, setMaterialType] = useState('');
     const [disposal, setDisposal] = useState('');
+    const [name, setName] = useState('');
 
     if (!permission) {
         // Camera permissions are still loading.
@@ -112,7 +113,7 @@ export default function Identifier({ navigation }) {
         });
     };
 
-    const saveScannedItem = async (materialType, disposal) => {
+    const saveScannedItem = async (materialType, disposal, name) => {
         const user = FIREBASE_AUTH.currentUser;
         if (user) {
             try {
@@ -120,6 +121,7 @@ export default function Identifier({ navigation }) {
                     userId: user.uid,
                     materialType: materialType,
                     disposal: disposal,
+                    name: name,
                     timestamp: new Date(),
                 });
                 console.log('Scanned item saved to Firestore');
@@ -131,7 +133,7 @@ export default function Identifier({ navigation }) {
 
 
     const analyzeImage = async (base64) => {
-        const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
+        const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'name' which is the name of the object. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
         const params = {
             model: "gpt-4o",
             response_format: { "type": "json_object" },
@@ -161,8 +163,9 @@ export default function Identifier({ navigation }) {
             console.log('OpenAI API Response:', response.choices[0]);
 
             const jsonResponse = JSON.parse(response.choices[0].message.content);
-            const { material_type, disposal } = jsonResponse;
+            const { material_type, disposal, name } = jsonResponse;
 
+            setName(name);
             setMaterialType(material_type);
             setDisposal(disposal);
             saveScannedItem(material_type, disposal);
