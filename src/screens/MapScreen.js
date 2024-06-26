@@ -19,7 +19,7 @@ import { ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage
 import { analyzeImage } from '../backend/binAPI'; 
 
 
-const MapScreen = () => {
+const MapScreen = ({route}) => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigation = useNavigation(); // Get the navigation prop
   const [location, setLocation] = useState(null);
@@ -80,8 +80,7 @@ const MapScreen = () => {
     if (!typeModalVisible) {
       resetModalOptions(); // Reset options when modal is closed
     }
-  }, [typeModalVisible]);
-  }, [binType]);
+  }, [typeModalVisible, binType]);
 
   /***
    * This function keeps track of the user's location and updates it
