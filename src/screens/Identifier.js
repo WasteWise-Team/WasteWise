@@ -6,7 +6,8 @@ import { OPENAI_API_KEY } from '@env';
 import { MaterialIcons, Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
 import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig';
-import { collection, addDoc } from '../../firebaseConfig';
+import { doc, updateDoc, increment, addDoc, getDoc, collection } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
@@ -114,23 +115,41 @@ export default function Identifier({ navigation }) {
     };
 
     const saveScannedItem = async (materialType, disposal, name) => {
-        const user = FIREBASE_AUTH.currentUser;
+        const user = getAuth().currentUser;
         if (user) {
-            try {
-                await addDoc(collection(FIRESTORE_DB, 'scannedItems'), {
-                    userId: user.uid,
-                    materialType: materialType,
-                    disposal: disposal,
-                    name: name,
-                    timestamp: new Date(),
-                });
-                console.log('Scanned item saved to Firestore');
-            } catch (error) {
-                console.error('Failed to save scanned item:', error);
+          try {
+            // Add the scanned item to the 'scannedItems' collection
+            await addDoc(collection(FIRESTORE_DB, 'scannedItems'), {
+              userId: user.uid,
+              materialType: materialType,
+              disposal: disposal,
+              name: name,
+              timestamp: new Date(),
+            });
+            console.log('Scanned item saved to Firestore');
+      
+            // Reference to the user's document
+            const userDocRef = doc(FIRESTORE_DB, 'users', user.uid);
+            const userDocSnap = await getDoc(userDocRef);
+      
+            if (userDocSnap.exists()) {
+              // Update the itemCount field if the document exists
+              await updateDoc(userDocRef, {
+                itemCount: increment(1),
+              });
+              console.log('User item count updated');
+            } else {
+              // Create the document with itemCount = 1 if it doesn't exist
+              await setDoc(userDocRef, {
+                itemCount: 1,
+              });
+              console.log('User document created with itemCount');
             }
+          } catch (error) {
+            console.error('Failed to save scanned item or update item count:', error);
+          }
         }
-    };
-
+      };
 
     const analyzeImage = async (base64) => {
         const prompt = "Provide valid JSON output. Given these categories: E-waste, Food, Chemicals, Textiles, Metal, Plastic, classify the object in the image. Provide one column name 'name' which is the name of the object. Provide one column name 'material_type' which is the type of material of the object. Provide another column name 'disposal' which is the instructions on how to properly dispose of the material. Make the instructions limited to 50 words."
