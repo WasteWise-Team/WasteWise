@@ -20,7 +20,6 @@ import { analyzeImage } from '../backend/binAPI';
 
 
 const MapScreen = () => {
-const MapScreen = () => {
   const { theme, toggleTheme } = useContext(ThemeContext);
   const navigation = useNavigation(); // Get the navigation prop
   const [location, setLocation] = useState(null);
