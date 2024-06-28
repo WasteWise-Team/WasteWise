@@ -1,9 +1,43 @@
-import React, { useContext } from 'react';
-import { StyleSheet, Text, View, SafeAreaView } from 'react-native';
+import React, { useEffect, useState, useContext } from 'react';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
 
-export default function ScanHistory() {
-  const { theme } = useContext(ThemeContext);
+// Mock data fetching function
+const fetchHistoryData = async (page) => {
+  // Replace this with your actual data fetching logic
+  return new Array(10).fill(null).map((_, index) => ({
+    id: `${page}-${index}`,
+    name: `Item ${page}-${index}`,
+    date: new Date().toLocaleDateString(),
+  }));
+};
+
+export default function ScanHistory({ history }) {
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const { theme, toggleTheme } = useContext(ThemeContext);
+
+
+  const loadMoreData = async () => {
+    if (loading) return;
+    setLoading(true);
+    const newData = await fetchHistoryData(page);
+    setData([...data, ...newData]);
+    setPage(page + 1);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    loadMoreData();
+  }, []);
+
+  const renderItem = ({ item }) => (
+    <View style={styles.item}>
+      <Text style={styles.itemName}>{item.name}</Text>
+      <Text style={styles.itemDate}>{item.date}</Text>
+    </View>
+  );
 
   const styles = StyleSheet.create({
     container: {
@@ -12,7 +46,7 @@ export default function ScanHistory() {
       padding: 16, // Add padding around the container
     },
     content: {
-      width: '87%', // Make content 87% of the screen width
+      width: '85%', // Make content 75% of the screen width
       alignSelf: 'center', // Center the content
       height: '95%',
     },
@@ -25,19 +59,45 @@ export default function ScanHistory() {
       marginVertical: 20,
       paddingLeft: 25,
     },
-    fillerText: {
-      fontSize: 18,
-      textAlign: 'center',
-      marginTop: 20,
+    listContainer: {
+      paddingBottom: 15, // Add padding at the bottom of the list
+      paddingRight: 20,
+      paddingLeft: 20,
+    },
+    item: {
+      fontFamily: 'Nunito-Regular',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      padding: 10,
+    },
+    itemName: {
+      flex: 1,
+      textAlign: 'left',
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      fontSize: 15,
+    },
+    itemDate: {
+      flex: 1,
+      textAlign: 'right',
+      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      fontSize: 15,
     },
   });
+
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
         <Text style={styles.title}>Scan History</Text>
-        <Text style={styles.fillerText}>This is a placeholder text while we disable the fetching functionality.</Text>
+        <FlatList
+          data={data}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          onEndReached={loadMoreData}
+          onEndReachedThreshold={0.5}
+          ListFooterComponent={loading && <ActivityIndicator size="large" color="#0000ff" />}
+          contentContainerStyle={styles.listContainer}
+        />
       </View>
     </SafeAreaView>
   );
