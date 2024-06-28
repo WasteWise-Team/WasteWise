@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useContext, useCallback } from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView, TouchableOpacity } from 'react-native';
 import ThemeContext from '../context/ThemeContext';
 import { getAuth } from 'firebase/auth';
-import { FIRESTORE_DB } from '../../firebaseConfig'; // Import Firestore instance
-import { collection, query, where, orderBy, limit, startAfter, onSnapshot } from 'firebase/firestore';
+import { FIRESTORE_DB } from '../../firebaseConfig';
+import { collection, query, where, orderBy, limit, startAfter, getDocs } from 'firebase/firestore';
 
-const fetchHistoryData = (lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage) => {
+const fetchHistoryData = async (lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage) => {
   const auth = getAuth();
   const user = auth.currentUser;
 
@@ -16,7 +16,7 @@ const fetchHistoryData = (lastDoc, setData, setLoading, setHasMore, setLastDoc, 
   }
 
   const userUid = user.uid;
-  const pageSize = 10; // Number of items per page
+  const pageSize = 12;
 
   let itemsQuery = query(
     collection(FIRESTORE_DB, 'scannedItems'),
@@ -35,7 +35,8 @@ const fetchHistoryData = (lastDoc, setData, setLoading, setHasMore, setLastDoc, 
     );
   }
 
-  const unsubscribe = onSnapshot(itemsQuery, (querySnapshot) => {
+  try {
+    const querySnapshot = await getDocs(itemsQuery);
     const newData = querySnapshot.docs.map(doc => {
       const item = doc.data();
       return {
@@ -57,14 +58,12 @@ const fetchHistoryData = (lastDoc, setData, setLoading, setHasMore, setLastDoc, 
 
     const lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
     setLastDoc(lastVisible);
-    setLoading(false);
-  }, (error) => {
+  } catch (error) {
     console.error('Error fetching history data:', error);
     setMessage('Failed to fetch history data');
+  } finally {
     setLoading(false);
-  });
-
-  return unsubscribe;
+  }
 };
 
 export default function ScanHistory() {
@@ -76,16 +75,14 @@ export default function ScanHistory() {
   const { theme } = useContext(ThemeContext);
 
   useEffect(() => {
-    // setLoading(true);
-    const unsubscribe = fetchHistoryData(lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage);
-    return () => unsubscribe();
-  }, [lastDoc]);
+    setLoading(true);
+    fetchHistoryData(lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage);
+  }, []);
 
   const loadMoreData = () => {
     if (loading || !hasMore) return;
-
-    // setLoading(true);
-    setLastDoc(prevLastDoc => prevLastDoc); // Trigger useEffect to fetch more data
+    setLoading(true);
+    fetchHistoryData(lastDoc, setData, setLoading, setHasMore, setLastDoc, setMessage);
   };
 
   const renderItem = useCallback(({ item }) => (
@@ -99,24 +96,24 @@ export default function ScanHistory() {
     container: {
       flex: 1,
       backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
-      padding: 16, // Add padding around the container
+      padding: 16,
     },
     content: {
-      width: '87%', // Make content 87% of the screen width
-      alignSelf: 'center', // Center the content
-      height: '95%',
+      width: '87%',
+      alignSelf: 'center',
+      height: '93%',
     },
     title: {
       paddingTop: 20,
       fontSize: 20,
       fontFamily: 'Nunito-Bold',
-      textAlign: 'left', // Align title to the left
+      textAlign: 'left',
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       marginVertical: 20,
       paddingLeft: 25,
     },
     listContainer: {
-      paddingBottom: 15, // Add padding at the bottom of the list
+      paddingBottom: 15,
       paddingRight: 20,
       paddingLeft: 20,
     },
@@ -136,7 +133,7 @@ export default function ScanHistory() {
     itemDate: {
       flex: 1,
       textAlign: 'right',
-      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+      color: theme === 'dark' ? '#C4D8BF90' : '#2D5A3D90',
       fontSize: 15,
     },
     emptyMessage: {
@@ -144,6 +141,14 @@ export default function ScanHistory() {
       textAlign: 'center',
       marginTop: 20,
       color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
+    },
+    loadMoreButton: {
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    loadMoreButtonText: {
+      color: theme === 'dark' ? '#C4D8BF90' : '#274d2990',
+      fontSize: 16,
     },
   });
 
@@ -161,16 +166,21 @@ export default function ScanHistory() {
         ) : data.length === 0 && !loading ? (
           <Text style={styles.emptyMessage}>Scan your first item!</Text>
         ) : (
-          <FlatList
-            data={data}
-            renderItem={renderItem}
-            keyExtractor={(item) => item.id}
-            onEndReached={loadMoreData}
-            onEndReachedThreshold={0.5}
-            ListFooterComponent={renderFooter}
-            contentContainerStyle={styles.listContainer}
-          />
+          <>
+            <FlatList
+              data={data}
+              renderItem={renderItem}
+              keyExtractor={(item) => item.id}
+              contentContainerStyle={styles.listContainer}
+            />
+            {hasMore && !loading && (
+              <TouchableOpacity style={styles.loadMoreButton} onPress={loadMoreData}>
+                <Text style={styles.loadMoreButtonText}>Load More</Text>
+              </TouchableOpacity>
+            )}
+          </>
         )}
+        {renderFooter()}
       </View>
     </SafeAreaView>
   );
