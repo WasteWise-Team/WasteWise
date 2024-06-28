@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, Switch, ScrollView, SafeAreaView, TouchableOpac
 import Icon from 'react-native-vector-icons/FontAwesome';
 import ThemeContext from '../context/ThemeContext';
 
+
 export default function Settings({ navigation }) {
   const { theme, toggleTheme } = useContext(ThemeContext);
   
@@ -76,7 +77,7 @@ export default function Settings({ navigation }) {
       fontSize: 12,
       color: theme === 'dark' ? '#C4D8BF70' : '#2D5A3D',
     },
-  });
+  }); 
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -123,14 +124,14 @@ export default function Settings({ navigation }) {
           <View style={styles.section}>
             <Text style={styles.sectionTitle}>More</Text>
           </View>
-          <View style={styles.row}>
+          <TouchableOpacity style={styles.row} onPress={() => navigation.navigate('AboutUs')}>
             <Text style={styles.text}>About Us</Text>
             <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
-          </View>
+          </TouchableOpacity>
           <View style={styles.row}>
             <Text style={styles.text}>Privacy Policy</Text>
             <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
-          </View>
+          </View> 
           <View style={styles.row}>
             <Text style={styles.text}>Terms and Conditions</Text>
             <Icon name="chevron-right" size={20} color={theme === 'dark' ? '#C4D8BF' : '#2D5A3D'} style={styles.icon} />
