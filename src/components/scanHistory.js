@@ -87,10 +87,15 @@ export default function ScanHistory() {
 
   const renderItem = useCallback(({ item }) => (
     <View style={styles.item}>
-      <Text style={styles.itemName}>{item.name}</Text>
-      <Text style={styles.itemDate}>{item.date}</Text>
+      <Text style={[styles.itemName, { color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D' }]}>{item.name}</Text>
+      <Text style={[styles.itemDate, { color: theme === 'dark' ? '#C4D8BF90' : '#2D5A3D90' }]}>{item.date}</Text>
     </View>
-  ), []);
+  ), [theme]);
+
+  const renderFooter = () => {
+    if (!loading) return null;
+    return <ActivityIndicator size="large" color="#9ee8a4" />;
+  };
 
   const styles = StyleSheet.create({
     container: {
@@ -121,7 +126,6 @@ export default function ScanHistory() {
       fontFamily: 'Nunito-Regular',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      color: theme === 'dark' ? '#C4D8BF' : '#2D5A3D',
       padding: 10,
     },
     itemName: {
@@ -151,11 +155,6 @@ export default function ScanHistory() {
       fontSize: 16,
     },
   });
-
-  const renderFooter = () => {
-    if (!loading) return null;
-    return <ActivityIndicator size="large" color="#9ee8a4" />;
-  };
 
   return (
     <SafeAreaView style={styles.container}>
