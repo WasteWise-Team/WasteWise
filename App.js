@@ -7,7 +7,8 @@ import { ThemeProvider } from './src/context/ThemeContext';
 import ThemeContext from './src/context/ThemeContext';
 import { onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebaseConfig';
-
+import Settings from './src/components/settingsPage';
+import AboutUs from './src/screens/AboutUs'; 
 
 SplashScreen.preventAutoHideAsync();
 
@@ -20,6 +21,7 @@ const loadFonts = async () => {
     'Nunito-SemiBold': require('./assets/fonts/Nunito-SemiBold.ttf')
   });
 };
+
 
 const App = () => {
   const [appIsReady, setAppIsReady] = useState(false);

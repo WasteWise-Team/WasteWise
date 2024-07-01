@@ -20,6 +20,7 @@ import GuestHomeScreen from '../screens/GuestHomeScreen';
 import GuestProfileScreen from '../screens/GuestProfileScreen';
 import LoginScreen from '../screens/LoginScreen';
 import Identifier from '../screens/Identifier';
+import AboutUs from '../screens/AboutUs';
 
 // Screen names
 const homeName = 'Home';
@@ -68,6 +69,7 @@ const MainStack = ({ theme }) => (
     </Stack.Screen>
     <Stack.Screen name="Info" component={InfoScreen} />
     <Stack.Screen name="Identify" component={Identifier}/>
+    <Stack.Screen name="AboutUs" component={AboutUs} />
   </Stack.Navigator>
 );
 
