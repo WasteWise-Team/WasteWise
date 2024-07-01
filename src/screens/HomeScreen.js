@@ -2,17 +2,15 @@ import { StatusBar } from 'expo-status-bar';
 import React, { useContext, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Dimensions, ScrollView, SafeAreaView } from 'react-native';
 import TestChart from '../components/pie-chart';
-import HeaderLogo from '../components/headerLogo'; // Import the HeaderLogo component
+import HeaderLogo from '../components/headerLogo';
 import ThemeContext from '../context/ThemeContext';
-import { FIREBASE_AUTH, FIRESTORE_DB, getDoc, doc } from '../../firebaseConfig';
-
-
-
+import { FIREBASE_AUTH, FIRESTORE_DB } from '../../firebaseConfig'; // Ensure this imports correctly
+import { collection, query, where, onSnapshot, getDoc, doc } from 'firebase/firestore'; // Import Firestore functions correctly
 
 export default function HomeScreen({ navigation }) {
-
-    const { theme, toggleTheme } = useContext(ThemeContext);
+    const { theme } = useContext(ThemeContext);
     const [firstName, setFirstName] = useState('');
+    const [numberOfItems, setNumberOfItems] = useState(0);
 
     useEffect(() => {
         const fetchDataFromFirestore = async () => {
@@ -20,12 +18,12 @@ export default function HomeScreen({ navigation }) {
                 const currentUser = FIREBASE_AUTH.currentUser;
                 if (currentUser) {
                     const userId = currentUser.uid;
-                    const userDocRef = doc(FIRESTORE_DB, 'users', userId);
-                    const userDocSnap = await getDoc(userDocRef);
+                    const userDocRef = doc(FIRESTORE_DB, 'users', userId); // Ensure doc is correctly imported
+                    const userDocSnap = await getDoc(userDocRef); // Use getDoc function from Firestore
 
                     if (userDocSnap.exists()) {
                         const userData = userDocSnap.data();
-                        setFirstName(userData.firstName); // Update the name variable
+                        setFirstName(userData.firstName);
                     } else {
                         console.log('User document does not exist.');
                     }
@@ -37,14 +35,38 @@ export default function HomeScreen({ navigation }) {
             }
         };
 
-        fetchDataFromFirestore(); // Call the function inside useEffect to ensure it runs after the component mounts
-    }, []); // Empty dependency array ensures it runs only once after mounting
+        fetchDataFromFirestore();
+    }, []);
 
+    useEffect(() => {
+        const fetchScannedItemsCount = async () => {
+            try {
+                const currentUser = FIREBASE_AUTH.currentUser;
+                if (currentUser) {
+                    const userId = currentUser.uid;
+                    const scannedItemsRef = collection(FIRESTORE_DB, 'scannedItems');
+                    const q = query(scannedItemsRef, where('userId', '==', userId));
 
-    // Get screen dimensions
+                    // Use onSnapshot to listen for real-time updates
+                    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                        setNumberOfItems(querySnapshot.size); // Update the numberOfItems state
+                    });
+
+                    return () => unsubscribe(); // Cleanup function
+                } else {
+                    console.log('No current user.');
+                }
+            } catch (error) {
+                console.error('Error fetching scanned items count:', error);
+            }
+        };
+
+        const unsubscribe = fetchScannedItemsCount();
+        return () => unsubscribe(); // Cleanup function
+    }, []);
+
     const { width } = Dimensions.get('window');
-
-    const baseFontSize = width > 600 ? 24 : 16; // Example breakpoint at 600
+    const baseFontSize = width > 600 ? 24 : 16;
 
     const Square = () => {
         return <View style={styles.square} />;
@@ -56,7 +78,6 @@ export default function HomeScreen({ navigation }) {
         return <View style={styles.square2} />;
     };
 
-    // Edit style stuff here
     const styles = StyleSheet.create({
         safeArea: {
             flex: 1,
@@ -74,63 +95,57 @@ export default function HomeScreen({ navigation }) {
         chartContainer: {
             alignItems: 'center',
             justifyContent: 'center',
-            marginVertical: 10, // Add vertical margin to adjust spacing
+            marginVertical: 10,
             paddingBottom: 20,
             width: '85%',
             alignSelf: 'center',
         },
-
-
         welcome_text: {
             fontSize: 15,
             fontFamily: 'Nunito-Regular',
             color: theme === 'dark' ? '#F8F8F8' : '#2D5A3D',
-            textAlign: 'center', // Center the text
-            marginBottom: 20, // Add margin to separate from the chart
+            textAlign: 'center',
+            marginBottom: 20,
         },
-
         name: {
             color: theme === 'dark' ? '#00DF82' : '#68A77C',
             fontFamily: 'Nunito-Regular',
         },
-
         squares_container: {
             paddingTop: 50,
-            flexDirection: 'row', // Arrange squares horizontally
-            alignItems: 'center', // Align squares vertically centered
+            flexDirection: 'row',
+            alignItems: 'center',
         },
-
         square: {
             width: 50,
             height: 50,
             backgroundColor: '#2D5A3D',
-            marginHorizontal: 5, // Add horizontal margin between squares
+            marginHorizontal: 5,
         },
         square1: {
             width: 50,
             height: 50,
             backgroundColor: '#99DAB3',
-            marginHorizontal: 5, // Add horizontal margin between squares
+            marginHorizontal: 5,
         },
         square2: {
             width: 50,
             height: 50,
             backgroundColor: '#FFFFFF',
-            marginHorizontal: 5, // Add horizontal margin between squares
+            marginHorizontal: 5,
         },
         category: {
             color: theme === 'dark' ? '#F8F8F8' : '#2D5A3D',
-            marginHorizontal: 5, // Add horizontal margin between text and squares
+            marginHorizontal: 5,
             fontSize: 10,
             fontFamily: 'Nunito-Regular',
-            textAlign: 'center', // Center the text
+            textAlign: 'center',
         },
-
         summary_container: {
             paddingTop: 75,
             paddingBottom: 40,
             alignItems: 'center',
-            width: '90%', // Ensure the container takes the full width
+            width: '90%',
             justifyContent: 'center',
         },
         summary_text: {
@@ -143,12 +158,7 @@ export default function HomeScreen({ navigation }) {
             color: theme === 'dark' ? '#F8F8F8' : '#2D5A3D',
             fontFamily: 'Nunito-Regular',
         },
-        name: {
-            color: theme === 'dark' ? '#00DF82' : '#68A77C',
-            fontFamily: 'Nunito-Regular',
-        },
     });
-
 
     return (
         <SafeAreaView style={styles.safeArea}>
@@ -157,8 +167,7 @@ export default function HomeScreen({ navigation }) {
                 <View style={styles.container}>
                     <StatusBar style="auto" />
                     <Text style={styles.welcome_text}>
-                        Good afternoon, <Text style={styles.name}>{firstName}</Text>.
-                        It's <Text style={styles.name}>73°F</Text> and mostly sunny outside.
+                        Hello, <Text style={styles.name}>{firstName}</Text>!
                     </Text>
 
                     <View style={styles.chartContainer}>
@@ -168,7 +177,7 @@ export default function HomeScreen({ navigation }) {
                             <Square />
                             <Text style={styles.category}>Plastic</Text>
                             <Square1 />
-                            <Text style={styles.category}>Aluminum</Text>
+                            <Text style={styles.category}>Metal</Text>
                             <Square2 />
                             <Text style={styles.category}>Paper</Text>
                         </View>
@@ -178,13 +187,11 @@ export default function HomeScreen({ navigation }) {
                         <Text style={styles.summary_text}>
                             <Text style={styles.summary_word}>Summary:</Text>
                             {"\n"}
-                            You've recycled a total of <Text style={styles.name}>2478</Text> pounds
+                            You've recycled a total of <Text style={styles.name}>{numberOfItems}</Text> items!
                         </Text>
                     </View>
-
                 </View>
             </ScrollView>
         </SafeAreaView>
     );
 }
-

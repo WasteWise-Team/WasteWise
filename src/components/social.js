@@ -90,100 +90,105 @@ export default function CommunityRecords() {
       flex: 1,
       backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
       padding: 16,
-    },
-    listContainer: {
-      paddingBottom: 16,
-    },
-    itemContainer: {
-      flexDirection: 'row',
-      marginVertical: 10,
-      width: '90%',
-      alignItems: 'flex-end',
-      alignSelf: 'center', // Center the container itself
-      justifyContent: 'flex-end', // Center the content within the container
-    },
-    currentUserContainer: {
-      justifyContent: 'flex-end',
-      alignItems: 'flex-end', // Align all items to the right
-    },
-    friendContainer: {
-      flexDirection: 'row', // Ensure profile pic is on the left
-      justifyContent: 'flex-start',
-    },
-    profilePic: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      marginHorizontal: 10,
-    },
-    textContainer: {
-      maxWidth: '80%',
-    },
-    currentUserTextContainer: {
-      alignItems: 'flex-end',
-      marginLeft: 'auto', // Push the current user's text container to the right
-    },
-    friendTextContainer: {
-      alignItems: 'flex-start',
-    },
-    currentUserChatBubble: {
-      backgroundColor: theme === 'dark' ? '#03624C' : '#2D5A3D', 
-      padding: 10,
-      borderBottomLeftRadius: 15,
-      borderTopRightRadius: 15,
-      borderTopLeftRadius: 15,
-    },
-    friendChatBubble: {
-      backgroundColor: theme === 'dark' ? '#C2D9BF' : '#FFFFFF',
-      padding: 10,
-      borderTopLeftRadius: 15,
-      borderTopRightRadius: 15,
-      borderBottomRightRadius: 15,
-    },
-    currentUserItemText: {
-      color: '#FFFFFF', // Text color for current user
-    },
-    friendItemText: {
-      
-      color: theme === 'dark' ? 'black' : '#68A77C',
-    },
-    currentUserItemTextHighlight: {
-      color: theme === 'dark' ? '#99DAB3' : '#C4D8BF', // Highlight color for current user
-    },
-    friendItemTextHighlight: {
-      color: theme === 'dark' ? '#03624C' : '#000000', // Text color for friend
-    },
-    timeText: {
-      fontSize: 12,
-      color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
-      marginTop: 5, // Add margin to separate from chat bubble
-    },
-    userName: {
-      fontSize: 14,
-      color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
-      marginBottom: 5, // Add margin to separate from chat bubble
-    },
-    dateSeparator: {
-      flexDirection: 'row',
+      justifyContent: 'center', 
       alignItems: 'center',
-      marginVertical: 20,
+    },
+    title: {
+      color: theme === 'dark' ? '#C4D8BF' : '#042222',
+    },
+    // listContainer: {
+    //   paddingBottom: 16,
+    // },
+    // itemContainer: {
+    //   flexDirection: 'row',
+    //   marginVertical: 10,
+    //   width: '90%',
+    //   alignItems: 'flex-end',
+    //   alignSelf: 'center', // Center the container itself
+    //   justifyContent: 'flex-end', // Center the content within the container
+    // },
+    // currentUserContainer: {
+    //   justifyContent: 'flex-end',
+    //   alignItems: 'flex-end', // Align all items to the right
+    // },
+    // friendContainer: {
+    //   flexDirection: 'row', // Ensure profile pic is on the left
+    //   justifyContent: 'flex-start',
+    // },
+    // profilePic: {
+    //   width: 50,
+    //   height: 50,
+    //   borderRadius: 25,
+    //   marginHorizontal: 10,
+    // },
+    // textContainer: {
+    //   maxWidth: '80%',
+    // },
+    // currentUserTextContainer: {
+    //   alignItems: 'flex-end',
+    //   marginLeft: 'auto', // Push the current user's text container to the right
+    // },
+    // friendTextContainer: {
+    //   alignItems: 'flex-start',
+    // },
+    // currentUserChatBubble: {
+    //   backgroundColor: theme === 'dark' ? '#03624C' : '#2D5A3D', 
+    //   padding: 10,
+    //   borderBottomLeftRadius: 15,
+    //   borderTopRightRadius: 15,
+    //   borderTopLeftRadius: 15,
+    // },
+    // friendChatBubble: {
+    //   backgroundColor: theme === 'dark' ? '#C2D9BF' : '#FFFFFF',
+    //   padding: 10,
+    //   borderTopLeftRadius: 15,
+    //   borderTopRightRadius: 15,
+    //   borderBottomRightRadius: 15,
+    // },
+    // currentUserItemText: {
+    //   color: '#FFFFFF', // Text color for current user
+    // },
+    // friendItemText: {
+      
+    //   color: theme === 'dark' ? 'black' : '#68A77C',
+    // },
+    // currentUserItemTextHighlight: {
+    //   color: theme === 'dark' ? '#99DAB3' : '#C4D8BF', // Highlight color for current user
+    // },
+    // friendItemTextHighlight: {
+    //   color: theme === 'dark' ? '#03624C' : '#000000', // Text color for friend
+    // },
+    // timeText: {
+    //   fontSize: 12,
+    //   color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
+    //   marginTop: 5, // Add margin to separate from chat bubble
+    // },
+    // userName: {
+    //   fontSize: 14,
+    //   color: theme === 'dark' ? '#C4D8BF95' : '#2D5A3D',
+    //   marginBottom: 5, // Add margin to separate from chat bubble
+    // },
+    // dateSeparator: {
+    //   flexDirection: 'row',
+    //   alignItems: 'center',
+    //   marginVertical: 20,
 
 
-    },
-    separatorLine: {
-      flex: 1,
-      height: 1,
-      backgroundColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
-    },
-    dateSeparatorText: {
-      marginHorizontal: 10,
-      color: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
-    },
+    // },
+    // separatorLine: {
+    //   flex: 1,
+    //   height: 1,
+    //   backgroundColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
+    // },
+    // dateSeparatorText: {
+    //   marginHorizontal: 10,
+    //   color: theme === 'dark' ? '#e5f0e260'  : '#82B37A',
+    // },
   });
 
   return (
     <SafeAreaView style={styles.container}>
-      <FlatList
+      {/* <FlatList
         data={data}
         renderItem={renderListItem}
         keyExtractor={(item) => item.id}
@@ -192,7 +197,10 @@ export default function CommunityRecords() {
         ListFooterComponent={loading && <ActivityIndicator size="large" color="#0000ff" />}
         contentContainerStyle={styles.listContainer}
         inverted // To show new entries at the top
-      />
+      /> */}
+      <Text style={styles.title}>
+        Coming Soon!
+      </Text>
     </SafeAreaView>
   );
 }

@@ -123,10 +123,10 @@ export default function ProfileScreen({ navigation }) {
 function HistoryScreen({ navigation }) {
   const { theme } = useContext(ThemeContext);
   const styles = StyleSheet.create({
-    scene: {
-      flex: 1,
-      backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
-    },
+      scene: {
+        flex: 1,
+        backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      },
   });
 
   return (
