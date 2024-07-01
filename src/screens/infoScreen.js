@@ -50,7 +50,7 @@ const RecyclingInfoPage = () => {
             fontWeight: 'bold',
         },
         card: {
-            backgroundColor: theme === 'dark' ? '#9FBCA5' : '#FFFFFF',
+            backgroundColor: theme === 'dark' ? '#C4D8BF' : '#FFFFFF',
             borderRadius: 10,
             padding: 15,
             marginBottom: 20,

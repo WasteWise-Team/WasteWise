@@ -5,9 +5,6 @@ import ThemeContext from '../context/ThemeContext';
 import Terence from '../../assets/terence.png';
 import William from '../../assets/william.jpg';
 import My from '../../assets/miku.jpg';
-
-import EWaste from '../../assets/e-waste.png';
-import FoodWaste from '../../assets/food-waste.png';
 import { ScrollView } from 'react-native';
 
 const recyclingData = [
@@ -58,7 +55,7 @@ export default function UserSettings({ onUpdateBio }) {
       marginVertical: 10,
     },
     backButtonText: {
-      color: '#fff',
+      color: theme === 'dark' ? '#9FBCA5' : '#2D5A3D',
       fontSize: 18,
     },
     safeArea: {
@@ -82,7 +79,7 @@ export default function UserSettings({ onUpdateBio }) {
   },
   card: {
       flexDirection: "row",
-      backgroundColor: theme === 'dark' ? '#9FBCA5' : '#FFFFFF',
+      backgroundColor: theme === 'dark' ? '#9FBCA5' : '#f5fff0',
       borderRadius: 10,
       padding: 15,
       marginBottom: 20,
