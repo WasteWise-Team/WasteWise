@@ -5,10 +5,10 @@ import { View, StyleSheet } from 'react-native';
 import AppNavigator from './src/components/appNavigator';
 import { ThemeProvider } from './src/context/ThemeContext';
 import ThemeContext from './src/context/ThemeContext';
-import { onAuthStateChanged } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth';
 import { FIREBASE_AUTH } from './firebaseConfig';
 import Settings from './src/components/settingsPage';
-import AboutUs from './src/screens/AboutUs'; 
+import AboutUs from './src/screens/AboutUs';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -22,10 +22,9 @@ const loadFonts = async () => {
   });
 };
 
-
 const App = () => {
   const [appIsReady, setAppIsReady] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(null);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
     async function prepare() {
@@ -46,9 +45,17 @@ const App = () => {
       setIsAuthenticated(!!user);
     });
 
-    return () => unsubscribe();
+    return () => {
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, []);
 
+  // Log the isAuthenticated state whenever it changes
+  useEffect(() => {
+    console.log('isAuthenticated state has changed:', isAuthenticated);
+  }, [isAuthenticated]);
 
   const onLayoutRootView = useCallback(async () => {
     if (appIsReady) {
@@ -62,7 +69,7 @@ const App = () => {
 
   return (
     <ThemeProvider>
-      <ThemedApp onLayout={onLayoutRootView} isAuthenticated={isAuthenticated}/>
+      <ThemedApp onLayout={onLayoutRootView} isAuthenticated={isAuthenticated} />
     </ThemeProvider>
   );
 };
