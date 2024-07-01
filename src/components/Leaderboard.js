@@ -46,62 +46,67 @@ export default function Leaderboard({ navigation }) {
       flex: 1,
       backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
       padding: 16,
-    },
-    content: {
-      width: '90%',
-      height: '95%',
-      alignSelf: 'center',
-    },
-    title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      textAlign: 'Left',
-      paddingLeft: 25,
-      marginVertical: 20,
-      fontFamily: 'Nunito-Bold',
-      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
-    },
-    listContainer: {
-      paddingBottom: 16,
-      paddingRight: 20,
-      paddingLeft: 20,
-    },
-    item: {
-      flexDirection: 'row',
+      justifyContent: 'center', 
       alignItems: 'center',
-      padding: 10,
-      borderBottomWidth: 1,
-      borderBottomColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A', // Border color
     },
-    photo: {
-      width: 50,
-      height: 50,
-      borderRadius: 25,
-      marginRight: 10,
+    title_coming: {
+      color: theme === 'dark' ? '#C4D8BF' : '#042222',
     },
-    itemInfo: {
-      flex: 1,
-      alignItems: 'flex-end', // Align items to the right
-    },
-    itemName: {
-      fontSize: 18,
-      fontfamily: 'Nunito-SemiBold',
-      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
-    },
-    itemCity: {
-      fontSize: 14,
-      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
-    },
-    itemRecycledItems: {
-      fontSize: 14,
-      color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
-    },
+    // content: {
+    //   width: '90%',
+    //   height: '95%',
+    //   alignSelf: 'center',
+    // },
+    // title: {
+    //   fontSize: 20,
+    //   fontWeight: 'bold',
+    //   textAlign: 'Left',
+    //   paddingLeft: 25,
+    //   marginVertical: 20,
+    //   fontFamily: 'Nunito-Bold',
+    //   color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    // },
+    // listContainer: {
+    //   paddingBottom: 16,
+    //   paddingRight: 20,
+    //   paddingLeft: 20,
+    // },
+    // item: {
+    //   flexDirection: 'row',
+    //   alignItems: 'center',
+    //   padding: 10,
+    //   borderBottomWidth: 1,
+    //   borderBottomColor: theme === 'dark' ? '#e5f0e260'  : '#82B37A', // Border color
+    // },
+    // photo: {
+    //   width: 50,
+    //   height: 50,
+    //   borderRadius: 25,
+    //   marginRight: 10,
+    // },
+    // itemInfo: {
+    //   flex: 1,
+    //   alignItems: 'flex-end', // Align items to the right
+    // },
+    // itemName: {
+    //   fontSize: 18,
+    //   fontfamily: 'Nunito-SemiBold',
+    //   color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    // },
+    // itemCity: {
+    //   fontSize: 14,
+    //   color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    // },
+    // itemRecycledItems: {
+    //   fontSize: 14,
+    //   color: theme === 'dark' ? '#C4D8BF': '#2D5A3D'
+    // },
   });
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.content}>
-        <Text style={styles.title}>Green Machines</Text>
+        {/* <Text style={styles.title}>Green Machines</Text>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
         ) : (
@@ -111,8 +116,11 @@ export default function Leaderboard({ navigation }) {
             keyExtractor={(item) => item.id}
             contentContainerStyle={styles.listContainer}
           />
-        )}
+        )} */}
       </View>
+      <Text style={styles.title_coming}>
+        Coming Soon!
+      </Text>
     </SafeAreaView>
   );
 }
