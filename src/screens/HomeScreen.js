@@ -39,6 +39,8 @@ export default function HomeScreen({ navigation }) {
     }, []);
 
     useEffect(() => {
+        let unsubscribeScannedItemsListener;
+
         const fetchScannedItemsCount = async () => {
             try {
                 const currentUser = FIREBASE_AUTH.currentUser;
@@ -48,11 +50,9 @@ export default function HomeScreen({ navigation }) {
                     const q = query(scannedItemsRef, where('userId', '==', userId));
 
                     // Use onSnapshot to listen for real-time updates
-                    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+                    unsubscribeScannedItemsListener = onSnapshot(q, (querySnapshot) => {
                         setNumberOfItems(querySnapshot.size); // Update the numberOfItems state
                     });
-
-                    return () => unsubscribe(); // Cleanup function
                 } else {
                     console.log('No current user.');
                 }
@@ -61,8 +61,13 @@ export default function HomeScreen({ navigation }) {
             }
         };
 
-        const unsubscribe = fetchScannedItemsCount();
-        return () => unsubscribe(); // Cleanup function
+        fetchScannedItemsCount();
+
+        return () => {
+            if (unsubscribeScannedItemsListener) {
+                unsubscribeScannedItemsListener(); // Cleanup function
+            }
+        };
     }, []);
 
     const { width } = Dimensions.get('window');
