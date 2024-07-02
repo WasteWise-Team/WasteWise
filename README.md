@@ -1,5 +1,14 @@
 # WasteWise
-Mudd Summer of CS '24 ESHIP App
+
+A React Native app that utilizes computer vision and navigation to make proper waste disposal easier.
+
+Sponsor: Mudd Entrepreneurship Studio 2024 
+
+Made with ❤️ by:
+* [My Nguyen](https://mynguyen.vercel.app/)
+* [Terence Chen](https://mynguyen.vercel.app/)
+* [William Koh](https://kohdingjourney.netlify.app/)
+
 
 ### dependencies dump
 ```
