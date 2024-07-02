@@ -27,7 +27,7 @@ Made with 🌎 by:
 To dispose of an item, users can take a picture of it and receive instructions on how to dispose of it. Then, the app will redirect them to the proper disposal bin (recycling, e-waste, regular garbage).
 
 <p align="center">
-    <img src="/assets/gifs/scanning.gif" alt="Scanning GIF" width="300" height="500">
+    <img src="/assets/gifs/scanning.gif" alt="Scanning GIF" width="400" height="550">
 </p>
 
 
@@ -36,7 +36,7 @@ To dispose of an item, users can take a picture of it and receive instructions o
 Users can add a new bin to the map by taking a photo. Using computer vision, the app will make sure it's an actual bin before adding it.
 
 <p align="center">
-    <img src="/assets/gifs/addBin.gif" alt="Scanning GIF" width="300" height="500">
+    <img src="/assets/gifs/addBin.gif" alt="Scanning GIF" width="400" height="550">
 </p>
 
 
@@ -44,14 +44,14 @@ Users can add a new bin to the map by taking a photo. Using computer vision, the
 The app prevents users from adding bins that already exist. 
 
 <p align="center">
-    <img src="/assets/gifs/binExists.gif" alt="Scanning GIF" width="300" height="500">
+    <img src="/assets/gifs/binExists.gif" alt="Scanning GIF" width="400" height="550">
 </p>
 
 ### User Profile + Customization
 In the profile screen, users can see their scan history: a list of the items they have scanned. Users can customize their profile picture, bio, and enable dark/light mode. 
 
 <p align="center">
-    <img src="/assets/gifs/profilepic.gif" alt="Scanning GIF" width="300" height="500">
+    <img src="/assets/gifs/profilepic.gif" alt="Scanning GIF" width="400" height="550">
 </p>
 
 
