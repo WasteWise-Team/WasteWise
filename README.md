@@ -25,20 +25,24 @@ Made with 🌎 by:
 ### Item Classification
 To dispose of an item, users can take a picture of it and receive instructions on how to dispose of it. Then, the app will redirect them to the proper disposal bin (recycling, e-waste, regular garbage).
 
+![alt text](/assets/gifs/scanning.gif)
 
 ### Crowdsource Bin
 Users can add a new bin to the map by taking a photo. Using computer vision, the app will make sure it's an actual bin before adding it.
 
-<p align="center">
-    <video width="560" height="315" controls>
-        <source src="assets/movies/addBin.mov" type="video/quicktime">
-    </video>
-</p>
+![alt text](/assets/gifs/addBin.gif)
+
 
 The app prevents users from adding bins that already exist. 
 
+![alt text](/assets/gifs/binExists.gif)
+
+
 ### User Profile + Customization
 In the profile screen, users can see their scan history: a list of the items they have scanned. Users can customize their profile picture, bio, and enable dark/light mode. 
+
+![alt text](/assets/gifs/profilepic.gif)
+
 
 ## Technologies
 - <b><a href="https://expo.dev/" target="_blank">Expo</a></b> - An open-source platform for making universal native apps for Android, iOS, and the web with JavaScript and React. 
