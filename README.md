@@ -1,7 +1,7 @@
 <h1 align="center">WasteWise</h1>
 
 <p align="center">
-    <img src="assets/logo2.png" width="800" height="800" alt="Profile Picture">
+    <img src="assets/logo2.png" width="400" height="400" alt="Profile Picture">
 </p>
 
 <p align="center">
@@ -25,26 +25,32 @@ Made with 🌎 by:
 ### Item Classification
 To dispose of an item, users can take a picture of it and receive instructions on how to dispose of it. Then, the app will redirect them to the proper disposal bin (recycling, e-waste, regular garbage).
 
-<img src="/assets/gifs/scanning.gif" alt="Scanning GIF" width="300" height="300">
+<img src="/assets/gifs/scanning.gif" alt="Scanning GIF" width="300" height="600">
 
 
 ### Crowdsource Bin
 Users can add a new bin to the map by taking a photo. Using computer vision, the app will make sure it's an actual bin before adding it.
 
-<img src="/assets/gifs/addBin.gif" alt="Scanning GIF" width="300" height="300">
+<p align="center">
+    <img src="/assets/gifs/addBin.gif" alt="Scanning GIF" width="300" height="600">
+
+</p>
 
 
 
 The app prevents users from adding bins that already exist. 
 
-<img src="/assets/gifs/binExists.gif" alt="Scanning GIF" width="300" height="300">
-
-
+<p align="center">
+    <img src="/assets/gifs/binExists.gif" alt="Scanning GIF" width="300" height="600">
+</p>
 
 ### User Profile + Customization
 In the profile screen, users can see their scan history: a list of the items they have scanned. Users can customize their profile picture, bio, and enable dark/light mode. 
 
-<img src="/assets/gifs/profilepic.gif" alt="Scanning GIF" width="300" height="300">
+<p align="center">
+    <img src="/assets/gifs/profilepic.gif" alt="Scanning GIF" width="300" height="600">
+</p>
+
 
 
 
