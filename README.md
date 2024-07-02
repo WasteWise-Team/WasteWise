@@ -1,7 +1,7 @@
 <h1 align="center">WasteWise</h1>
 
 <p align="center">
-    <img src="assets/logo2.png" width="300" height="300" alt="Profile Picture">
+    <img src="assets/logo2.png" width="800" height="800" alt="Profile Picture">
 </p>
 
 <p align="center">
@@ -11,26 +11,36 @@
 
 ## Authors
 Sponsor: Mudd Entrepreneurship Studio 2024 
+Advisors: 
+- Zachary Dodds, Professor of Computer Science at Harvey Mudd College
+- Michael Izbicki, Assistant Professor of Computer Science
 
-Made with ❤️ by:
+Made with 🌎 by:
 * [My Nguyen](https://mynguyen.vercel.app/): Project Manager
 * [Terence Chen](https://github.com/TCHEN621130): UI/UX Lead
 * [William Koh](https://kohdingjourney.netlify.app/): Lead Developer
 
+## Features
+
+### Item Classification
+To dispose of an item, users can take a picture of it and receive instructions on how to dispose of it. Then, the app will redirect them to the proper disposal bin (recycling, e-waste, regular garbage).
 
 
-### dependencies dump
-```
-# Docker stuff - 
-docker compose up --build -w # to build and to watch
-'''
+### Crowdsource Bin
+Users can add a new bin to the map by taking a photo. Using computer vision, the app will make sure it's an actual bin before adding it.
 
-### color hex code dump
-##### Light Mode:
-Background: #C4D8BF
-Text: #2D5A3D
-Accents: #82B37A
+<p align="center">
+    <video width="560" height="315" controls>
+        <source src="assets/movies/addBin.mov" type="video/quicktime">
+    </video>
+</p>
 
-##### Dark Mode:
-Background: #042222
-Text: #C4D8BF
+The app prevents users from adding bins that already exist. 
+
+### User Profile + Customization
+In the profile screen, users can see their scan history: a list of the items they have scanned. Users can customize their profile picture, bio, and enable dark/light mode. 
+
+## Technologies
+- <b><a href="https://expo.dev/" target="_blank">Expo</a></b> - An open-source platform for making universal native apps for Android, iOS, and the web with JavaScript and React. 
+- <b><a href="https://firebase.google.com/" target="_blank">Google Firebase</a></b> - Google's mobile application development platform. Used for user authentication and real-time database storage.
+- <b><a href="https://platform.openai.com/docs/overview" target="_blank">OpenAI API</a></b> - OpenAI's API to interact with its large-language models. Used for object classification and computer vision.
