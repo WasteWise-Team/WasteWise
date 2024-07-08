@@ -50,6 +50,7 @@ In the profile screen, users can see their scan history: a list of the items the
 - <b><a href="https://platform.openai.com/docs/overview" target="_blank">OpenAI API</a></b> - OpenAI's API to interact with its large-language models. Used for object classification and computer vision.
 
 
+
 ## Authors
 Sponsor: Mudd Entrepreneurship Studio 2024 
 
