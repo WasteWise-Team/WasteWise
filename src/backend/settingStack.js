@@ -13,6 +13,7 @@ export default function SettingsStack( {onUpdateBio} ) {
   const styles = StyleSheet.create({
     headerStyle: {
       backgroundColor: theme === 'dark' ? '#042222' : '#C4D8BF',
+      shadowOpacity: 0,
     },
     headerTitleStyle: {
       fontWeight: 'medium',
