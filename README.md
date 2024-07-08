@@ -8,19 +8,6 @@
     A React Native app that utilizes computer vision and navigation to make proper waste disposal easier.
 </p>
 
-
-## Authors
-Sponsor: Mudd Entrepreneurship Studio 2024 
-
-Advisors: 
-* [Zachary Dodds](https://www.cs.hmc.edu/~dodds/): Professor of Computer Science at Harvey Mudd College
-* [Michael Izbicki](https://izbicki.me/): Assistant Professor of Computer Science
-
-Made with 🌎 by:
-* [My Nguyen](https://mynguyen.vercel.app/): Project Manager
-* [Terence Chen](https://github.com/TCHEN621130): UI/UX Lead
-* [William Koh](https://kohdingjourney.netlify.app/): Lead Developer
-
 ## Features
 
 ### Item Classification
@@ -61,3 +48,16 @@ In the profile screen, users can see their scan history: a list of the items the
 - <b><a href="https://expo.dev/" target="_blank">Expo</a></b> - An open-source platform for making universal native apps for Android, iOS, and the web with JavaScript and React. 
 - <b><a href="https://firebase.google.com/" target="_blank">Google Firebase</a></b> - Google's mobile application development platform. Used for user authentication and real-time database storage.
 - <b><a href="https://platform.openai.com/docs/overview" target="_blank">OpenAI API</a></b> - OpenAI's API to interact with its large-language models. Used for object classification and computer vision.
+
+
+## Authors
+Sponsor: Mudd Entrepreneurship Studio 2024 
+
+Advisors: 
+* [Zachary Dodds](https://www.cs.hmc.edu/~dodds/): Professor of Computer Science at Harvey Mudd College
+* [Michael Izbicki](https://izbicki.me/): Assistant Professor of Computer Science
+
+Made with 🌎 by:
+* [My Nguyen](https://mynguyen.vercel.app/): Project Manager
+* [Terence Chen](https://github.com/TCHEN621130): UI/UX Lead
+* [William Koh](https://kohdingjourney.netlify.app/): Lead Developer
