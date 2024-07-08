@@ -34,7 +34,7 @@ export default function SettingsStack( {onUpdateBio} ) {
       }}
     >
       <Stack.Screen
-        name="Settings"
+        name="SettingsPage"
         component={Settings}
         options={{
           headerShown: false, // Hide the header for this screen if needed
