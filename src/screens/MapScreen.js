@@ -8,7 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 import BinModal from '../components/BinModal'; // Adjust the import path if needed
 import CustomAlert from '../components/alertModal'; // Adjust the import path if needed
 import ThemeContext from '../context/ThemeContext';
-import { useNavigation } from '@react-navigation/native'; // Import useNavigation
+import { useNavigation, useFocusEffect } from '@react-navigation/native'; // Import useNavigation
 import { getAuth } from 'firebase/auth';
 
 // Import Firestore and Storage functions
@@ -42,8 +42,11 @@ const MapScreen = ({ route }) => {
   const [types] = useState(['General Trash', 'General Recyclables', 'E-waste', 'Hazardous Waste']);
   const [typeModalVisible, setTypeModalVisible] = useState(false); // State for type selection modal visibility
   const [selectedTypes, setSelectedTypes] = useState([]); // State for selected types
-  const { binType } = route.params || {};
+  const { binType, itemScanned } = route.params || {};
+  console.log('Received route params:', { binType, itemScanned });
   const markerRefs = useRef({});
+  const [scannedItem, setScannedItem] = useState(itemScanned  || false); // state variable to keep track of number of scans
+
 
   const navigateToNearestBin = () => {
     console.log('Reached navigateToNearestBin function!');
@@ -59,14 +62,22 @@ const MapScreen = ({ route }) => {
     let minDistance = Number.MAX_SAFE_INTEGER;
 
     markers.forEach((marker) => {
-      const distance = getDistance(
-        { latitude: location.latitude, longitude: location.longitude },
-        { latitude: marker.latitude, longitude: marker.longitude }
-      );
+      console.log('Checking marker:', marker);
 
-      if (distance < minDistance) {
-        nearestBin = marker;
-        minDistance = distance;
+      if (marker.types && marker.types.includes(binType)) {
+        const distance = getDistance(
+          { latitude: location.latitude, longitude: location.longitude },
+          { latitude: marker.latitude, longitude: marker.longitude }
+        );
+
+        console.log(`Distance to marker ${marker.id}:`, distance);
+
+        if (distance < minDistance) {
+          nearestBin = marker;
+          minDistance = distance;
+        }
+      } else {
+        console.log(`Marker ${marker.id} does not match binType ${binType}`);
       }
     });
 
@@ -88,27 +99,34 @@ const MapScreen = ({ route }) => {
         nearestMarkerRef.showCallout();
         console.log('Callout shown for nearest bin');
       }
+    } else {
+      console.log('No nearest bin found that matches the binType');
     }
   };
 
-  useEffect(() => {
-    const requestLocationPermission = async () => {
-      let { status } = await Location.requestForegroundPermissionsAsync();
-      if (status !== 'granted') {
-        setErrorMsg('Permission to access location was denied');
-        return;
-      }
-      watchLocation();
-    };
-    requestLocationPermission();
-    fetchMarkers();
-  }, []);
+  useFocusEffect(
+    React.useCallback(() => {
+      const requestLocationPermission = async () => {
+        let { status } = await Location.requestForegroundPermissionsAsync();
+        if (status !== 'granted') {
+          setErrorMsg('Permission to access location was denied');
+          return;
+        }
+        watchLocation();
+      };
+      requestLocationPermission();
+      fetchMarkers();
+      console.log('Fetching markers and location permission on focus');
+    }, [])
+  );
 
   useEffect(() => {
-    if (markers.length && binType) {
+    if (markers.length && scannedItem && binType) {
+      console.log('Conditions met, calling navigateToNearestBin');
       navigateToNearestBin();
+      setScannedItem(false); // Reset scanned state after navigation
     }
-  }, [markers, binType]);
+  }, [markers, binType, scannedItem]);
 
   const watchLocation = async () => {
     return new Promise((resolve, reject) => {
@@ -226,7 +244,6 @@ const MapScreen = ({ route }) => {
         : [...prevSelected, option]
     );
   };
-
   const renderTypeSelectModal = () => (
     <Modal
       animationType="fade"
@@ -373,13 +390,13 @@ const MapScreen = ({ route }) => {
 
   const checkLocation = async () => {
     const querySnapshot = await getDocs(collection(FIRESTORE_DB, 'bins'));
-      const existingBins = querySnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          latitude: data.binLocation.latitude,
-          longitude: data.binLocation.longitude,
-        };
-      });
+    const existingBins = querySnapshot.docs.map(doc => {
+      const data = doc.data();
+      return {
+        latitude: data.binLocation.latitude,
+        longitude: data.binLocation.longitude,
+      };
+    });
 
     const binExists = existingBins.some(bin => getDistance(
       { latitude: location.latitude, longitude: location.longitude },
