@@ -121,7 +121,7 @@ const MapScreen = ({ route }) => {
   );
 
   useEffect(() => {
-    if (markers.length && scannedItem && binType) {
+    if (markers.length && binType) {
       console.log('Conditions met, calling navigateToNearestBin');
       navigateToNearestBin();
       setScannedItem(false); // Reset scanned state after navigation
