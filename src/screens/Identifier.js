@@ -188,6 +188,8 @@ export default function Identifier({ navigation }) {
                 return 'General Recyclables';
             case 'glass':
                 return 'General Recyclables';
+            case 'e-waste':
+                return 'E-waste';
             // Add more cases as needed for different types of items
             default:
                 return null; // No specific bin type found
@@ -197,10 +199,11 @@ export default function Identifier({ navigation }) {
 
     const navigateToMapScreen = () => {
         const binType = getBinTypeForItem(materialType);
+      
         console.log(binType);
         if (binType) {
             setModalVisible(false);
-            navigation.navigate('Map', { binType });
+            navigation.navigate('Map', { binType, itemScanned: true });
         } else {
             Alert.alert('Error', 'No bin type found for the item');
         }
