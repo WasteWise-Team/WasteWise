@@ -11,6 +11,7 @@ export default function HomeScreen({ navigation }) {
     const { theme } = useContext(ThemeContext);
     const [firstName, setFirstName] = useState('');
     const [numberOfItems, setNumberOfItems] = useState(0);
+    const [counts, setCounts] = useState({ plastic: 0, metal: 0, ewaste: 0 });
 
     useEffect(() => {
         const fetchDataFromFirestore = async () => {
@@ -49,9 +50,24 @@ export default function HomeScreen({ navigation }) {
                     const scannedItemsRef = collection(FIRESTORE_DB, 'scannedItems');
                     const q = query(scannedItemsRef, where('userId', '==', userId));
 
-                    // Use onSnapshot to listen for real-time updates
                     unsubscribeScannedItemsListener = onSnapshot(q, (querySnapshot) => {
-                        setNumberOfItems(querySnapshot.size); // Update the numberOfItems state
+                        setNumberOfItems(querySnapshot.size);
+                        let plastic = 0;
+                        let metal = 0;
+                        let ewaste = 0;
+
+                        querySnapshot.forEach((doc) => {
+                            const data = doc.data();
+                            if (data.materialType === 'plastic') {
+                                plastic += 1;
+                            } else if (data.materialType === 'metal') {
+                                metal += 1;
+                            } else if (data.materialType === 'e-waste') {
+                                ewaste += 1;
+                            }
+                        });
+
+                        setCounts({ plastic, metal, ewaste });
                     });
                 } else {
                     console.log('No current user.');
@@ -176,7 +192,7 @@ export default function HomeScreen({ navigation }) {
                     </Text>
 
                     <View style={styles.chartContainer}>
-                        <TestChart />
+                        <TestChart counts={numberOfItems}/>
 
                         <View style={styles.squares_container}>
                             <Square />
@@ -184,7 +200,7 @@ export default function HomeScreen({ navigation }) {
                             <Square1 />
                             <Text style={styles.category}>Metal</Text>
                             <Square2 />
-                            <Text style={styles.category}>Paper</Text>
+                            <Text style={styles.category}>E-Waste</Text>
                         </View>
                     </View>
 
@@ -200,3 +216,5 @@ export default function HomeScreen({ navigation }) {
         </SafeAreaView>
     );
 }
+
+// export const numberOfItems = 17;
