@@ -58,15 +58,15 @@ export default function HomeScreen({ navigation }) {
 
                         querySnapshot.forEach((doc) => {
                             const data = doc.data();
-                            if (data.materialType === 'plastic') {
+                            if (data.materialType === 'Plastic') {
                                 plastic += 1;
-                            } else if (data.materialType === 'metal') {
+                            } else if (data.materialType === 'Metal') {
                                 metal += 1;
-                            } else if (data.materialType === 'e-waste') {
+                            } else if (data.materialType === 'E-waste') {
                                 ewaste += 1;
                             }
                         });
-
+                        console.log(plastic, metal, ewaste);
                         setCounts({ plastic, metal, ewaste });
                     });
                 } else {
@@ -192,7 +192,7 @@ export default function HomeScreen({ navigation }) {
                     </Text>
 
                     <View style={styles.chartContainer}>
-                        <TestChart counts={numberOfItems}/>
+                        <TestChart counts={numberOfItems} plastic={counts.plastic} metal={counts.metal} ewaste={counts.ewaste}/>
 
                         <View style={styles.squares_container}>
                             <Square />

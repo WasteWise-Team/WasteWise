@@ -4,16 +4,17 @@ import PieChart from 'react-native-pie-chart';
 import { useRoute } from '@react-navigation/native';
 import ThemeContext from '../context/ThemeContext';
 
-const TestChart = ({counts}) => {
+
+const TestChart = ({counts, plastic, metal, ewaste}) => {
   const { theme } = useContext(ThemeContext);
   const numberOfItems = counts;
 
   const widthAndHeight = 250;
-  const plastic = numberOfItems / 3;
-  const metal = numberOfItems / 3;
-  const ewaste = numberOfItems / 3;
+  const plastic1 = plastic / numberOfItems;
+  const metal1 = metal / numberOfItems;
+  const ewaste1 = ewaste / numberOfItems;
   // const { plastic, metal, ewaste } = counts;
-  const series = [plastic, metal, ewaste];
+  const series = [plastic1, metal1, ewaste1];
   const sliceColor = ['#99DAB3', '#2D5A3D', '#FFFFFF'];
 
   const styles = StyleSheet.create({
